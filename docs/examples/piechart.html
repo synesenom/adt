@@ -53,7 +53,7 @@ var data = [
 // create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var chart = new adt.widgets.PieChart("mychart", "#widget")
+var chart = new du.widgets.PieChart("mychart", "#widget")
     .describe("A simple pie chart showing the number of fruits in a virtual basket.")
     .data(data)
     .x(width/2 - height/2 + 20)

@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module linechart
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 // TODO add log axes
 // TODO make marker separate widget
@@ -34,9 +34,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.LineChart = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.LineChart = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -45,7 +45,7 @@
      * The line chart widget class.
      *
      * @class LineChart
-     * @memberOf adt.widgets.linechart
+     * @memberOf du.widgets.linechart
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -59,7 +59,7 @@
          * Default is number.
          *
          * @method xType
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {string} type Type of the X axis.
          */
         _w.attr.add(this, "xType", "number");
@@ -72,7 +72,7 @@
          * Note: this method is still experimental, and therefore it is unstable.
          *
          * @method legend
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {boolean} on Whether legend should be added.
          */
         _w.attr.add(this, "legend", false);
@@ -90,7 +90,7 @@
          * Error is only drawn for lines that are defined as property in {dy}.
          *
          * @method data
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {Array} data Array of data points.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
          */
@@ -107,7 +107,7 @@
          * Highlights the specified plot.
          *
          * @method highlight
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {string} key Key of the line to highlight.
          * @param {number} duration Duration of the highlight animation.
          */
@@ -124,7 +124,7 @@
          * If a marker with the specified identifier already exists, the marker is ignored.
          *
          * @method addMarker
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {string} id Marker identifier.
          * @param {string} key Key of the line to mark.
          * @param {(number|string)} start Start X position of the marker.
@@ -227,7 +227,7 @@
          * Removes a marker from the plot.
          *
          * @method removeMarker
-         * @memberOf adt.widgets.linechart.LineChart
+         * @memberOf du.widgets.linechart.LineChart
          * @param {string} id Identifier of the marker to remove.
          * @returns {boolean} True if marker exists and could be removed, false otherwise.
          */

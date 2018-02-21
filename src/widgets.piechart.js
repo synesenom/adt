@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module piechart
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 // TODO simplify class
 (function (global, factory) {
@@ -33,9 +33,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.PieChart = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.PieChart = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -44,7 +44,7 @@
      * The pie chart widget class.
      *
      * @class PieChart
-     * @memberOf adt.widgets.piechart
+     * @memberOf du.widgets.piechart
      * @param {string} name Identifier of the pie chart.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -57,7 +57,7 @@
          * Default is 0.
          *
          * @method innerRadius
-         * @memberOf adt.widgets.piechart.PieChart
+         * @memberOf du.widgets.piechart.PieChart
          * @param {number} size Size of the inner radius in pixels.
          */
         _w.attr.add(this, "innerRadius", 0, "dim");
@@ -67,7 +67,7 @@
          * Default is 50.
          *
          * @method outerRadius
-         * @memberOf adt.widgets.piechart.PieChart
+         * @memberOf du.widgets.piechart.PieChart
          * @param {number} size Size of the outer radius in pixels.
          */
         _w.attr.add(this, "outerRadius", 50, "dim");
@@ -76,7 +76,7 @@
          * Adds values as small labels inside the chart.
          *
          * @method ticks
-         * @memberOf adt.widgets.piechart.PieChart
+         * @memberOf du.widgets.piechart.PieChart
          * @param {boolean} add Adds ticks.
          */
         _w.attr.add(this, "ticks", false);
@@ -93,7 +93,7 @@
          * Binds new data to pie chart.
          *
          * @method data
-         * @memberOf adt.widgets.piechart.PieChart
+         * @memberOf du.widgets.piechart.PieChart
          * @param {Array} data Array of objects with keys 'name', 'value' and 'color'.
          */
         this.data = function (data) {
@@ -105,7 +105,7 @@
          * Highlights the specified slice.
          *
          * @method highlight
-         * @memberOf adt.widgets.piechart.PieChart
+         * @memberOf du.widgets.piechart.PieChart
          * @param {string} key Key of the segment to highlight.
          * @param {number} duration Duration of the highlight animation.
          */

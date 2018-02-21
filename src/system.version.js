@@ -29,7 +29,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module system.version
- * @memberOf adt
+ * @memberOf du
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -37,9 +37,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.system = global.adt.system || {};
-        global.adt.system.version = factory();
+        global.du = global.du || {};
+        global.du.system = global.du.system || {};
+        global.du.system.version = factory();
     }
 } (this, function () {
     "use strict";
@@ -48,7 +48,7 @@
      * Path to the version file to update.
      *
      * @var {string} _VERSION_FILE
-     * @memberOf adt.version
+     * @memberOf du.version
      * @private
      */
     var _VERSION_FILE = "data/version.json";
@@ -57,16 +57,16 @@
      * Key for the local storage to save/load current browser version.
      *
      * @var {string} _VERSION_KEY
-     * @memberOf adt.version
+     * @memberOf du.version
      * @private
      */
-    var _VERSION_KEY = "adt-version";
+    var _VERSION_KEY = "du-version";
 
     /**
      * To check if we have regular checks turned on.
      *
      * @var {boolean} _REGULAR_ON
-     * @memberOf adt.version
+     * @memberOf du.version
      * @private
      */
     var _REGULAR_ON = false;
@@ -76,7 +76,7 @@
      * If version code is invalid, it returns 0.0.1.
      *
      * @method parse
-     * @memberOf adt.system.version
+     * @memberOf du.system.version
      * @param {string} version Version code to parse.
      * @returns {{major: number, minor: number, patch: number}} Object containing the major, minor and patch
      * numbers.
@@ -105,7 +105,7 @@
      * - major and minor numbers are equal but patch number is higher
      *
      * @method compare
-     * @memberOf adt.system.version
+     * @memberOf du.system.version
      * @param {string} newVersion New (latest) version code.
      * @param {string} oldVersion Old (current) version code.
      * @returns {boolean} True if new version is higher than old one, false otherwise.
@@ -123,7 +123,7 @@
      * Sets the version resource file.
      *
      * @method file
-     * @memberOf adt.system.version
+     * @memberOf du.system.version
      * @param {string} path Path to the version file.
      */
     function file(path) {
@@ -136,7 +136,7 @@
      * Also, if delay is specified, regular check for version update is enabled.
      *
      * @method check
-     * @memberOf adt.system.version
+     * @memberOf du.system.version
      * @param {function=} onUpdate Callback to perform on version update. The function must accept two parameters:
      * latest and current for the latest and current version numbers.
      * @param {boolean=} regular Turns on regular checks for version updates around every 30 minutes.
@@ -180,7 +180,7 @@
      * If version is not yet set in local storage, it is initialized to 0.0.1.
      *
      * @method current
-     * @memberOf adt.system.version
+     * @memberOf du.system.version
      * @returns {string} Current version in string format.
      */
     function current() {

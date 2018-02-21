@@ -18,8 +18,8 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../dl/widgets.min.js"></script>
-    <script src="../dl/widgets.barchart.min.js"></script>
+    <script src="../../src/widgets.js"></script>
+    <script src="../../src/widgets.barchart.js"></script>
     <title>bar chart | adt</title>
 </head>
 <body>
@@ -59,7 +59,7 @@ var colors = {
 // create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var chart = new adt.widgets.BarChart("mychart", "#widget")
+var chart = new du.widgets.BarChart("mychart", "#widget")
     .describe("A colorful bar chart displaying the volume of fruits in a virtual fridge.")
     .data(data)
     .width(width)

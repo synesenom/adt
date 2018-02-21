@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module system.log
- * @memberOf adt
+ * @memberOf du
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -30,9 +30,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.system = global.adt.system || {};
-        global.adt.system.log = factory();
+        global.du = global.du || {};
+        global.du.system = global.du.system || {};
+        global.du.system.log = factory();
     }
 } (this, function () {
     "use strict";
@@ -41,7 +41,7 @@
      * Valid severity levels.
      *
      * @var {object} _SEVERITY
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @private
      */
     var _SEVERITY = {
@@ -59,7 +59,7 @@
      * Current severity level.
      *
      * @var {string} _severity
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @private
      */
     var _severity = 'info';
@@ -68,7 +68,7 @@
      * Starting time of the logging.
      *
      * @var {Date} _start
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @private
      */
     var _start = new Date();
@@ -77,7 +77,7 @@
      * Convert a number to a zero padded string.
      *
      * @method _format
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param {number} x Number to format.
      * @param {number} length Final length after zeroes added.
      * @returns {string} Zero padded number in string format.
@@ -91,7 +91,7 @@
      * Returns the elapsed time in hh:mm:ss:ms format.
      *
      * @method _timer
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @returns {string} Elapsed time in string format.
      * @private
      */
@@ -109,7 +109,7 @@
      * Either the full name or the initial of the level is passed.
      *
      * @method severity
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param {string} level Severity level to set logger to.
      */
     function severity(level) {
@@ -122,7 +122,7 @@
      * Prints a debug message on the console if severity level is at least 'debug'.
      *
      * @method d
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param tag Tag to use for the log.
      * @param message Log message.
      */
@@ -135,7 +135,7 @@
      * Prints an info message on console if severity level is at least 'info'.
      *
      * @method i
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param {string} tag Tag to use for the log.
      * @param {string} message Log message.
      */
@@ -149,7 +149,7 @@
      * Prints a warning message to console if severity level is at least 'warning'.
      *
      * @method w
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param {string} tag Tag to use for the log.
      * @param {string} message Log message.
      */
@@ -164,7 +164,7 @@
      * Prints an error message to console if severity level is at least 'error'.
      *
      * @method e
-     * @memberOf adt.system.log
+     * @memberOf du.system.log
      * @param {string} tag Tag to use for the log.
      * @param {string} message Log message.
      */

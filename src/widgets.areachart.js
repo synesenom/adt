@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module areachart
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 // TODO add transition to render methods
 // TODO add mouse events
@@ -34,9 +34,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.AreaChart = factory(global.d3, global.adt.widgets.Widget);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.AreaChart = factory(global.d3, global.du.widgets.Widget);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -45,7 +45,7 @@
      * The area chart widget class.
      *
      * @class AreaChart
-     * @memberOf adt.widgets.areachart
+     * @memberOf du.widgets.areachart
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -59,7 +59,7 @@
          * Default is number.
          *
          * @method xType
-         * @memberOf adt.widgets.areachart.AreaChart
+         * @memberOf du.widgets.areachart.AreaChart
          * @param {string} type Type of the X axis.
          */
         _w.attr.add(this, "xType", "number");
@@ -69,7 +69,7 @@
          * Default is 0.3.
          *
          * @method opacity
-         * @memberOf adt.widgets.areachart.AreaChart
+         * @memberOf du.widgets.areachart.AreaChart
          * @param {number} value The opacity value to set.
          */
         _w.attr.add(this, "opacity", 0.3);
@@ -83,7 +83,7 @@
          * Binds data to the area plot.
          *
          * @method data
-         * @memberOf adt.widgets.areachart.AreaChart
+         * @memberOf du.widgets.areachart.AreaChart
          * @param {Array} data Array of {x, y} objects where X is a number or Date, Y is an object containing the y
          * values for each area to plot.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
@@ -101,7 +101,7 @@
          * Highlights the specified plot.
          *
          * @method highlight
-         * @memberOf adt.widgets.areachart.AreaChart
+         * @memberOf du.widgets.areachart.AreaChart
          * @param {string} key Key of the area to highlight.
          * @param {number} duration Duration of the highlight animation.
          */

@@ -66,7 +66,7 @@ var colors = {
 // create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var chart = new adt.widgets.ChordChart("mychart", "#widget")
+var chart = new du.widgets.ChordChart("mychart", "#widget")
     .describe("Chord chart that displays the trade of fruit in a virtual community.")
     .data(data)
     .x(width/2 - height/2)

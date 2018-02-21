@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module image
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -34,9 +34,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Image = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Image = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -45,7 +45,7 @@
      * The image widget class.
      *
      * @class Image
-     * @memberOf adt.widgets.image
+     * @memberOf du.widgets.image
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -57,7 +57,7 @@
          * Sets the image source path.
          *
          * @method src
-         * @memberOf adt.widgets.image.Image
+         * @memberOf du.widgets.image.Image
          * @param {string} path Path to the image source.
          */
         _w.attr.add(this, "src", "");

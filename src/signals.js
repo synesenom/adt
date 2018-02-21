@@ -25,7 +25,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module signals
- * @memberOf adt
+ * @memberOf du
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -33,8 +33,8 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.signals = factory();
+        global.du = global.du || {};
+        global.du.signals = factory();
     }
 } (this, function () {
     "use strict";
@@ -44,7 +44,7 @@
      * Contains a list of functions for each added signal.
      *
      * @var {object} _subscriptions
-     * @memberOf adt.signals
+     * @memberOf du.signals
      * @private
      */
     var _subscriptions = {};
@@ -53,7 +53,7 @@
      * Adds a single callback to a signal. If the signal does not exist yet, it is also created.
      *
      * @method _add
-     * @memberOf adt.signals
+     * @memberOf du.signals
      * @param {string} signal Identifier of the signal to add callback to.
      * @param {function} callback The callback to append to signal list.
      * @private
@@ -79,7 +79,7 @@
      * If the signal does not exists yet, it is created as well.
      *
      * @method subscribe
-     * @memberOf adt.signals
+     * @memberOf du.signals
      * @param {(string|Array)} signals Single signal identifier or an array of signal identifiers.
      * @param {function} callback Callback to subscribe to signal list(s).
      */
@@ -99,7 +99,7 @@
      * Emits a signal and calls all subscribed callbacks.
      *
      * @method emit
-     * @memberOf adt.signals
+     * @memberOf du.signals
      * @param {string} signal Identifier of the signal to emit.
      * @param {object=} args Arguments to pass to the triggered callbacks.
      */

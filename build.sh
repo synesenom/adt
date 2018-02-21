@@ -28,8 +28,8 @@ AVAILABLE_MODULES=(
 )
 
 echo ""
-echo "Building ADT"
-echo "-----------------------"
+echo "Building dashboard-utils"
+echo "------------------------"
 
 # Build docs
 echo "  building documentation"
@@ -49,4 +49,4 @@ for module in "${AVAILABLE_MODULES[@]}"; do
 done
 
 # Build full library
-uglifyjs ${module_list} --mangle --output somc-adt.min.js
+uglifyjs ${module_list} --mangle --output dashboard-utils.min.js

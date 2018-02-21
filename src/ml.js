@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module ml
- * @memberOf adt
+ * @memberOf du
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -30,7 +30,7 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['exports'], factory);
     } else {
-        factory((global.adt = global.adt || {}));
+        factory((global.du = global.du || {}));
     }
 } (this, (function (exports) {
     "use strict";
@@ -51,7 +51,7 @@
          *  https://www.wessa.net/download/stl.pdf
          *
          * @method anomalies
-         * @memberOf adt.ml
+         * @memberOf du.ml
          * @param {Array} data Array containing {x: number, y: number} objects of the time series data.
          * @returns {object} Object containing two arrays of data points that were detected as local/global anomalies.
          */

@@ -12,7 +12,7 @@
 </head>
 <body>
 <script>
-    var map = new adt.widgets.Map("flight")
+    var map = new du.widgets.Map("flight")
         .x(0)                       // Top-left corner is adjusted to
         .y(0)                       // the window
         .width(window.innerWidth)   // Size is set to the window size
@@ -29,7 +29,7 @@
     var proxy = "https://cors-anywhere.herokuapp.com/";
 
     // Create REST object that fetches the data
-    var api = new adt.rest.Rest(
+    var api = new du.rest.Rest(
         proxy + "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json"
     );
 

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module rest
- * @memberOf adt
+ * @memberOf du
  * @requires d3@v4
  */
 (function (global, factory) {
@@ -31,8 +31,8 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.rest = factory(global.d3);
+        global.du = global.du || {};
+        global.du.rest = factory(global.d3);
     }
 } (this, function (d3) {
     "use strict";
@@ -43,7 +43,7 @@
      * This is to ensure that one {Rest} object connects to a single table.
      *
      * @class Rest
-     * @memberOf adt.rest
+     * @memberOf du.rest
      * @param {string} endpoint Endpoint of the REST API.
      * @constructor
      */
@@ -52,7 +52,7 @@
          * Performs a query to the connected table.
          *
          * @method _query
-         * @memberOf adt.rest.Rest
+         * @memberOf du.rest.Rest
          * @param {object=} params Object containing the parameters of the query.
          * @param {function} exec Function to call in order to execute the query.
          * @param {function=} onSuccess Callback to perform if the query was successful. Must accept the response
@@ -103,7 +103,7 @@
          * Performs a query to a REST API that is expected to return a JSON file.
          *
          * @method json
-         * @memberOf adt.rest.Rest
+         * @memberOf du.rest.Rest
          * @param {object} params Object containing the parameters of the query.
          * @param {function=} onSuccess Callback to perform if the query was successful. Must accept the JSON response
          * of the query.
@@ -118,7 +118,7 @@
          * Performs a query to a REST API that is expected to return a CSV file.
          *
          * @method csv
-         * @memberOf adt.rest.Rest
+         * @memberOf du.rest.Rest
          * @param {object} params Object containing the parameters of the query.
          * @param {function=} onSuccess Callback to perform if the query was successful. Must accept the CSV response
          * of the query.

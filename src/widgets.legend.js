@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module legend
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -34,9 +34,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Legend = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Legend = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -45,7 +45,7 @@
      * The legend widget class.
      *
      * @class Legend
-     * @memberOf adt.widgets.legend
+     * @memberOf du.widgets.legend
      * @param {string} name Identifier of the legend.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -57,7 +57,7 @@
          * Sets legend text.
          *
          * @method text
-         * @memberOf adt.widgets.legend.Legend
+         * @memberOf du.widgets.legend.Legend
          * @param {string} label Text of the legend.
          */
         _w.attr.add(this, "text", "");
@@ -67,7 +67,7 @@
          * Default is white.
          *
          * @method color
-         * @memberOf adt.widgets.legend.Legend
+         * @memberOf du.widgets.legend.Legend
          * @param {string} color Color to use.
          */
         _w.attr.add(this, "color", "white");
@@ -80,7 +80,7 @@
          * Highlights legend. A highlighted legend has a bold text.
          *
          * @method highlight
-         * @memberOf adt.widgets.legend.Legend
+         * @memberOf du.widgets.legend.Legend
          * @param {boolean} on Whether to turn highlight on or off.
          */
         this.highlight = function(on) {

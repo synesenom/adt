@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module barchart
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -32,9 +32,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.BarChart = factory(global.d3, global.adt.widgets.Widget);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.BarChart = factory(global.d3, global.du.widgets.Widget);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -43,7 +43,7 @@
      * The bar chart widget class.
      *
      * @class BarChart
-     * @memberOf adt.widgets.barchart
+     * @memberOf du.widgets.barchart
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -56,7 +56,7 @@
          * Default is false.
          *
          * @method vertical
-         * @memberOf adt.widgets.barchart.BarChart
+         * @memberOf du.widgets.barchart.BarChart
          * @param {boolean} vertical Whether to set bar chart to vertical.
          */
         _w.attr.add(this, "vertical", false);
@@ -69,9 +69,9 @@
          * Binds data to the bar chart.
          *
          * @method data
-         * @memberOf adt.widgets.barchart.BarChart
+         * @memberOf du.widgets.barchart.BarChart
          * @param {Array} data Array of {x: (number|string), y: number} objects.
-         * @returns {adt.widgets.barchart.BarChart} Reference to the current bar chart.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current bar chart.
          */
         this.data = function(data) {
             _data = data;
@@ -82,10 +82,10 @@
          * Highlights the specified plot.
          *
          * @method highlight
-         * @memberOf adt.widgets.barchart.BarChart
+         * @memberOf du.widgets.barchart.BarChart
          * @param {string} key Key of the line to highlight.
          * @param {number} duration Duration of the highlight animation.
-         * @returns {adt.widgets.barchart.BarChart} Reference to the current bar chart.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current bar chart.
          */
         this.highlight = function(key, duration) {
             _w.utils.highlight(_svg, ".bar", key, duration);
@@ -153,7 +153,7 @@
                 // Add bars if needed
                 if (_svg.bars === undefined) {
                     _svg.bars = _svg.g.selectAll(".bar")
-                        .data(data)
+                        .data(_data)
                         .enter().append("rect")
                         .attr("class", function(d) { return "bar " + _w.utils.encode("" + d.x); })
                         .style("pointer-events", "all")

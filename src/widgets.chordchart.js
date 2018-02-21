@@ -30,9 +30,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module chordchart
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 // TODO update style for ticks in render.style()
 (function (global, factory) {
@@ -41,9 +41,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.ChordChart = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.ChordChart = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -52,7 +52,7 @@
      * The chord chart widget class.
      *
      * @class ChordChart
-     * @memberOf adt.widgets.chordchart
+     * @memberOf du.widgets.chordchart
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -65,7 +65,7 @@
          * Default is 100.
          *
          * @method radius
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {number} size Size of the radius in pixels.
          */
         _w.attr.add(this, "radius", 100, "dim");
@@ -75,7 +75,7 @@
          * Default is 10.
          *
          * @method thickness
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {number} size Size of the thickness in pixels.
          */
         _w.attr.add(this, "thickness", 10, "dim");
@@ -85,7 +85,7 @@
          * Default is false.
          *
          * @method ticks
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {boolean} on Whether to have ticks or not.
          */
         _w.attr.add(this, "ticks", false);
@@ -95,7 +95,7 @@
          * source instead of the largest target.
          *
          * @method invert
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {boolean} on If chord should be inverted.
          */
         _w.attr.add(this, "invert", false);
@@ -112,7 +112,7 @@
          * Binds data to the chord chart.
          *
          * @method data
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {Array} data Array of {source, target, value} objects denoting the size of chord from segment to
          * segment.
          */
@@ -163,7 +163,7 @@
          * Creates a default color scheme based on the groups.
          *
          * @method _makeColors
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {Array} groups Array containing the chord groups.
          * @returns {object} The color schemes.
          * @private
@@ -181,7 +181,7 @@
          * Creates an identifier for a ribbon.
          *
          * @method _ribbonId
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {object} data Object describing the ribbon.
          * @returns {string} Identifier.
          * @private
@@ -196,7 +196,7 @@
          * Calculates an arc tween function from a starting chord data.
          *
          * @method _arcTween
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {object} start Starting chord data.
          * @returns {function} The arc tween animation function.
          * @private
@@ -236,7 +236,7 @@
          * Calculates a ribbon tween from a starting chord data.
          *
          * @method _ribbonTween
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {object} start Starting chord data.
          * @returns {function} The ribbon tween animation function.
          * @private
@@ -305,7 +305,7 @@
          * Highlights the specified segment.
          *
          * @method highlight
-         * @memberOf adt.widgets.chordchart.ChordChart
+         * @memberOf du.widgets.chordchart.ChordChart
          * @param {string} key Key of the segment to highlight.
          * @param {number} duration Duration of the highlight animation.
          */

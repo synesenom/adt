@@ -30,7 +30,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module widgets
- * @memberOf adt
+ * @memberOf du
  * @requires d3@v4
  * @requires lodash@4.17.4
  */
@@ -51,9 +51,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', '_', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Widget = factory(global.d3, global._);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Widget = factory(global.d3, global._);
     }
 } (this, function (d3, _) {
     "use strict";
@@ -62,7 +62,7 @@
      * The base widget class, all widgets inherit this parent class.
      *
      * @class Widget
-     * @memberOf adt.widgets
+     * @memberOf du.widgets
      * @param {string} name Name of the widget. This is used to identify the element.
      * @param {string} type Widget type, part of the generated widget ID.
      * @param {string=} element HTML element type to use in the widget. If not specified, SVG is used.
@@ -74,22 +74,22 @@
          * The widget DOM element.
          *
          * @var {object} _widget
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @private
          */
         var _widget;
         try {
             if (parent) {
                 _widget = d3.select(parent).append(element)
-                    .attr("id", "adt-widget-" + type + "-" + name)
-                    .attr("class", "adt-widget")
+                    .attr("id", "du-widget-" + type + "-" + name)
+                    .attr("class", "du-widget")
                     .style("display", "none")
                     .style("position", "absolute")
                     .style("pointer-events", "none");
             } else {
                 _widget = d3.select("body").append(element)
-                    .attr("id", "adt-widget-" + type + "-" + name)
-                    .attr("class", "adt-widget")
+                    .attr("id", "du-widget-" + type + "-" + name)
+                    .attr("class", "du-widget")
                     .style("display", "none")
                     .style("position", "absolute")
                     .style("pointer-events", "none");
@@ -102,7 +102,7 @@
          * Default widget attributes.
          *
          * @var {object} _attr
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @property {number} width Width in pixels.
          * @property {number} height Height in pixels.
          * @property {object} margins Object containing margins for each side.
@@ -120,7 +120,7 @@
              * Attribute categories.
              *
              * @var {object} _categories
-             * @memberOf adt.widgets.Widget._attr
+             * @memberOf du.widgets.Widget._attr
              * @private
              */
             _categories: {
@@ -128,7 +128,7 @@
                  * Dimension attributes.
                  *
                  * @var {Array} _dim
-                 * @memberOf adt.widgets.Widget._attr._categories
+                 * @memberOf du.widgets.Widget._attr._categories
                  */
                 dim: []
             },
@@ -137,7 +137,7 @@
              * Adds a new attribute to the widget.
              *
              * @method add
-             * @memberOf adt.widgets.Widget._attr
+             * @memberOf du.widgets.Widget._attr
              * @param {object} widget The widget to add the attribute to.
              * @param {string} name Name of the attribute.
              * @param {object} value Initial value of the attribute.
@@ -172,7 +172,7 @@
          * Default is false.
          *
          * @method relative
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {boolean} on True if relative position should be turned on.
          */
         _attr.add(this, "relative", false);
@@ -182,7 +182,7 @@
          * Default is 1.
          *
          * @method resize
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {boolean} scale Factor to resize widget with.
          */
         _attr.add(this, "resize", 1);
@@ -192,7 +192,7 @@
          * Default is 0px.
          *
          * @method x
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} x Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
          */
@@ -207,7 +207,7 @@
          * Default is 0px.
          *
          * @method y
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} y Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
          */
@@ -221,7 +221,7 @@
          * Sets widget width in pixels. Default is 200.
          *
          * @method width
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} w Width in pixels.
          */
         _attr.add(this, "width", 200, "dim");
@@ -230,7 +230,7 @@
          * Sets widget height in pixels. Default is 150.
          *
          * @method height
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} h Height in pixels.
          */
         _attr.add(this, "height", 150, "dim");
@@ -239,7 +239,7 @@
          * Sets widget margins. Default is 0 for all sides.
          *
          * @method margins
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {(number|object)} margins A single number to set all sides or an object specifying some of the sides.
          */
         _attr.add(this, "margins", {left: 0, right: 0, top: 0, bottom: 0}, "dim", function(margins) {
@@ -259,7 +259,7 @@
          * Sets widget borders. Default is null for all sides.
          *
          * @method borders
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {object) borders An object specifying some of the sides.
          */
         _attr.add(this, "borders", {left: null, right: null, top: null, bottom: null}, null, function(borders) {
@@ -274,7 +274,7 @@
          * Default is black.
          *
          * @method fontColor
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} color Color to set font and axes to.
          */
         _attr.add(this, "fontColor", "black");
@@ -284,7 +284,7 @@
          * Default is 10.
          *
          * @method fontSize.
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} size Font size in pixels.
          */
         _attr.add(this, "fontSize", 10);
@@ -294,7 +294,7 @@
          * Default is normal.
          *
          * @method fontWeight
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} weight Font weight.
          */
         _attr.add(this, "fontWeight", "normal");
@@ -304,7 +304,7 @@
          * Default is an empty string.
          *
          * @method label
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "label", null);
@@ -314,7 +314,7 @@
          * Default is an empty string.
          *
          * @method xLabel
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "xLabel", null);
@@ -324,7 +324,7 @@
          * Default is an empty string.
          *
          * @method yLabel
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "yLabel", null);
@@ -334,7 +334,7 @@
          * Default is an SI prefixed number
          *
          * @method tickFormat
-         * @memberOf adt.widget.Widget
+         * @memberOf du.widget.Widget
          * @param {function} format Function that converts a number to a string.
          */
         _attr.add(this, "tickFormat", function(x) {
@@ -346,7 +346,7 @@
          * Default is an SI prefixed number.
          *
          * @method yTickFormat
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {function} format Function that converts a number to a string.
          */
         _attr.add(this, "yTickFormat", function(x) {
@@ -358,7 +358,7 @@
          * Default is 0.
          *
          * @method xTickAngle
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} angle The angle to set.
          */
         _attr.add(this, "xTickAngle", null);
@@ -368,7 +368,7 @@
          * Default is 0.
          *
          * @method yMin
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number} value Value to set vertical minimum to.
          */
         _attr.add(this, "yMin", 0);
@@ -381,7 +381,7 @@
          * Default is null.
          *
          * @method mouseover
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {function} callback Callback to trigger on mouseover.
          */
         _attr.add(this, "mouseover", null);
@@ -394,7 +394,7 @@
          * Default is null.
          *
          * @method mouseleave
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {function} callback Callback to trigger on mouseleave.
          */
         _attr.add(this, "mouseleave", null);
@@ -407,7 +407,7 @@
          * Default is null.
          *
          * @method click
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {function} callback Callback to trigger on click.
          */
         _attr.add(this, "click", null);
@@ -417,7 +417,7 @@
          * Default is #888.
          *
          * @method colors
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {(string|object)} color Single color to set all plot elements or an object specifying the color of
          * each plot.
          */
@@ -427,7 +427,7 @@
          * Collection of some convenience methods.
          *
          * @namespace _utils
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @private
          */
         var _utils = (function () {
@@ -435,7 +435,7 @@
              * Encodes a plot key by replacing spaces with double underscore.
              *
              * @method encode
-             * @memberOf adt.widgets.Widget.utils
+             * @memberOf du.widgets.Widget.utils
              * @param {string} key Key to encode.
              * @returns {string} Encoded key if key is valid, empty string otherwise.
              * @private
@@ -452,7 +452,7 @@
              * Also calculates the sorted range of values for the X axis.
              *
              * @method boundary
-             * @memberOf adt.widgets.Widget._utils
+             * @memberOf du.widgets.Widget._utils
              * @param {Array} data Array of {x: number, y: object} pairs where y is an object containing various Y
              * values for different keys.
              * @param {{x: Array, y: Array}=} constraints Object containing additional constraints on the boundary.
@@ -541,7 +541,7 @@
              * Calculates axis scales from a boundary.
              *
              * @method scale
-             * @memberOf adt.widgets.Widget.utils
+             * @memberOf du.widgets.Widget.utils
              * @param {{x: Array, y: Array}} boundary Object describing the boundary.
              * @param {number} width Width of the plotting area.
              * @param {number} height Height of the plotting area.
@@ -586,7 +586,7 @@
              * Highlights an element in the widget.
              *
              * @method highlight
-             * @memberOf adt.widgets.Widget.utils
+             * @memberOf du.widgets.Widget.utils
              * @param {object} svg The inner SVG of the widget.
              * @param {string} selector Selector of the widget elements.
              * @param {string} key Key of the element to highlight.
@@ -623,9 +623,9 @@
          * simply add a class, but sets the entire content for the class attribute).
          *
          * @method addClass
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} c Class to set the widget to.
-         * @returns {adt.widgets.Widget} Reference to the current widget.
+         * @returns {du.widgets.Widget} Reference to the current widget.
          */
         this.setClass = function (c) {
             _widget.attr("class", c);
@@ -636,7 +636,7 @@
          * The rendering methods of the widget.
          *
          * @namespace _render
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @private
          */
         var _render = {
@@ -645,10 +645,10 @@
              * Must be overridden.
              *
              * @method build
-             * @memberOf adt.widgets.Widget._render
+             * @memberOf du.widgets.Widget._render
              */
             build: function () {
-                //throw new Error("adt.widgets.Widgets Error: build() is not implemented");
+                //throw new Error("du.widgets.Widgets Error: build() is not implemented");
             },
 
             /**
@@ -656,10 +656,10 @@
              * Must be overridden.
              *
              * @method update
-             * @memberOf adt.widgets.Widget._render
+             * @memberOf du.widgets.Widget._render
              */
             update: function () {
-                //throw new Error("adt.widgets.Widgets Error: update() is not implemented");
+                //throw new Error("du.widgets.Widgets Error: update() is not implemented");
             },
 
             /**
@@ -667,10 +667,10 @@
              * Must be overridden.
              *
              * @method style
-             * @memberOf adt.widgets.Widget._render
+             * @memberOf du.widgets.Widget._render
              */
             style: function () {
-                //throw new Error("adt.widgets.Widgets Error: style() is not implemented");
+                //throw new Error("du.widgets.Widgets Error: style() is not implemented");
             }
         };
 
@@ -678,9 +678,9 @@
          * Renders the widget. Note that without calling this method, the widget is not rendered at all.
          *
          * @method render
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {number=} duration Duration of the rendering transition. If not specified, 500 ms is applied.
-         * @returns {adt.widgets.Widget} Reference to the current widget.
+         * @returns {du.widgets.Widget} Reference to the current widget.
          */
         this.render = function (duration) {
             // Calculate final duration to use
@@ -771,9 +771,9 @@
          * After 15 second or if the user leaves the widget, the description disappears.
          *
          * @method describe
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} content Content of the description. Can be HTML formatted.
-         * @returns {adt.widgets.Widget} Reference to the current widget.
+         * @returns {du.widgets.Widget} Reference to the current widget.
          */
         this.describe = function(content) {
             var _description = null;
@@ -825,13 +825,13 @@
          * Useful for showing missing data.
          *
          * @method placeholder
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          * @param {string} content Content to show in place of the widget. Can be HTML formatted. If nothing is passed,
          * the widget is shown again.
          */
         this.placeholder = function(content) {
             var duration = 300;
-            var placeHolderId = "adt-widget-placeholder-" + name;
+            var placeHolderId = "du-widget-placeholder-" + name;
             if (content) {
                 // Hide widget
                 _widget
@@ -878,7 +878,7 @@
          * Removes widget from DOM.
          *
          * @method remove
-         * @memberOf adt.widgets.Widget
+         * @memberOf du.widgets.Widget
          */
         this.remove = function() {
             _widget.remove();

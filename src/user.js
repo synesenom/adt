@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module user
- * @memberOf adt
+ * @memberOf du
  * @requires d3@v4
  */
 (function (global, factory) {
@@ -31,8 +31,8 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.user = factory(global.d3);
+        global.du = global.du || {};
+        global.du.user = factory(global.d3);
     }
 } (this, function (d3) {
     "use strict";
@@ -41,7 +41,7 @@
      * Class representing a cheat code, that is, a lowercase string that once is typed in, triggers an event.
      *
      * @class CheatCode
-     * @memberOf adt.user
+     * @memberOf du.user
      * @private
      */
     var CheatCode = (function() {
@@ -49,7 +49,7 @@
          * Array of available codes.
          *
          * @var {Array} codes
-         * @memberOf adt.user.CheatCode
+         * @memberOf du.user.CheatCode
          * @private
          */
         var _codes = [];
@@ -85,7 +85,7 @@
          * Class implementing the cheat code.
          *
          * @class CheatCode
-         * @memberOf adt.user.CheatCode
+         * @memberOf du.user.CheatCode
          * @param {string} code Code to type in order to trigger cheat.
          * @param {function} cheat Callback to perform once the code is entered.
          * @constructor
@@ -99,7 +99,7 @@
              * The cheat code in lowercase.
              *
              * @var {string} _code
-             * @memberOf adt.user.CheatCode._CheatCode
+             * @memberOf du.user.CheatCode._CheatCode
              * @private
              */
             var _code = code.toLowerCase();
@@ -109,7 +109,7 @@
              * Once this reaches the length of the cheat code, the cheat is triggered.
              *
              * @var {number} _index
-             * @memberOf adt.user.CheatCode._CheatCode
+             * @memberOf du.user.CheatCode._CheatCode
              * @private
              */
             this._index = 0;
@@ -118,7 +118,7 @@
              * Resets index to start.
              *
              * @method reset
-             * @memberOf adt.user.CheatCode._CheatCode
+             * @memberOf du.user.CheatCode._CheatCode
              * @private
              */
             this._reset = function () {
@@ -129,7 +129,7 @@
              * Checks if pressed key is the next in code. If code is completely entered, cheat is called.
              *
              * @method check
-             * @memberOf adt.user.CheatCode._CheatCode
+             * @memberOf du.user.CheatCode._CheatCode
              * @param {string} char Key pressed.
              * @returns {boolean} True if code typed completely, false otherwise.
              * @private
@@ -160,7 +160,7 @@
      * Initialized to 0.
      *
      * @var {number} idle
-     * @memberOf adt.user
+     * @memberOf du.user
      * @private
      */
     var _idle = 0;
@@ -187,7 +187,7 @@
      * with the page for some time.
      *
      * @method idle
-     * @memberOf adt.user
+     * @memberOf du.user
      * @param {number} period Time duration between consecutive calls.
      * @param {function} action Action to trigger once the waiting time elapsed.
      */
@@ -203,7 +203,7 @@
      * Triggers a callback once the browser tab of the dashboard is out of focus.
      *
      * @method leave
-     * @memberOf adt.user
+     * @memberOf du.user
      * @param {function} callback Callback to call when browser tab is out of focus.
      */
     function leave(callback) {
@@ -214,7 +214,7 @@
      * Triggers a callback once the browser tab of the dashboard is in focus.
      *
      * @method enter
-     * @memberOf adt.user
+     * @memberOf du.user
      * @param {function} callback Callback to call when browser tab is in focus.
      */
     function enter(callback) {
@@ -225,7 +225,7 @@
      * Enables user interactions by removing the pointer-event restriction on <body>.
      *
      * @method enable
-     * @memberOf adt.user
+     * @memberOf du.user
      */
     function enable() {
         d3.select("svg")
@@ -236,7 +236,7 @@
      * Disables user interaction by setting pointer-events to none on <body>.
      *
      * @method disable
-     * @memberOf adt.user
+     * @memberOf du.user
      */
     function disable() {
         try {
@@ -251,7 +251,7 @@
      * Namespace for cheat codes that trigger some events.
      *
      * @namespace cheats
-     * @memberOf adt.user
+     * @memberOf du.user
      */
     var cheats = {
         /**
@@ -259,7 +259,7 @@
          * until page reload.
          *
          * @method egg
-         * @memberOf adt.user.cheats
+         * @memberOf du.user.cheats
          * @param {string} name Code to activate egg with.
          * @param {function} cheat Cheat to call once activated.
          */
@@ -273,7 +273,7 @@
          * To disable the feature, type the code name starting with "disable".
          *
          * @method feature
-         * @memberOf adt.user.cheats
+         * @memberOf du.user.cheats
          * @param {string} name Name of the feature. Code to activate is enable+<name>, code to deactivate is
          * disable+<name>.
          * @param {function} enable Callback once feature is enabled.

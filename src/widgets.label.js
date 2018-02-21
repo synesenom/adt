@@ -25,9 +25,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module label
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
  // TODO set text only on build not in style updater
 (function (global, factory) {
@@ -36,9 +36,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Label = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Label = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -47,7 +47,7 @@
      * The label widget class.
      *
      * @class Label
-     * @memberOf adt.widgets.label
+     * @memberOf du.widgets.label
      * @param {string} name Identifier of the label.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
@@ -59,7 +59,7 @@
          * Sets text of the label.
          *
          * @method text
-         * @memberOf adt.widgets.label.Label
+         * @memberOf du.widgets.label.Label
          * @param {string} label Text of the label.
          */
         _w.attr.add(this, "text", "");
@@ -69,7 +69,7 @@
          * Default is center.
          *
          * @method align
-         * @memberOf adt.widgets.label.Label
+         * @memberOf du.widgets.label.Label
          * @param {string} alignment The alignment to set.
          */
         _w.attr.add(this, "align", "center");

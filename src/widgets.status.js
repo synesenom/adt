@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module status
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
  // TODO set status only on build not in style updater
 (function (global, factory) {
@@ -35,9 +35,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Status = factory(global.d3, global.adt.widgets.Widget);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Status = factory(global.d3, global.du.widgets.Widget);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -46,7 +46,7 @@
      * The status widget class.
      *
      * @class Status
-     * @memberOf adt.widgets.status
+     * @memberOf du.widgets.status
      * @param {string} name Identifier of the status widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * Accepts HTML formatting.
@@ -59,7 +59,7 @@
          * Sets the status label (description of the status).
          *
          * @method label
-         * @memberOf adt.widgets.status.Status
+         * @memberOf du.widgets.status.Status
          * @param {string} text Label text.
          */
         _w.attr.add(this, "label", "");
@@ -68,7 +68,7 @@
          * Sets the status value (current status).
          *
          * @method status
-         * @memberOf adt.widgets.status.Status
+         * @memberOf du.widgets.status.Status
          * @param {string} text Status value text.
          */
         _w.attr.add(this, "status", "");

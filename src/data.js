@@ -1,6 +1,5 @@
 /**
  * Module implementing various data structures and data manipulation methods.
- * Part of the Analytics Dashboard Tools.
  *
  * @copyright Copyright (C) 2017 Sony Mobile Communications Inc.
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +21,7 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module data
- * @memberOf adt
+ * @memberOf du
  * @requires lodash@4.17.4
  */
 (function (global, factory) {
@@ -31,8 +30,8 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['_', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.data = factory(global._);
+        global.du = global.du || {};
+        global.du.data = factory(global._);
     }
 } (this, function (_) {
     "use strict";
@@ -41,14 +40,14 @@
      * Collection of string and number formatting methods.
      *
      * @namespace format
-     * @memberOf adt.data
+     * @memberOf du.data
      */
     var format = {
         /**
          * Formats a number using SI prefixes.
          *
          * @method si
-         * @memberOf adt.data.format
+         * @memberOf du.data.format
          * @param {number} x Number to format.
          * @returns {string} Number formatted with SI prefixes if valid, 'N/A' otherwise.
          */
@@ -90,7 +89,7 @@
          * Converts a name into a valid identifier.
          *
          * @method idfy
-         * @memberOf adt.data.format
+         * @memberOf du.data.format
          * @param {string} name Name to convert.
          * @returns {string} The converted ID.
          */
@@ -102,7 +101,7 @@
          * Converts an identifier back into a name.
          *
          * @method namify
-         * @memberOf adt.data.format
+         * @memberOf du.data.format
          * @param {string} id Identifier to convert.
          * @returns {string} Converted name.
          */
@@ -115,7 +114,7 @@
      * Namespace for manipulating the content of a CSV file .
      *
      * @namespace explore
-     * @memberOf adt.data
+     * @memberOf du.data
      */
     var explore ={
         /**
@@ -123,7 +122,7 @@
          * Returns the sorted rows in descending order.
          *
          * @method sum
-         * @memberOf adt.data.explore
+         * @memberOf du.data.explore
          * @param {Array} data Array of data to calculate sum for. Content of a CSV file.
          * @param {(number|string)} column Column index or name of the column to sum.
          * @param {(number|string|Array)} segments Single index/name of the columns to group by or an array of column
@@ -175,14 +174,14 @@
      * Collection of smart data structures.
      *
      * @namespace structures
-     * @memberOf adt.data
+     * @memberOf du.data
      */
     var structures = {
         /**
          * Class representing a histogram. A histogram is an array of (value, frequency) pairs.
          *
          * @class Histogram
-         * @memberOf adt.data.structures
+         * @memberOf du.data.structures
          * @param {Array} data Array to initialize histogram with.
          * @constructor
          */
@@ -191,7 +190,7 @@
              * The histogram data.
              *
              * @var {Array} _data
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @private
              */
             var _data = data ? data : [];
@@ -200,9 +199,9 @@
              * Assigns histogram data to the passed Array.
              *
              * @method set
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @param {Array} data Array containing {x: number, y: number} objects.
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             this.set = function(data) {
                 _data = data;
@@ -213,7 +212,7 @@
              * Returns a copy of the underlying histogram data.
              *
              * @method get
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @returns {Array} The histogram data.
              */
             function get() {
@@ -225,10 +224,10 @@
              * The new data point is added to the tail of the histogram.
              *
              * @method add
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @param {number} x Value of the data point.
              * @param {number} y Frequency of the data point.
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function add(x, y) {
                 _data.push({x: x, y: y, index: _data.length});
@@ -239,9 +238,9 @@
              * Multiplies  all frequencies by the specified factor.
              *
              * @method scale
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @param {number} factor Multiplying factor.
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function scale(factor) {
                 _data.forEach(function(d) {
@@ -254,8 +253,8 @@
              * Normalizes histogram to have a sum of frequencies equal to unit.
              *
              * @method normalize
-             * @memberOf adt.data.structures.Histogram
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @memberOf du.data.structures.Histogram
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function normalize() {
                 var s = d3.sum(_data, function (d) {
@@ -271,9 +270,9 @@
              * Sorts histogram by its values.
              *
              * @method sortByX
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @param {boolean} descending Whether histogram should be sorted in descending instead of ascending order.
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function sortByX(descending) {
                 _data.sort(function(a, b) {
@@ -286,9 +285,9 @@
              * Sorts histogram by its frequencies.
              *
              * @method sortByY
-             * @memberOf adt.data.structures.Histogram
+             * @memberOf du.data.structures.Histogram
              * @param {boolean} descending Whether histogram should be sorted in descending instead of ascending order.
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function sortByY(descending) {
                 _data.sort(function(a, b) {
@@ -301,8 +300,8 @@
              * Restores original order of the histogram data.
              *
              * @method unsort
-             * @memberOf adt.data.structures.Histogram
-             * @returns {adt.data.structures.Histogram} Reference to the current histogram.
+             * @memberOf du.data.structures.Histogram
+             * @returns {du.data.structures.Histogram} Reference to the current histogram.
              */
             function unsort() {
                 _data.sort(function(a, b) {
@@ -330,7 +329,7 @@
          * dimensions.
          *
          * @class TimeSeries
-         * @memberOf adt.data.structures
+         * @memberOf du.data.structures
          * @param {Array} dimensions Array of keys for the different y values.
          * @constructor
          */
@@ -340,7 +339,7 @@
              * Initialized to an empty array.
              *
              * @var {Array} _data
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @private
              */
             var _data = [];
@@ -349,9 +348,9 @@
              * Clears history and re-allocates it based on the starting time.
              *
              * @method clear
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {Date} start Start time of the history.
-             * @returns {adt.data.structures.TimeSeries} Reference to the current history.
+             * @returns {du.data.structures.TimeSeries} Reference to the current history.
              */
             function clear(start) {
                 _data = [];
@@ -374,12 +373,12 @@
              * Updates history at a specific point.
              *
              * @method update
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {number} idx Temporal id of the data.
              * @param {Date} x Temporal value of the data.
              * @param {string} idy Y id of the data.
              * @param {number} y Y value of the data.
-             * @returns {adt.data.structures.TimeSeries} Reference to the current history.
+             * @returns {du.data.structures.TimeSeries} Reference to the current history.
              */
             function update(idx, x, idy, y) {
                 _data[idx].x = x;
@@ -390,7 +389,7 @@
              * Returns a sub history cut from the end.
              *
              * @method sub
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {number=} length Length of the sub history to cut. If not specified, the total history is returned.
              * @param {number=} offset Offset measured from the end of the history. If not specified, 0 is used.
              * @returns {Array} The sliced history array.
@@ -408,7 +407,7 @@
              * Returns the sum of the last several bins.
              *
              * @method sum
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {number=} length Number of bins to take sum over. If not specified, the last element is returned.
              * @param {number=} offset Offset measured from the end of the history. If not specified, 0 is used.
              * @returns {object} Object containing the sum for each y dimension.
@@ -433,7 +432,7 @@
              * Calculates the peak level in the specified slice of history.
              *
              * @method peak
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {number=} length Number of bins to calculate peak over. If not specified, the entire history is
              * considered.
              * @param {number=} offset Offset measured from the end of the history. If not specified, 0 is used.
@@ -457,7 +456,7 @@
              * The trend is simply the change from the bin before last and the last one.
              *
              * @method trend
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @returns {object} Object containing the relative changes for each y dimensions.
              */
             function trend(offset) {
@@ -480,7 +479,7 @@
              * Returns a distribution of y values in the specified interval.
              *
              * @method yDist
-             * @memberOf adt.data.structures.TimeSeries
+             * @memberOf du.data.structures.TimeSeries
              * @param {number=} length Number of bins to calculate distribution over. If not specified, the entire history is
              * considered.
              * @param {number=} offset Offset measured from the end of the history. If not specified, 0 is used.
@@ -515,7 +514,7 @@
          * Tables can be segmented, grouped, etc.
          *
          * @class Table
-         * @memberOf adt.data.structures
+         * @memberOf du.data.structures
          * @param {Array=} data Array of objects to initialize table with. Each element in the array is a row, and
          * each column must be present in every row as a property.
          * @constructor
@@ -525,7 +524,7 @@
              * Content of the table.
              *
              * @var {Array} _data
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              * @private
              */
             var _data = [];
@@ -534,7 +533,7 @@
              * Table row indices.
              *
              * @var {Array} _index
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              * @private
              */
             var _index = [];
@@ -552,7 +551,7 @@
              * The result is an array that can be used by the chart widgets.
              *
              * @method slice
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              * @param {string} x Column for the X values.
              * @param {(string|Array)} y Column or array of columns for the Y values.
              * @returns {Array} Array of {x, y} data points for using in charts.
@@ -581,10 +580,10 @@
              * error of the distance between the closest row and the specified value.
              *
              * @method segment
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              * @param {string} column Column to segment table by.
              * @param {(string|number)} value Value to use for segmentation.
-             * @returns {adt.data.structures.Table} The segmented table.
+             * @returns {du.data.structures.Table} The segmented table.
              */
             function segment(column, value) {
                 // Create segmented table data
@@ -610,16 +609,16 @@
                 }
 
                 // Return new table
-                return new adt.data.structures.Table(segmentedData);
+                return new du.data.structures.Table(segmentedData);
             }
 
             /**
              * Sorts the table by a column.
              *
              * @method sort
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              * @param {number} column Column to sort table by.
-             * @returns {adt.data.structures.Table} The segmented table.
+             * @returns {du.data.structures.Table} The segmented table.
              */
             function sort(column) {
                 _data.sort(function(a, b) {
@@ -632,7 +631,7 @@
              * Reverses any sorting previously performed on the table.
              *
              * @method unsort
-             * @memberOf adt.data.structures.Table
+             * @memberOf du.data.structures.Table
              */
             function unsort() {
                 var unsortedData = [];

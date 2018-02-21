@@ -54,7 +54,7 @@ var data = Array.from(new Array(100).keys()).map(function(i) {
 // create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var chart = new adt.widgets.LineChart("mychart", "#widget")
+var chart = new du.widgets.LineChart("mychart", "#widget")
     .describe("Line chart displaying two theoretical trends.")
     .data(data)
     .width(width)

@@ -48,15 +48,15 @@
         {x: 2, cats: 5, dogs: 3, birds: 0.3},
         {x: 3, cats: 5, dogs: 1, birds: 0.3}
     ];
-    var table = new adt.data.structures.Table(data);
+    var table = new du.data.structures.Table(data);
 
-    var chart = new adt.widgets.BarChart("barchart")
+    var chart = new du.widgets.BarChart("barchart")
         .data(table.segment('cats', 3).slice('x', 'dogs'))
         .margins({left: 30, right: 30, top: 30, bottom: 30})
         .fontColor("black")
         .render();
 
-    var slider = new adt.widgets.Slider("slider")
+    var slider = new du.widgets.Slider("slider")
         .x(50)
         .y(209)
         .width(500)

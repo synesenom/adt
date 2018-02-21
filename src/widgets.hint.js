@@ -25,9 +25,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module hint
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 // TODO fix bug with disappearing hint when position is out of window
 (function (global, factory) {
@@ -36,9 +36,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Hint = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Hint = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -47,7 +47,7 @@
      * The hint widget class.
      *
      * @class Hint
-     * @memberOf adt.widgets.hint
+     * @memberOf du.widgets.hint
      * @param {string} name Identifier of the widget.
      * @constructor
      */
@@ -56,7 +56,7 @@
          * List of visible hints.
          *
          * @var {object} _hints
-         * @memberOf adt.widgets.hint.Hint
+         * @memberOf du.widgets.hint.Hint
          * @private
          */
         var _hints = {};
@@ -65,7 +65,7 @@
          * Clears hints list.
          *
          * @method _clear
-         * @memberOf adt.widgets.hint.Hint
+         * @memberOf du.widgets.hint.Hint
          * @private
          */
         function _clear() {
@@ -81,14 +81,14 @@
          * The actual hint class.
          *
          * @class _Hint
-         * @memberOf adt.widgets.hint.Hint
+         * @memberOf du.widgets.hint.Hint
          * @param {string} name Name of the hint.
          * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
          * @private
          */
         function _Hint(name, parent) {
             // Hint IDs
-            var _idBase = "adt-widgets-hint-";
+            var _idBase = "du-widgets-hint-";
             var _id = _idBase + name;
             var _styleId = _idBase + "css";
             var _class = _idBase + "class";
@@ -104,7 +104,7 @@
 
             /**
              * @property {string} text The hint text.
-             * @memberOf adt.widgets.hint.Hint
+             * @memberOf du.widgets.hint.Hint
              */
             _w.attr.add(this, "text", "");
 
@@ -112,7 +112,7 @@
              * Pins the hint to the DOM so that it does not disappear on mousemove.
              *
              * @method pin
-             * @memberOf adt.widgets.hint.Hin
+             * @memberOf du.widgets.hint.Hin
              * @param {boolean} pinned Whether the hint should be pinned.
              */
             _w.attr.add(this, "pin", false);

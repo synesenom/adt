@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
  * @module info
- * @memberOf adt.widgets
+ * @memberOf du.widgets
  * @requires d3@v4
- * @requires adt.widgets.Widget
+ * @requires du.widgets.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -34,9 +34,9 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'widgets', 'exports'], factory);
     } else {
-        global.adt = global.adt || {};
-        global.adt.widgets = global.adt.widgets || {};
-        global.adt.widgets.Info = factory(global.d3, global.adt.widgets.Widget, global);
+        global.du = global.du || {};
+        global.du.widgets = global.du.widgets || {};
+        global.du.widgets.Info = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -45,7 +45,7 @@
      * The info widget class.
      *
      * @class Info
-     * @memberOf adt.widgets.info
+     * @memberOf du.widgets.info
      * @constructor
      */
     var Info = (function () {
@@ -64,7 +64,7 @@
              * Sets the info box content.
              *
              * @method content
-             * @memberOf adt.widgets.info.Info
+             * @memberOf du.widgets.info.Info
              * @param {string} text Content of the info box. Can be HTML formatted.
              */
             _w.attr.add(this, "content", "");
@@ -74,7 +74,7 @@
              * Default is black.
              *
              * @method backgroundColor
-             * @memberOf adt.widgets.info.Info
+             * @memberOf du.widgets.info.Info
              * @param {string} color Color to set background to.
              */
             _w.attr.add(this, "backgroundColor", "black");

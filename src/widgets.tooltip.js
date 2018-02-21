@@ -24,7 +24,7 @@
  * @module widgets.tooltip
  * @memberOf adt
  * @requires d3@v4
- * @requires adt.widgets
+ * @requires du.widgets
  */
 
 (function (global, factory) {
@@ -33,7 +33,7 @@
     } else if (typeof define === 'function' && define.amd) {
         define(['exports'], factory);
     } else {
-        factory((global.adt = global.adt || {}));
+        factory((global.du = global.du || {}));
     }
 } (this, (function (exports) {
     "use strict";
@@ -42,7 +42,7 @@
     if (exports.widgets) {
         var widgets = exports.widgets;
     } else {
-        throw new Error("adt.widgets.Tooltip Error: widgets module is not exported");
+        throw new Error("du.widgets.Tooltip Error: widgets module is not exported");
     }
 
     /**
@@ -52,14 +52,14 @@
      * Part of the Analytics Office map dashboard utils.
      *
      * @class Tooltip
-     * @memberOf adt.widgets
+     * @memberOf du.widgets
      * @requires d3@v4
-     * @requires adt.widgets
+     * @requires du.widgets
      * @constructor
      */
     function Tooltip() {
         // Tooltip ids
-        var _id = "adt-widgets-tooltip-tooltip";
+        var _id = "du-widgets-tooltip-tooltip";
 
         // Remove existing tooltip
         d3.select("#" + _id).remove();
@@ -67,13 +67,13 @@
 
         /**
          * @property {number} offsetX Horizontal offset to correct with.
-         * @memberOf adt.widgets.Tooltip
+         * @memberOf du.widgets.Tooltip
          */
         _w.attr.add(this, "offsetX", 0);
 
         /**
          * @property {number} offsetY Vertical offset to correct with.
-         * @memberOf adt.widgets.Tooltip
+         * @memberOf du.widgets.Tooltip
          */
         _w.attr.add(this, "offsetY", 0);
 

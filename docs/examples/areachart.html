@@ -52,7 +52,7 @@ var data = Array.from(new Array(100).keys()).map(function(i) {
 // create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var chart = new adt.widgets.AreaChart("mychart", "#widget")
+var chart = new du.widgets.AreaChart("mychart", "#widget")
     .describe("An area chart showing two hypothetical density functions.")
     .data(data)
     .width(width)

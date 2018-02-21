@@ -6,18 +6,17 @@
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700" rel="stylesheet">
 	<script src="https://d3js.org/d3.v4.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/synesenom/whiteprint/master/wp.min.css">
-    <link rel="stylesheet" type="text/css" href="style/adt.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 	<script>hljs.initHighlightingOnLoad();</script>
-	<title>home | adt</title>
+	<title>home | dashboard-utils</title>
 </head>
 <body>
 
 <!-- Menu -->
 <input type="checkbox" id="menu"><label for="menu" id="open">☰</label>
 <aside>
-	<div class="logo">adt</div>
+	<div class="logo">dashboard-utils</div>
 	<nav>
 		<div>
 			<a href="#description">description</a>
@@ -59,35 +58,27 @@
 
 <!-- Main content -->
 <main><label for="menu" id="exit"></label>
-	<!-- logos -->
-	<a href="https://www.sonymobile.com/"><img class="sony-logo sony-x" src="img/x.png"/></a>
-	<img class="sony-logo sony-ao" src="img/ao.png"/>
-
-
 	<!-- description -->
 	<h1 id="description">description</h1>
-	This is the documentation site for Analytics Dashboard Tools (<span class="adt"></span>) which is an open source Javascript library developed and used by the Analytics Office at Sony Mobile to build interactive dashboards for displaying real-time data.
-	In short, <span class="adt"></span> is simply a collection of reusable charts (wrapper methods around D3 with a
-	bunch of convenience functions).
-	However, in order to make the dashboard interactive and the building process less painful, <span class="adt"></span>
-	also has some modules for logging, emitting events and listening to various user inputs.
+	<span style="color:dodgerblue;font-weight:bold">dashboard-utils</span> is a collection of useful modules for building interactive
+	dashboards. It is built on top of the original <a href="https://github.com/sonyxperiadev/adt">adt</a> library that
+	Sony Mobile was so generous to open source.
 
 
 	<!-- install -->
 	<h1 id="installing">installing</h1>
 
-	<h2>Browser</h2>
+	<h2>browser</h2>
 	Just include the required modules:
 	<pre><code class="css">&lt;script src="module_name.min.js"&gt;&lt;/script&gt;</code></pre>
 
-	<h2>Node</h2>
-	<pre><code class="bash">npm install somc-adt</code></pre>
+	<h2>node</h2>
+	<pre><code class="bash">npm install dashboard-utils</code></pre>
 
 
 	<!-- requirements -->
 	<h1 id="requirements">requirements</h1>
-	Some of the modules rely on external libraries.
-	Here is a complete list of all libraries that are used in <span class="adt"></span>:
+	Some of the modules rely on external libraries. Here is a complete list of all dependencies:
 	<dl class="custom">
 		<dt><code>d3@4</code></dt>
 		<dd>SVG manipulation library. <a href="https://d3js.org/">[website]</a></dd>
@@ -100,20 +91,10 @@
 	</dl>
 
 
-    <!-- tutorials -->
-    <h1 id="tutorials">tutorials</h1>
-    Here is a (continuously increasing) list of tutorials that show how you can use the library to create some
-    interactive maps and dashboards, just to help you start with <span class="adt"></span>.
-    <dl class="custom">
-        <dt><a href="tutorials/flight-track">flightstat</a></dt>
-        <dd>A quick guide to build a real-time flight tracker using the open ADS-B database.</dd>
-    </dl>
-
-
 	<!-- api -->
 	<h1 id="api">api</h1>
     Below you find the API documentation for the modules. With the exception of the widgets, each module is a standalone
-    script that can be loaded and used as it is right out of the box. For the widgets, the module <code>adt.widgets</code>
+    script that can be loaded and used as it is right out of the box. For the widgets, the module <code>du.widgets</code>
     needs to be loaded first.
 	<div id="api-content"></div>
 </main>
