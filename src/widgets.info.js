@@ -1,6 +1,5 @@
 /**
  * Module implementing an info notification.
- * Part of the Analytics Dashboard Tools.
  *
  * An info is a small window together with a transparent full-width background.
  *

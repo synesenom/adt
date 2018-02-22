@@ -1,6 +1,5 @@
 /**
  * Module for creating and adding various widgets to an interactive dashboard.
- * Part of the Analytics Dashboard Tools.
  *
  * This module contains the base class for all widgets, and therefore it is required to be loaded.
  * All widgets come with some default functionality which are implemented in this module.

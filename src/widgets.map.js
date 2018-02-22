@@ -1,6 +1,5 @@
 /**
  * Module implementing an interactive world map.
- * Part of the Analytics Dashboard Tools.
  *
  * The map widget is an interactive world map with all countries, dependent territories and special areas of
  * geographical interest. All separate areas that have their own ISO 3166-1 numeric-3 code are included extended by

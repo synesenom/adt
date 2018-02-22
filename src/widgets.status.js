@@ -1,6 +1,5 @@
 /**
  * Module implementing an status widget.
- * Part of the Analytics Dashboard Tools.
  *
  * A status is a 'label: status' pair.
  *

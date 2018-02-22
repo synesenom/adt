@@ -1,6 +1,5 @@
 /**
  * Module for managing version checking and version updates.
- * Part of the Analytics Dashboard Tools.
  *
  * Version update is done by regularly checking the current version of the app (stored in the HTML5 local storage)
  * against a file that contains the latest version number. This requires a version file to be updated on version

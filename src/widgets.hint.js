@@ -1,6 +1,5 @@
 /**
  * Module implementing a smart hint.
- * Part of the Analytics Office map dashboard utils.
  *
  * A hint is a positioned label of information that disappears once the user interacts with the page.
  * It is always added to body as parent.

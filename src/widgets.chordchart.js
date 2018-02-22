@@ -1,13 +1,12 @@
 /**
  * Module implementing a chord chart.
- * Part of the Analytics Dashboard Tools.
  *
  * A chord chart displays directed relationship between groups of segments. Each segment is
  * represented by a slice in the chord and ribbons correspond to the flow between segments.
  * In case of a flow matrix <code>M</code>, the color of a ribbon from segment <code>i</code> to
- * segment <code>j</code> is always the color of the largest source. That is, if <code>M[i][j] = 3</code>
+ * segment <code>j</code> is always the color of the net receiver. That is, if <code>M[i][j] = 3</code>
  * and <code>M[j][i] = 10</code>, there is 7 more flow from <code>j</code> to <code>i</code> and the color
- * of the ribbon between these segments is the same as the color of segment <code>j</code> (the target of
+ * of the ribbon between these segments is the same as the color of segment <code>i</code> (the target of
  * the larger flow).
  *
  * @copyright Copyright (C) 2017 Sony Mobile Communications Inc.

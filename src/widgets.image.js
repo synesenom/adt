@@ -1,6 +1,5 @@
 /**
  * Module implementing the image widget.
- * Part of the Analytics Office map dashboard utils.
  *
  * The image widget is just simply an absolutely positioned image.
  *

@@ -1,6 +1,5 @@
 /**
  * Module for managing user interactions.
- * Part of the Analytics Dashboard Tools.
  *
  * @copyright Copyright (C) 2017 Sony Mobile Communications Inc.
  * Permission is hereby granted, free of charge, to any person obtaining a copy

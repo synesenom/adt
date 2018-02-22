@@ -1,9 +1,5 @@
 /**
- * Module implementing an interactive bar chart.
- * Part of the Analytics Dashboard Tools.
- *
  * A label is a static piece of text.
- * Part of the Analytics Office map dashboard utils.
  *
  * @copyright Copyright (C) 2017 Sony Mobile Communications Inc.
  * Permission is hereby granted, free of charge, to any person obtaining a copy

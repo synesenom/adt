@@ -354,8 +354,8 @@ class DocBuilder:
                     #    mainContent += "<br>Author: %s" % block['author']
                     if len(block['requires']) > 0:
                         mainContent += "<br>Requires: %s" % ' '.join("<code>%s</code>" % x[0]['name'] for x in block['requires'])
-                    if block['copyright'] is not None:
-                        mainContent += "<br><br>%s" % block['copyright']
+                    #if block['copyright'] is not None:
+                    #    mainContent += "<br><br>%s" % block['copyright']
 
                 if t == 'method' or (t == 'class' and block['constructor']):
                     mainContent += _method(block)

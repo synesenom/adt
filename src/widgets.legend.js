@@ -1,6 +1,5 @@
 /**
  * Module implementing a colored legend.
- * Part of the Analytics Dashboard Tools.
  *
  * A legend is a static label together with a colored square.
  *

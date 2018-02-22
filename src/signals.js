@@ -1,6 +1,5 @@
 /**
  * Module for managing event subscriptions and emissions.
- * Part of the Analytics Dashboard Tools.
  *
  * <br><br>Callbacks can be subscribed to signals and when an event of that signal is triggered,
  * all subscribed callbacks are called.
