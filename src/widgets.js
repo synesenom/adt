@@ -78,17 +78,26 @@
          * @private
          */
         var _widget;
+
+        /**
+         * The widget ID.
+         *
+         * @var {string} _id
+         * @memberOf du.widgets.Widget
+         * @private
+         */
+        var _id = "du-widget-" + type + "-" + name;
         try {
             if (parent) {
                 _widget = d3.select(parent).append(element)
-                    .attr("id", "du-widget-" + type + "-" + name)
+                    .attr("id", _id)
                     .attr("class", "du-widget")
                     .style("display", "none")
                     .style("position", "absolute")
                     .style("pointer-events", "none");
             } else {
                 _widget = d3.select("body").append(element)
-                    .attr("id", "du-widget-" + type + "-" + name)
+                    .attr("id", _id)
                     .attr("class", "du-widget")
                     .style("display", "none")
                     .style("position", "absolute")
@@ -617,6 +626,17 @@
                 highlight: _highlight
             };
         })();
+
+        /**
+         * Returns the widget ID.
+         *
+         * @method id
+         * @memberOf du.widgets.Widget
+         * @returns {string}
+         */
+        this.id = function() {
+            return _id;
+        };
 
         /**
          * Sets the class of the widget. Note that this method replaces existing class content (that is, it does not

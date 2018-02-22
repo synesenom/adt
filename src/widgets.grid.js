@@ -59,7 +59,6 @@
         var _cells = [];
         var _widgets = [];
         var _show = false;
-        var _resizeFinished = null;
 
         /**
          * Resize grid. Note that it also removes all widgets already in the grid.
@@ -125,7 +124,7 @@
         };
 
         /**
-         * Sets the number of vertical size.
+         * Sets the number of rows. Setting rows removes all contained widgets.
          * Default is 1.
          *
          * @method rows
@@ -140,7 +139,7 @@
         };
 
         /**
-         * Sets the number of horizontal size.
+         * Sets the number of columns. Setting columns removes all contained widgets.
          * Default is 1.
          *
          * @method cols
@@ -156,70 +155,7 @@
 
         // TODO remove this
         this.w = function() {
-            return "#" + name;
-        };
-
-        /**
-         * Makes the grid flexible, that is, it rescales all contained widgets when
-         * the window size is changed.
-         * Note that this method overwrites {windows.onresize}.
-         *
-         * @method flexible
-         * @memberOf du.widgets.grid.Grid
-         * @param {boolean} on Whether the grid should be flexible.
-         * @returns {du.widgets.grid.Grid} Reference to the current grid.
-         */
-        this.flexible = function (on) {
-            function onresize() {
-                // Only resize when resize operation has finished
-                clearTimeout(_resizeFinished);
-                _resizeFinished = setTimeout(function () {
-                    // Get scale
-                    var scaleX = _w.attr.width / window.innerWidth;
-                    var scaleY = _w.attr.height / window.innerHeight;
-
-                    // Resize grid
-                    _w.attr.x = _x /= scaleX;
-                    _w.attr.y = _y /= scaleY;
-                    _w.attr.width /= scaleX;
-                    _w.attr.height /= scaleY;
-                    _w.widget
-                        .style("position", "absolute")
-                        .style(_w.attr.x > 0 ? "left" : "right", Math.abs(_w.attr.x) + _w.attr.xDim)
-                        .style(_w.attr.y > 0 ? "top" : "bottom", Math.abs(_w.attr.y) + _w.attr.yDim)
-                        .style("width", _w.attr.width + "px")
-                        .style("height", _w.attr.height + "px");
-
-                    // Adjust borders
-                    _w.widget.selectAll(".grid-border-h")
-                        .style("top", function () {
-                            return (d3.select(this).attr("data-y") * _w.attr.height / _rows - 1) + "px";
-                        })
-                        .style("width", _w.attr.width + "px");
-                    _w.widget.selectAll(".grid-border-v")
-                        .style("left", function () {
-                            return (d3.select(this).attr("data-x") * _w.attr.width / _columns - 1) + "px";
-                        })
-                        .style("height", _w.attr.height + "px");
-
-                    // Rescale widgets
-                    _widgets.forEach(function (widget) {
-                        widget.widget
-                            .x(widget.x * _w.attr.width / _columns + _w.attr.x)
-                            .y(widget.y * _w.attr.height / _rows + _w.attr.y)
-                            .width(widget.width * _w.attr.width / _columns)
-                            .height(widget.height * _w.attr.height / _rows)
-                            .render(0);
-                    });
-                }, 100);
-            }
-
-            if (on)
-                window.addEventListener("resize", onresize);
-            else
-                window.removeEventListener("resize", onresize);
-
-            return this;
+            return "#du-widget-grid-" + name;
         };
 
         /**
@@ -246,7 +182,7 @@
                         .style("top", (y * _w.attr.height / _rows - 1.5) + "px")
                         .style("width", _w.attr.width + "px")
                         .style("height", "3px")
-                        .style("background-color", "white")
+                        .style("background-color", "white");
                 }
                 for (var x = 1; x < _columns; x++) {
                     _w.widget.append("div")
@@ -257,7 +193,7 @@
                         .style("top", "0")
                         .style("width", "3px")
                         .style("height", _w.attr.height + "px")
-                        .style("background-color", "white")
+                        .style("background-color", "white");
                 }
 
                 // Black lines
@@ -270,7 +206,7 @@
                         .style("top", (y * _w.attr.height / _rows - 0.5) + "px")
                         .style("width", _w.attr.width + "px")
                         .style("height", "1px")
-                        .style("background-color", "black")
+                        .style("background-color", "black");
                 }
                 for (x = 1; x < _columns; x++) {
                     _w.widget.append("div")
@@ -281,7 +217,7 @@
                         .style("top", "0")
                         .style("width", "1px")
                         .style("height", _w.attr.height + "px")
-                        .style("background-color", "black")
+                        .style("background-color", "black");
                 }
             } else {
                 _show = false;
@@ -344,12 +280,16 @@
                 }
             }
 
-            // Set up widget
+            // Change widget parent to the grid
+            d3.select("#" + this.id()).node()
+                .appendChild(d3.select("#" + widget.id()).node());
+
+            // Set up widget size and render
             widget
-                .x(column * _w.attr.width / _columns + _w.attr.x)
-                .y(row * _w.attr.height / _rows + _w.attr.y + d3.select(parent).attr("top"))
-                .width(width * _w.attr.width / _columns)
-                .height(height * _w.attr.height / _rows)
+                .x(column * _w.attr.width / _columns + _w.attr.x + _w.attr.margins.left)
+                .y(row * _w.attr.height / _rows + _w.attr.y + d3.select(parent).attr("top") + _w.attr.margins.left)
+                .width(width * _w.attr.width / _columns - 2*_w.attr.margins.left)
+                .height(height * _w.attr.height / _rows - 2*_w.attr.margins.left)
                 .render();
             return widget;
         };
@@ -371,6 +311,37 @@
                 return null;
             }
         };
+
+        _w.render.style = function() {
+            _w.widget
+                .style("position", "absolute")
+                .style(_w.attr.x > 0 ? "left" : "right", Math.abs(_w.attr.x) + _w.attr.xDim)
+                .style(_w.attr.y > 0 ? "top" : "bottom", Math.abs(_w.attr.y) + _w.attr.yDim)
+                .style("width", _w.attr.width + "px")
+                .style("height", _w.attr.height + "px");
+
+            // Adjust borders
+            _w.widget.selectAll(".grid-border-h")
+                .style("top", function () {
+                    return (d3.select(this).attr("data-y") * _w.attr.height / _rows - 1) + "px";
+                })
+                .style("width", _w.attr.width + "px");
+            _w.widget.selectAll(".grid-border-v")
+                .style("left", function () {
+                    return (d3.select(this).attr("data-x") * _w.attr.width / _columns - 1) + "px";
+                })
+                .style("height", _w.attr.height + "px");
+
+            // Rescale widgets
+            _widgets.forEach(function (widget) {
+                widget.widget
+                    .x(widget.x * _w.attr.width / _columns + _w.attr.x + _w.attr.margins.left)
+                    .y(widget.y * _w.attr.height / _rows + _w.attr.y + _w.attr.margins.left)
+                    .width(widget.width * _w.attr.width / _columns - 2*_w.attr.margins.left)
+                    .height(widget.height * _w.attr.height / _rows - 2*_w.attr.margins.left)
+                    .render(0);
+            });
+        }
     }
 
     // Export
