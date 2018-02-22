@@ -10,7 +10,7 @@
     "topojson": "^3.0.2"
   },
   "devDependencies": {
-    "uglify-js": "^3.3.10"
+    "uglify-js": "^3.3.12"
   },
   "main": "index.js"
 }
