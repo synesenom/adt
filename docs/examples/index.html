@@ -325,17 +325,17 @@
             .rows(2)
             .cols(2)
             .render();
-        grid.add(new du.widgets.LineChart("linechart", grid.w())
+        grid.add(new du.widgets.LineChart("subchart1")
             .margins({left: 30, top: 20, right: 10, bottom: 20})
             .fontSize(10)
             .colors(DUMMY_COLORS)
             .data(DUMMY_DATA), 0, 0, 1, 1);
-        grid.add(new du.widgets.AreaChart("areachart", grid.w())
+        grid.add(new du.widgets.AreaChart("subchart2")
             .margins({left: 30, top: 20, right: 10, bottom: 20})
             .fontSize(10)
             .colors(DUMMY_COLORS)
             .data(DUMMY_DATA), 0, 1, 2, 1);
-        grid.add(new du.widgets.BarChart("barchart", grid.w())
+        grid.add(new du.widgets.BarChart("subchart3")
             .margins({left: 30, top: 20, right: 10, bottom: 20})
             .fontSize(10)
             .colors("#888")
