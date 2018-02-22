@@ -50,7 +50,7 @@
      * @param {string} name Identifier of the widget.
      * @constructor
      */
-    var Hint = (function() {
+    var Hint = (function () {
         /**
          * List of visible hints.
          *
@@ -91,7 +91,6 @@
             var _id = _idBase + name;
             var _styleId = _idBase + "css";
             var _class = _idBase + "class";
-            var _detectorId = _idBase + "detector";
 
             // Avoid duplicates
             if (_hints.hasOwnProperty(_id)) {
@@ -111,7 +110,7 @@
              * Pins the hint to the DOM so that it does not disappear on mousemove.
              *
              * @method pin
-             * @memberOf du.widgets.hint.Hin
+             * @memberOf du.widgets.hint.Hint
              * @param {boolean} pinned Whether the hint should be pinned.
              */
             _w.attr.add(this, "pin", false);
@@ -121,11 +120,11 @@
                 if (d3.select("#" + _styleId).empty()) {
                     d3.select("head").append("style")
                         .attr("id", _styleId)
-                        .text("." + _class + ":after{content:' ';position:absolute;width:0;height:0;left:20.5px;top:40px;border:7px solid;border-color:#000 transparent transparent #000;}");
+                        .text("." + _class + ":after{content:' ';position:absolute;width:0;height:0;left:20.5px;bottom:-10px;border:7px solid;border-color:#000 transparent transparent #000;}");
                 }
 
                 // Setup mouse interaction
-                window.addEventListener("mousemove", function() {
+                window.addEventListener("mousemove", function () {
                     d3.selectAll("." + _class + ".removable").remove();
                     _clear();
                 });
@@ -141,7 +140,7 @@
                     .style("display", "block")
                     .style("padding", "15px")
                     .style("text-align", "center")
-                    .style("line-height", "0.9em")
+                    .style("line-height", "1.1em")
                     .style("background-color", "black")
                     .style("border-radius", "4px")
                     .style("color", "white")
