@@ -16,7 +16,7 @@
     <script src="../dl/widgets.chordchart.min.js"></script>
     <script src="../dl/widgets.grid.min.js"></script>
     <script src="../dl/widgets.hint.min.js"></script>
-    <script src="../dl/widgets.image.min.js"></script>
+    <script src="../dl/widgets.picture.min.js"></script>
     <script src="../dl/widgets.label.min.js"></script>
     <script src="../dl/widgets.legend.min.js"></script>
     <script src="../dl/widgets.linechart.min.js"></script>
@@ -152,15 +152,6 @@
         <div class="example-container">
             <div class="example">
                 <div class="widget-container">
-                    <div class="chart-name"><a href="image.html">Image</a></div>
-                    <div id="image" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
                     <div class="chart-name"><a href="label.html">Label</a></div>
                     <div id="label" class="widget"></div>
                 </div>
@@ -190,6 +181,15 @@
                 <div class="widget-container">
                     <div class="chart-name"><a href="map.html">Map</a></div>
                     <div id="map" class="widget"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="example-container">
+            <div class="example">
+                <div class="widget-container">
+                    <div class="chart-name"><a href="picture.html">Picture</a></div>
+                    <div id="picture" class="widget"></div>
                 </div>
             </div>
         </div>
@@ -349,13 +349,6 @@
             .pin(true)
             .render();
 
-        // Image
-        // TODO center image in container
-        var image = new du.widgets.Image("image", "#image")
-            .width(WIDTH)
-            .src("data/raccoon.jpg")
-            .render();
-
         // Label
         // TODO set default font color to black
         var label = new du.widgets.Label("label", "#label")
@@ -401,6 +394,13 @@
             .backgroundColor("white")
             .borderColor("#555")
             .foregroundColor("#999")
+            .render();
+
+        // Picture
+        var Picture = new du.widgets.Picture("picture", "#picture")
+            .width(WIDTH)
+            .height(HEIGHT)
+            .src("data/raccoon.jpg")
             .render();
 
         // Pie chart

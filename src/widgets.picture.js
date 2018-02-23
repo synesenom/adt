@@ -1,7 +1,7 @@
 /**
- * Module implementing the image widget.
+ * Module implementing the picture widget.
  *
- * The image widget is just simply an absolutely positioned image.
+ * The picture widget is just simply a static image.
  *
  * @copyright Copyright (C) 2017 Sony Mobile Communications Inc.
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
- * @module image
+ * @module picture
  * @memberOf du.widgets
  * @requires d3@v4
  * @requires du.widgets.Widget
@@ -35,50 +35,71 @@
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Image = factory(global.d3, global.du.widgets.Widget, global);
+        global.du.widgets.Picture = factory(global.d3, global.du.widgets.Widget, global);
     }
 } (this, function (d3, Widget) {
     "use strict";
 
     /**
-     * The image widget class.
+     * The picture widget class.
      *
-     * @class Image
-     * @memberOf du.widgets.image
+     * @class Picture
+     * @memberOf du.widgets.picture
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
      */
-    function Image(name, parent) {
-        var _w = Widget.call(this, name, "image", "img", parent);
+    function Picture(name, parent) {
+        var _w = Widget.call(this, name, "picture", "div", parent);
 
         /**
          * Sets the image source path.
          *
          * @method src
-         * @memberOf du.widgets.image.Image
+         * @memberOf du.widgets.picture.Image
          * @param {string} path Path to the image source.
          */
         _w.attr.add(this, "src", "");
 
+        // Widget elements
+        var _svg = {};
+        var _img = null;
+
+        _w.render.build = function() {
+            // Add widget
+            _svg.g = _w.widget.append("img")
+                .style("width", _w.attr.width > 0 ? _w.attr.width : null)
+                .style("height", _w.attr.height > 0 ? _w.attr.height : null)
+                .style("position", "relative")
+                .style("pointer-events", "none");
+
+            // Adjust aspect ratio and size once loaded
+            _img = new Image();
+            _img.onload = function() {
+                var imgAspect = _img.width / _img.height;
+                var aspect = _w.attr.width / _w.attr.height;
+                var width = imgAspect > aspect ? _w.attr.width : _w.attr.height * imgAspect;
+                var height = imgAspect < aspect ? _w.attr.height : _w.attr.width / imgAspect;
+
+                _svg.g.attr("src", _w.attr.src);
+                _svg.g
+                    .style("width", width + "px")
+                    .style("height", height + "px")
+                    .style("margin-left", (_w.attr.width - width) / 2 + "px")
+                    .style("margin-top", (_w.attr.height - height) / 2 + "px");
+            };
+        };
+
         // Style updater
         _w.render.style = function() {
-            _w.widget
-                .style("width", null)
-                .style("height", null)
-                .attr("width", _w.attr.width)
-                .attr("height", null)
-                .style("pointer-events", "none");
-            if (typeof _w.attr.src === "string" && _w.attr.src !== "") {
-                _w.widget.attr("src", _w.attr.src)
-                    .style("display", "block");
-            } else {
-                _w.widget.style("display", "none");
+            // Set image source, it will update the widget as well
+            if (_w.attr.src) {
+                _img.src = _w.attr.src;
             }
         };
     }
 
     // Export
-    Image.prototype = Object.create(Widget.prototype);
-    return Image;
+    Picture.prototype = Object.create(Widget.prototype);
+    return Picture;
 }));

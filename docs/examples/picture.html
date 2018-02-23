@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700" rel="stylesheet">
+    <script src="../dependencies/d3.v4.min.js"></script>
+    <script src="../dependencies/lodash.4.17.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css">
+    <link rel="stylesheet" type="text/css" href="../style/examples.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="../dependencies/codedoc.min.js"></script>
+    <script>
+        codedoc.heading()
+            .callback(function() {
+                hljs.initHighlighting.called = false;
+                hljs.initHighlighting();
+            });
+    </script>
+    <script src="../dl/widgets.min.js"></script>
+    <script src="../../src/widgets.picture.js"></script>
+    <title>image | dashboard-utils</title>
+</head>
+<body>
+<main>
+    <div id="widget"></div>
+    <h1>description</h1>
+    <div id="desc">
+        Just a static image centered in the widget.
+    </div>
+    <div id="code-doc"></div>
+</main>
+<script class="doc">
+// create widget
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var grid = new du.widgets.Picture("mypicture", "#widget")
+    .width(width)
+    .height(height)
+    .src("data/raccoon.jpg")
+    .render();
+</script>
+<script>
+    window.onresize = function() {
+        grid
+            .width(parseFloat(d3.select("#widget").style("width")))
+            .height(parseFloat(d3.select("#widget").style("height")))
+            .render();
+    }
+</script>
+</body>
+</html>
