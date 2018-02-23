@@ -29,15 +29,15 @@
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widgets'));
+        module.exports = factory(require('d3'), require('lodash'), require('./widgets'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'widgets', 'exports'], factory);
+        define(['d3', '_', 'widgets', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Legend = factory(global.d3, global.du.widgets.Widget, global);
+        global.du.widgets.Legend = factory(global.d3, global._, global.du.widgets.Widget, global);
     }
-} (this, function (d3, Widget) {
+} (this, function (d3, _, Widget) {
     "use strict";
 
     /**
@@ -53,15 +53,6 @@
         var _w = Widget.call(this, name, "legend", "div", parent);
 
         /**
-         * Sets legend text.
-         *
-         * @method text
-         * @memberOf du.widgets.legend.Legend
-         * @param {string} label Text of the legend.
-         */
-        _w.attr.add(this, "text", "");
-
-        /**
          * Sets legend color.
          * Default is white.
          *
@@ -71,62 +62,105 @@
          */
         _w.attr.add(this, "color", "white");
 
+        /**
+         * Makes legend two-column wide.
+         * Default is false.
+         *
+         * @method twoColumns
+         * @memberOf du.widgets.legend.Legend
+         * @param {number} on Whether legend should be two columned.
+         */
+        _w.attr.add(this, "twoColumns", false);
+
         // Widget elements.
-        var _square = null;
-        var _text = null;
+        var _svg = {};
 
         /**
-         * Highlights legend. A highlighted legend has a bold text.
+         * Highlights the specified legend.
          *
          * @method highlight
          * @memberOf du.widgets.legend.Legend
-         * @param {boolean} on Whether to turn highlight on or off.
+         * @param {string} key Label of the legend to highlight.
+         * @param {number} duration Duration of the highlight animation.
          */
-        this.highlight = function(on) {
-            _text.style("font-weight", on ? "900" : "normal");
+        this.highlight = function(key, duration) {
+            _w.utils.highlight(_svg, ".legend-entry", key, duration);
         };
 
         // Builder
         _w.render.build = function() {
-            if (!_square) {
-                _square = _w.widget.append("div")
+            _svg.g = _w.widget.append("div")
+                .style("display", "block")
+                .style("position", "relative");
+
+            _svg.legends = {};
+            _.forOwn(_w.attr.colors, function(color, label) {
+                var g = _svg.g.append("div")
+                    .attr("class", "legend-entry " + _w.utils.encode(label))
+                    .style("display", "inline-block")
+                    .style("position", "relative")
+                    .style("width", "100%")
+                    .style("margin-bottom", "6px")
+                    .style("vertical-align", "top")
+                    .style("pointer-event", "all");
+                var square = g.append("div")
+                    .style("display", "inline-block")
                     .style("position", "relative")
                     .style("float", "left")
-                    .style("display", "block")
-                    .style("background-color", "white")
                     .style("cursor", "pointer");
-            }
-            if (!_text) {
-                _text = _w.widget.append("div")
+                var text = g.append("div")
+                    .style("display", "inline-block")
                     .style("position", "relative")
-                    .style("float", "left")
-                    .style("color", "white")
-                    .style("font-size", "16px")
-                    .style("text-align", "left")
-                    .style("cursor", "pointer");
-            }
+                    .style("float", "right")
+                    .style("cursor", "pointer")
+                    .text(label);
+                _svg.legends[label] = {
+                    color: color,
+                    g: g,
+                    square: square,
+                    text: text
+                };
+            });
         };
 
         // Style updater
         _w.render.style = function() {
-            _w.widget.style("pointer-events", "all");
-            _.forOwn(_w.attr.margins, function(margin, side) {
-                _w.widget.style("margin-" + side, margin + "px");
+            _svg.g
+                .style("width", _w.attr.width + 'px')
+                .style("height", _w.attr.height + 'px')
+                .style("pointer-events", "all");
+
+            _.forOwn(_svg.legends, function(legend, label) {
+                legend.g
+                    .style("width", _w.attr.twoColumns ? "50%" : "100%");
+
+                legend.square
+                    .style("width", 0.7 * _w.attr.fontSize + "px")
+                    .style("height", 0.7 * _w.attr.fontSize + "px")
+                    .style("margin", 0.15 * _w.attr.fontSize + "px " + 0.15 * _w.attr.fontSize + "px")
+                    .style("background-color", legend.color)
+                    .on("mouseover", function() {
+                        _w.attr.mouseover && _w.attr.mouseover(label);
+                    })
+                    .on("mouseleave", function() {
+                        _w.attr.mouseleave && _w.attr.mouseleave(label);
+                    })
+                    .on("click", function() {
+                        _w.attr.click && _w.attr.click(label);
+                    });
+                legend.text
+                    .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
+                    .style("line-height", _w.attr.fontSize + "px")
+                    .on("mouseover", function() {
+                        _w.attr.mouseover && _w.attr.mouseover(label);
+                    })
+                    .on("mouseleave", function() {
+                        _w.attr.mouseleave && _w.attr.mouseleave(label);
+                    })
+                    .on("click", function() {
+                        _w.attr.click && _w.attr.click(label);
+                    });
             });
-            _text.style("color", _w.attr.fontColor)
-                .style("font-size", _w.attr.fontSize + "px")
-                .html(_w.attr.text);
-            if (_w.attr.mouseover)
-                _text.on("mouseover", _w.attr.mouseover);
-            if (_w.attr.mouseleave)
-                _text.on("mouseleave", _w.attr.mouseleave);
-            if (_w.attr.click)
-                _text.on("click", _w.attr.click);
-            _square.style("width", 0.8*_w.attr.fontSize + "px")
-                .style("height", 0.8*_w.attr.fontSize + "px")
-                .style("margin-right", 0.4*_w.attr.fontSize + "px")
-                .style("margin-top", 0.2*_w.attr.fontSize + "px")
-                .style("background-color", _w.attr.color);
         }
     }
 

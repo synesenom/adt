@@ -35,7 +35,7 @@
 // create widget
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var grid = new du.widgets.Picture("mypicture", "#widget")
+var picture = new du.widgets.Picture("mypicture", "#widget")
     .width(width)
     .height(height)
     .src("data/raccoon.jpg")
@@ -43,7 +43,7 @@ var grid = new du.widgets.Picture("mypicture", "#widget")
 </script>
 <script>
     window.onresize = function() {
-        grid
+        picture
             .width(parseFloat(d3.select("#widget").style("width")))
             .height(parseFloat(d3.select("#widget").style("height")))
             .render();
