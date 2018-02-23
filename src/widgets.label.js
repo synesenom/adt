@@ -52,15 +52,6 @@
         var _w = Widget.call(this, name, "label", "div", parent);
 
         /**
-         * Sets text of the label.
-         *
-         * @method text
-         * @memberOf du.widgets.label.Label
-         * @param {string} label Text of the label.
-         */
-        _w.attr.add(this, "text", "");
-
-        /**
          * Sets label text alignment.
          * Default is center.
          *
@@ -70,21 +61,29 @@
          */
         _w.attr.add(this, "align", "center");
 
+        // Widget elements
+        var _svg = {};
+
+        _w.render.build = function() {
+            _svg.g = _w.widget.append("div")
+                .style("position", "absolute")
+                .style("width", "100%")
+                .style("height", "100%")
+                .style("display", "table");
+            _svg.label = _svg.g.append("div")
+                .style("display", "table-cell")
+                .style("vertical-align", "middle")
+                .style("pointer-events", "none")
+                .html(_w.attr.label);
+        };
+
         // Style updater
         _w.render.style = function() {
-            _w.widget
+            _svg.label
                 .style("color", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("font-weight", _w.attr.fontWeight)
-                .style("text-align", _w.attr.align)
-                .style("pointer-events", "none")
-                .html(_w.attr.text);
-            _.forOwn(_w.attr.margins, function(margin, side) {
-                _w.widget.style("margin-" + side, margin + "px");
-            });
-            _.forOwn(_w.attr.borders, function(border, side) {
-                _w.widget.style("border-" + side, border);
-            });
+                .style("text-align", _w.attr.align);
         };
     }
 
