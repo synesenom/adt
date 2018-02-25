@@ -19,16 +19,15 @@
             });
     </script>
     <script src="../dl/widgets.min.js"></script>
-    <script src="../dl/widgets.label.min.js"></script>
-    <title>label | dashboard-utils</title>
+    <script src="../dl/widgets.status.min.js"></script>
+    <title>status | dashboard-utils</title>
 </head>
 <body>
 <main>
-    <div id="widget"></div>
+    <div id="widget" style="font-family:'Courier',monospace"></div>
     <h1>description</h1>
     <div id="desc">
-        A label is simply a static text.
-        The content can be HTML formatted, but direct formatting should be avoided.
+        A status is a changing status value along with a static label.
     </div>
     <div id="code-doc"></div>
 </main>
@@ -36,19 +35,40 @@
 // create widget
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var label = new du.widgets.Label("mylabel", "#widget")
-    .width(width)
+var statusLabel = new du.widgets.Status("status", "#widget")
+    .x((width - 240) / 2)
+    .width(240)
     .height(height)
-    .label("&ldquo;I have a dream&rdquo;")
+    .label("π ≈ ")
     .fontSize(24)
-    .fontColor("goldenrod")
     .render();
+</script>
+<script class="doc">
+// add some changing content
+var k = 0,
+    n = 0,
+    iMax = 100;
+(function estimate() {
+    for (var i = 0; i < iMax; i++) {
+        if (Math.pow(Math.random(), 2) + Math.pow(Math.random(), 2) < 1)
+            k++;
+    }
+    n += iMax;
+    iMax = parseInt(iMax * 1.001);
+    statusLabel
+        .status((4 * k / n).toFixed(10))
+        .render();
+    setTimeout(estimate, 100);
+})();
 </script>
 <script>
     window.onresize = function() {
-        label
-            .width(parseFloat(d3.select("#widget").style("width")))
-            .height(parseFloat(d3.select("#widget").style("height")))
+        var width = parseFloat(d3.select("#widget").style("width"));
+        var height = parseFloat(d3.select("#widget").style("height"));
+        statusLabel
+            .x((width - 240) / 2)
+            .width(240)
+            .height(height)
             .render();
     };
 </script>

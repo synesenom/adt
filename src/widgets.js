@@ -605,12 +605,14 @@
             function _highlight(svg, selector, key, duration) {
                 if (svg !== null) {
                     if (typeof key === "string") {
+                        svg.g.selectAll(selector).transition();
                         svg.g.selectAll(selector)
                             .transition().duration(duration ? duration : 0)
                             .style("opacity", function () {
                                 return d3.select(this).classed(_encode(key)) ? 1 : 0.1;
                             });
                     } else {
+                        svg.g.selectAll(selector).transition();
                         svg.g.selectAll(selector)
                             .transition().duration(duration ? duration : 0)
                             .style("opacity", 1);
@@ -636,20 +638,6 @@
          */
         this.id = function() {
             return _id;
-        };
-
-        /**
-         * Sets the class of the widget. Note that this method replaces existing class content (that is, it does not
-         * simply add a class, but sets the entire content for the class attribute).
-         *
-         * @method addClass
-         * @memberOf du.widgets.Widget
-         * @param {string} c Class to set the widget to.
-         * @returns {du.widgets.Widget} Reference to the current widget.
-         */
-        this.setClass = function (c) {
-            _widget.attr("class", c);
-            return this;
         };
 
         /**

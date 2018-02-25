@@ -24,10 +24,7 @@ main {
     }
 }
 pre {
-    width : 100%;
-}
-pre code {
-    width: 700px;
+    width: auto;
 }
 .desc {
     position: relative;

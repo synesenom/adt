@@ -55,15 +55,6 @@
         var _w = Widget.call(this, name, "status", "div", parent);
 
         /**
-         * Sets the status label (description of the status).
-         *
-         * @method label
-         * @memberOf du.widgets.status.Status
-         * @param {string} text Label text.
-         */
-        _w.attr.add(this, "label", "");
-
-        /**
          * Sets the status value (current status).
          *
          * @method status
@@ -73,26 +64,31 @@
         _w.attr.add(this, "status", "");
 
         // Widget elements.
+        var _svg = {};
         var _label = null;
         var _status = null;
 
         // Builder
         _w.render.build = function() {
-            if (_label === null) {
-                _label = _w.widget.append("span")
-                    .style("position", "relative")
-                    .style("display", "inline-block")
-                    .style("float", "left")
-                    .style("width", "25%")
-                    .style("color", "white")
-                    .style("font-weight", "normal");
-                _status = _w.widget.append("span")
-                    .style("position", "relative")
-                    .style("display", "inline-block")
-                    .style("float", "right")
-                    .style("width", "75%")
-                    .style("text-align", "right");
-            }
+            _svg.g = _w.widget.append("div")
+                .style("position", "absolute")
+                .style("width", "100%")
+                .style("height", "100%")
+                .style("display", "table");
+            _svg.label = _svg.g.append("div")
+                .style("display", "table-cell")
+                .style("position", "relative")
+                .style("vertical-align", "middle")
+                .style("width", "25%")
+                .style("pointer-events", "none")
+                .text(_w.attr.label);
+            _svg.status = _svg.g.append("div")
+                .style("display", "table-cell")
+                .style("position", "relative")
+                .style("vertical-align", "middle")
+                .style("width", "75%")
+                .style("text-align", "right")
+                .style("pointer-events", "none");
         };
 
         // Style updater
@@ -107,16 +103,13 @@
             _.forOwn(_w.attr.borders, function(border, side) {
                 _w.widget.style("border-" + side, border);
             });
-            _label
+            _svg.label
+                .style("color", _w.attr.fontColor)
+                .style("font-weight", _w.attr.fontWeight);
+            _svg.status
                 .style("color", _w.attr.fontColor)
                 .style("font-weight", _w.attr.fontWeight)
-                .style("pointer-events", "none")
-                .html(_w.attr.label);
-            _status
-                .style("color", _w.attr.fontColor)
-                .style("font-weight", _w.attr.fontWeight)
-                .style("pointer-events", "none")
-                .html(_w.attr.status);
+                .text(_w.attr.status);
         };
     }
 
