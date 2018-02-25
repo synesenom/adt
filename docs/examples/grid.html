@@ -39,12 +39,12 @@ var data = Array.from(new Array(100).keys()).map(function(i) {
     return {
         x: i,
         y: {
-            first: 10 * Math.pow(i/40, 2),
-            second: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+            mango: 10 * Math.pow(i/40, 2),
+            kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
         },
         dy: {
-            first: i/10,
-            second: 6
+            mango: i/10,
+            kiwi: 6
         }
     }
 });
@@ -69,22 +69,22 @@ var grid = new du.widgets.Grid("mygrid", "#widget")
 grid.add(new du.widgets.LineChart("chart1")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .colors({first: "dodgerblue", second: "limegreen"})
+    .colors({mango: "tomato", kiwi: "limegreen"})
     .data(data), 0, 0, 1, 2);
 grid.add(new du.widgets.LineChart("chart2")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .colors({first: "dodgerblue", second: "limegreen"})
+    .colors({mango: "tomato", kiwi: "limegreen"})
     .data(data), 1, 0, 1, 1);
 grid.add(new du.widgets.LineChart("chart3")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .colors({first: "dodgerblue", second: "limegreen"})
+    .colors({mango: "tomato", kiwi: "limegreen"})
     .data(data), 2, 0, 1, 1);
 grid.add(new du.widgets.LineChart("chart4")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .colors({first: "dodgerblue", second: "limegreen"})
+    .colors({mango: "tomato", kiwi: "limegreen"})
     .data(data), 1, 1, 2, 1);
 </script>
 <script>
@@ -93,7 +93,7 @@ grid.add(new du.widgets.LineChart("chart4")
             .width(parseFloat(d3.select("#widget").style("width")))
             .height(parseFloat(d3.select("#widget").style("height")))
             .render();
-    }
+    };
 </script>
 </body>
 </html>

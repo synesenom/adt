@@ -44,6 +44,7 @@
 // TODO make plot data modifiable
 // TODO add placeholder as example
 // TODO add description as an example
+// TODO clean up mouse event chaos
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -869,6 +870,7 @@
                         .style(_attr.x >= 0 ? "left" : "right", Math.abs(_attr.x) + _attr.xDim)
                         .style(_attr.y >= 0 ? "top" : "bottom", Math.abs(_attr.y) + _attr.yDim)
                         .style("text-align", "center")
+                        .style("pointer-events", "none")
                         .append("span")
                         .style("display", "inline-block")
                         .style("vertical-align", "middle")

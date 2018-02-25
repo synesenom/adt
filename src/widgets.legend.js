@@ -106,13 +106,11 @@
                 var square = g.append("div")
                     .style("display", "inline-block")
                     .style("position", "relative")
-                    .style("float", "left")
-                    .style("cursor", "pointer");
+                    .style("float", "left");
                 var text = g.append("div")
                     .style("display", "inline-block")
                     .style("position", "relative")
                     .style("float", "right")
-                    .style("cursor", "pointer")
                     .text(label);
                 _svg.legends[label] = {
                     color: color,
@@ -138,28 +136,51 @@
                     .style("width", 0.7 * _w.attr.fontSize + "px")
                     .style("height", 0.7 * _w.attr.fontSize + "px")
                     .style("margin", 0.15 * _w.attr.fontSize + "px " + 0.15 * _w.attr.fontSize + "px")
-                    .style("background-color", legend.color)
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(label);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(label);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(label);
-                    });
+                    .style("background-color", legend.color);
+                if (_w.attr.mouseover) {
+                    legend.square
+                        .style("cursor", "pointer")
+                        .on("mouseover", function() {
+                            _w.attr.mouseover(label);
+                        });
+                }
+                if (_w.attr.mouseleave) {
+                    legend.square
+                        .on("mouseleave", function() {
+                            _w.attr.mouseleave(label);
+                        });
+                }
+                if (_w.attr.click) {
+                    legend.square
+                        .style("cursor", "pointer")
+                        .on("click", function() {
+                            _w.attr.click(label);
+                        });
+                }
+
                 legend.text
                     .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
-                    .style("line-height", _w.attr.fontSize + "px")
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(label);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(label);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(label);
-                    });
+                    .style("line-height", _w.attr.fontSize + "px");
+                if (_w.attr.mouseover) {
+                    legend.text
+                        .style("cursor", "pointer")
+                        .on("mouseover", function() {
+                            _w.attr.mouseover(label);
+                        });
+                }
+                if (_w.attr.mouseleave) {
+                    legend.text
+                        .on("mouseleave", function() {
+                            _w.attr.mouseleave(label);
+                        });
+                }
+                if (_w.attr.click) {
+                    legend.text
+                        .style("cursor", "pointer")
+                        .on("click", function() {
+                            _w.attr.click(label);
+                        });
+                }
             });
         }
     }

@@ -118,7 +118,6 @@
                 .style("pointer-events", "none")
                 .html(_w.attr.status);
         };
-
     }
 
     // Export

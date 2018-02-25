@@ -16,11 +16,11 @@
     <script src="../dl/widgets.chordchart.min.js"></script>
     <script src="../dl/widgets.grid.min.js"></script>
     <script src="../dl/widgets.hint.min.js"></script>
-    <script src="../dl/widgets.picture.min.js"></script>
     <script src="../dl/widgets.label.min.js"></script>
     <script src="../dl/widgets.legend.min.js"></script>
     <script src="../dl/widgets.linechart.min.js"></script>
-    <script src="../dl/widgets.map.min.js"></script>
+    <script src="../../src/widgets.map.js"></script>
+    <script src="../dl/widgets.picture.min.js"></script>
     <script src="../dl/widgets.piechart.min.js"></script>
     <script src="../dl/widgets.slider.min.js"></script>
     <script src="../dl/widgets.status.min.js"></script>
@@ -41,9 +41,14 @@
             position: relative;
             width: 300px;
             height: 280px;
-            margin: calc(50% - 150px);
-            box-shadow: 1px 1px 3px gray;
+            margin: calc(50% - 152px);
+            box-shadow: 1px 1px 1px #ddd;
             border-radius: 3px;
+            border: 1px solid #eee;
+            -webkit-filter: grayscale(100%);
+            filter: grayscale(100%);
+            transition: .3s box-shadow, .3s border, .3s filter;
+            -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
         }
         .example-container:last-child {
             margin-bottom: 60px;
@@ -69,27 +74,33 @@
                 margin-top: 40px;
             }
         }
-        .example a {
-            text-decoration: none;
-            color: black;
-            font-family: inherit;
-        }
-        .example a:hover {
-            color: #888;
-        }
-        .example:hover a {
-            color: dodgerblue;
-        }
         .widget-container {
             display: block;
             width: 300px;
             height: 280px;
             padding: 20px;
         }
-        .chart-name {
+        .widget-name {
             width: 100%;
             height: 40px;
-            font-family: 'Avenir Next', 'Helvetica Neue', 'Helvetica', sans-serif;
+            font-family: 'Montserrat', 'Avenir Next', 'Helvetica Neue', 'Helvetica', sans-serif;
+            color: #aaa;
+            transition: .3s color;
+        }
+        .example:hover .widget-name {
+            color: black;
+            transition: .3s color;
+        }
+        .example a {
+            color: black;
+        }
+        .example:hover {
+            box-shadow: 1px 1px 5px black;
+            border: 1px solid #ccc;
+            -webkit-filter: grayscale(0);
+            filter: grayscale(0);
+            transition: .3s box-shadow, .3s border, .3s filter;
+            -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
         }
         .widget {
             position: relative;
@@ -103,352 +114,319 @@
 <body>
 <main>
     <h1>examples</h1>
-    <div class="examples">
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="areachart.html">Area chart</a></div>
-                    <div id="areachart" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="barchart.html">Bar chart</a></div>
-                    <div id="barchart" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="chordchart.html">Chord chart</a></div>
-                    <div id="chordchart" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="grid.html">Grid</a></div>
-                    <div id="grid" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="hint.html">Hint</a></div>
-                    <div id="hint" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="label.html">Label</a></div>
-                    <div id="label" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="legend.html">Legend</a></div>
-                    <div id="legend" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="linechart.html">Line chart</a></div>
-                    <div id="linechart" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="map.html">Map</a></div>
-                    <div id="map" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="picture.html">Picture</a></div>
-                    <div id="picture" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="piechart.html">Piechart</a></div>
-                    <div id="piechart" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="placeholder.html">Placeholder</a></div>
-                    <div id="placeholder" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="slider.html">Slider</a></div>
-                    <div id="slider" class="widget"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="example-container">
-            <div class="example">
-                <div class="widget-container">
-                    <div class="chart-name"><a href="status.html">Status</a></div>
-                    <div id="status" class="widget"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="examples"></div>
 </main>
-
 <script>
-    var WIDTH = 260;
-    var HEIGHT = 200;
-    var DUMMY_DATA = [];
-    for (var i=0; i<100; i++) {
-        DUMMY_DATA.push({
-            x: i,
-            y: {dogs: 10*Math.pow(i/100, 2), cats: 10*Math.exp(-i/100)*Math.pow(Math.cos(Math.PI*i/15), 2)+2}
-        });
+    function addWidget(name) {
+        var container = d3.select(".examples").append("div")
+            .attr("class", "example-container")
+            .append("div")
+            .attr("class", "example")
+            .append("a")
+            .attr("href", name + ".html")
+            .append('div')
+            .attr("class", "widget-container");
+        container.append("div")
+            .attr("class", "widget-name")
+            .text(name.charAt(0).toUpperCase() + name.slice(1,  name.length));
+        container.append("div")
+            .attr("id", name)
+            .attr("class", "widget");
     }
-    var DUMMY_DATA_2 = [];
-    var chars = "abcdefghij";
-    for (i=0; i<10; i++) {
-        DUMMY_DATA_2.push({
-            x: chars.charAt(i),
-            y: Math.cos(i/1.2) + Math.pow(i/2.1, 1.1)
-        });
-    }
-    var DUMMY_DATA_MATRIX = [
-        {source: "melon", target: "apple", value: 1},
-        {source: "melon", target: "pear", value: 2},
-        {source: "melon", target: "lime", value: 3},
-        {source: "apple", target: "melon", value: 4},
-        {source: "apple", target: "pear", value: 5},
-        {source: "apple", target: "lime", value: 6},
-        {source: "pear", target: "melon", value: 7},
-        {source: "pear", target: "apple", value: 8},
-        {source: "pear", target: "lime", value: 9},
-        {source: "lime", target: "melon", value: 10},
-        {source: "lime", target: "apple", value: 11},
-        {source: "lime", target: "pear", value: 12},
-        {source: "grape", target: "apple", value: 1},
-        {source: "apple", target: "grape", value: 2}
-    ];
-    var DUMMY_DATA_PIE = [
-        {name: "orange", value: 1, color: "black"},
-        {name: "lime", value: 4, color: "#444"},
-        {name: "banana", value: 4, color: "#888"},
-        {name: "apple", value: 2, color: "#aaa"}
-    ];
-    var COLORS_MATRIX = {
-        'melon': "black",
-        'apple': "#666",
-        'pear': "#888",
-        'lime': "#aaa",
-        'grape': "#ddd"
-    };
-    var DUMMY_COLORS = {dogs: "#444", cats: "#888"};
-
-    window.addEventListener("load", function() {
-        // Area chart
-        var areaChart = new du.widgets.AreaChart("areachart", "#areachart")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .xLabel("value")
-            .yLabel("density")
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(14)
-            .data(DUMMY_DATA)
-            .colors(DUMMY_COLORS)
-            .render();
-
-        // Bar chart
-        var barChart = new du.widgets.BarChart("barchart", "#barchart")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .xLabel("category")
-            .yLabel("values")
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(14)
-            .colors("#888")
-            .data(DUMMY_DATA_2)
-            .render();
-
-        // Chord chart
-        var chordChart = new du.widgets.ChordChart("chordchart", "#chordchart")
-            .x(30)
-            .radius(100)
-            .thickness(10)
-            .margins(42)
-            .fontSize(16)
-            .ticks(true)
-            .colors(COLORS_MATRIX)
-            .data(DUMMY_DATA_MATRIX)
-            .render();
-
-        // Grid
-        var grid = new du.widgets.Grid("grid", "#grid")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .rows(2)
-            .cols(2)
-            .render();
-        grid.add(new du.widgets.LineChart("subchart1")
-            .margins({left: 30, top: 20, right: 10, bottom: 20})
-            .fontSize(10)
-            .colors(DUMMY_COLORS)
-            .data(DUMMY_DATA), 0, 0, 1, 1);
-        grid.add(new du.widgets.AreaChart("subchart2")
-            .margins({left: 30, top: 20, right: 10, bottom: 20})
-            .fontSize(10)
-            .colors(DUMMY_COLORS)
-            .data(DUMMY_DATA), 0, 1, 2, 1);
-        grid.add(new du.widgets.BarChart("subchart3")
-            .margins({left: 30, top: 20, right: 10, bottom: 20})
-            .fontSize(10)
-            .colors("#888")
-            .data(DUMMY_DATA_2), 1, 0, 1, 1);
-
-        // Hint
-        var hint = new du.widgets.Hint("hint", "#hint")
-            .x(80)
-            .y(50)
-            .text("This is a hint")
-            .pin(true)
-            .render();
-
-        // Label
-        var label = new du.widgets.Label("label", "#label")
-            .x(20)
-            .y(60)
-            .width(200)
-            .height(50)
-            .fontSize(20)
-            .label("Green tea and licorice")
-            .render();
-
-        // Legend
-        var legend = new du.widgets.Legend("legend", "#legend")
-            .x((WIDTH - 100) / 2)
-            .y((HEIGHT - 80) / 2)
-            .width(100)
-            .height(80)
-            .fontSize(20)
-            .colors({black: "black", grey: "grey", white: "#eee"})
-            .render();
-
-        // Line chart
-        var lineChart = new du.widgets.LineChart("linechart", "#linechart")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .xLabel("time")
-            .yLabel("trends")
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(14)
-            .colors(DUMMY_COLORS)
-            .data(DUMMY_DATA)
-            .render();
-
-        // Map
-        var map = new du.widgets.Map("map", "#map")
-            .x(0)
-            .y(0)
-            .width(WIDTH)
-            .height(HEIGHT)
-            .labels(true)
-            .backgroundColor("white")
-            .borderColor("#555")
-            .foregroundColor("#999")
-            .render();
-
-        // Picture
-        var Picture = new du.widgets.Picture("picture", "#picture")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .src("data/raccoon.jpg")
-            .render();
-
-        // Pie chart
-        var pieChart = new du.widgets.PieChart("mychart", "#piechart")
-            .data(DUMMY_DATA_PIE)
-            .x(30)
-            .y(0)
-            .innerRadius(30)
-            .outerRadius(100)
-            .margins(30)
-            .fontSize(14)
-            .ticks(true)
-            .render();
-
-        // Placeholder
-        var placeholder = new du.widgets.LineChart("placeholder", "#placeholder")
-            .width(WIDTH)
-            .height(HEIGHT)
-            .xLabel("time")
-            .yLabel("trends")
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(14)
-            .colors(DUMMY_COLORS)
-            .data(DUMMY_DATA)
-            .render();
-        placeholder.placeholder("This chart is empty and you see a placeholder instead");
-
-        // Slider
-        var slider = new du.widgets.Slider("slider", "#slider")
-            .x(10)
-            .y(70)
-            .width(WIDTH - 20)
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(14)
-            .render();
-
-        // Status
-        var status = new du.widgets.Status("status", "#status")
-            .x(0)
-            .y(60)
-            .width(170)
-            .height(50)
-            .margins({left: 40, top: 20, right: 20, bottom: 40})
-            .fontSize(20)
-            .label("Time:")
-            .render();
-        setInterval(function() {
-            status.status(new Date().toLocaleTimeString())
-                .render();
-        }, 100);
+    [
+        "areachart",
+        "barchart",
+        "chordchart",
+        "grid",
+        "hint",
+        "label",
+        "legend",
+        "linechart",
+        "map",
+        "picture",
+        "piechart",
+        "placeholder",
+        "slider",
+        "status"
+    ].forEach(function(w) {
+        addWidget(w);
     });
+
+    var width = 260;
+    var height = 200;
+    var colors = {
+        apple: "lime",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange",
+        melon: "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    };
+
+    // Area chart
+    var areachart = new du.widgets.AreaChart("areachart", "#areachart")
+        .describe("An area chart showing two hypothetical density functions.")
+        .width(width)
+        .height(height)
+        .xLabel("value")
+        .yLabel("probability density")
+        .margins({left: 40, top: 20, right: 20, bottom: 40})
+        .fontSize(12)
+        .data(Array.from(new Array(100).keys()).map(function(i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i/40, 2),
+                    kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+                }
+            }
+        }))
+        .colors(colors)
+        .render();
+
+    // Bar chart
+    var barchart = new du.widgets.BarChart("barchart", "#barchart")
+        .describe("A colorful bar chart displaying the volume of fruits in a virtual fridge.")
+        .width(width)
+        .height(height)
+        .xLabel("fruit name")
+        .yLabel("stock")
+        .margins({left: 60, top: 20, right: 20, bottom: 40})
+        .fontSize(12)
+        .vertical(true)
+        .data([
+            {x: 'apple', y: 13},
+            {x: 'banana', y: 4},
+            {x: 'mango', y: 6},
+            {x: 'orange', y: 2},
+            {x: 'melon', y: 11},
+            {x: 'kiwi', y: 7},
+            {x: 'pear', y: 3}
+        ])
+        .colors(colors)
+        .render();
+
+    // Chord chart
+    var chordchart = new du.widgets.ChordChart("chordchart", "#chordchart")
+        .describe("Chord chart that displays the trade of fruit in a virtual community.")
+        .x(width/2 - height/2)
+        .radius(height / 2)
+        .thickness(10)
+        .margins(40)
+        .fontSize(12)
+        .ticks(true)
+        .data([
+            {source: "melon", target: "apple", value: 1},
+            {source: "melon", target: "pear", value: 2},
+            {source: "melon", target: "kiwi", value: 3},
+            {source: "apple", target: "melon", value: 4},
+            {source: "apple", target: "pear", value: 5},
+            {source: "apple", target: "kiwi", value: 6},
+            {source: "pear", target: "melon", value: 7},
+            {source: "pear", target: "apple", value: 8},
+            {source: "pear", target: "kiwi", value: 9},
+            {source: "kiwi", target: "melon", value: 10},
+            {source: "kiwi", target: "apple", value: 11},
+            {source: "kiwi", target: "pear", value: 12},
+            {source: "orange", target: "apple", value: 1},
+            {source: "apple", target: "orange", value: 2}
+        ])
+        .colors(colors)
+        .render();
+
+    // Grid
+    var grid = new du.widgets.Grid("grid", "#grid")
+        .width(width)
+        .height(height)
+        .rows(2)
+        .cols(2)
+        .render();
+    grid.add(new du.widgets.LineChart("subchart1")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .data(Array.from(new Array(100).keys()).map(function(i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i/40, 2),
+                    kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+                }
+            }
+        }))
+        .colors(colors), 0, 0, 1, 1);
+    grid.add(new du.widgets.BarChart("subchart3")
+        .margins({left: 50, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .vertical(true)
+        .data([
+            {x: 'apple', y: 13},
+            {x: 'banana', y: 4},
+            {x: 'mango', y: 6},
+            {x: 'orange', y: 2},
+            {x: 'melon', y: 11},
+            {x: 'kiwi', y: 7},
+            {x: 'pear', y: 3}
+        ])
+        .colors(colors), 0, 1, 2, 1);
+    grid.add(new du.widgets.AreaChart("subchart2")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .data(Array.from(new Array(100).keys()).map(function(i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i/40, 2),
+                    kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+                }
+            }
+        }))
+        .colors(colors), 1, 0, 1, 1);
+
+    // Hint
+    var hint = new du.widgets.Hint("hint", "#hint")
+        .x(70)
+        .y(50)
+        .text("This is a hint")
+        .pin(true)
+        .render();
+
+    // Label
+    var label = new du.widgets.Label("label", "#label")
+        .width(width)
+        .height(height)
+        .label("&ldquo;I have a dream&rdquo;")
+        .fontSize(24)
+        .fontColor("goldenrod")
+        .render();
+
+    // Legend
+    var legend = new du.widgets.Legend("legend", "#legend")
+        .x(40)
+        .y(50)
+        .width(200)
+        .height(150)
+        .colors(colors)
+        .fontSize(20)
+        .twoColumns(true)
+        .render();
+
+    // Line chart
+    var linechart = new du.widgets.LineChart("linechart", "#linechart")
+        .describe("Line chart displaying two theoretical trends.")
+        .width(width)
+        .height(height)
+        .xLabel("days")
+        .yLabel("price")
+        .margins({left: 40, top: 20, right: 20, bottom: 40})
+        .fontSize(12)
+        .data(Array.from(new Array(100).keys()).map(function(i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i/40, 2),
+                    kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+                },
+                dy: {
+                    mango: i/10,
+                    kiwi: 6
+                }
+            }
+        }))
+        .colors(colors)
+        .render();
+
+    // Map
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            var map = new du.widgets.Map("map", "#map")
+                .x(0)
+                .y(0)
+                .width(width)
+                .height(height)
+                .labels(true)
+                .backgroundColor("#aac6ff")
+                .borderColor("white")
+                .foregroundColor("#dc9a2f")
+                .render();
+        }, 500);
+    });
+
+    // Picture
+    var picture = new du.widgets.Picture("picture", "#picture")
+        .width(width)
+        .height(height)
+        .src("data/raccoon.jpg")
+        .render();
+
+    // Pie chart
+    var piechart = new du.widgets.PieChart("piechart", "#piechart")
+        .describe("A simple pie chart showing the number of fruits in a virtual basket.")
+        .x(30)
+        .y(0)
+        .innerRadius(30)
+        .outerRadius(100)
+        .margins(30)
+        .fontColor("white")
+        .fontSize(14)
+        .ticks(true)
+        .data([
+            {name: "orange", value: 3, color: "orange"},
+            {name: "mango", value: 4, color: "tomato"},
+            {name: "banana", value: 4, color: "gold"},
+            {name: "apple", value: 2, color: "limegreen"}
+        ])
+        .render();
+
+    // Placeholder
+    var placeholder = new du.widgets.LineChart("placeholder", "#placeholder")
+        .width(width)
+        .height(height)
+        .xLabel("time")
+        .yLabel("trends")
+        .margins({left: 40, top: 20, right: 20, bottom: 40})
+        .fontSize(14)
+        .data(Array.from(new Array(100).keys()).map(function(i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i/40, 2),
+                    kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+                },
+                dy: {
+                    mango: i/10,
+                    kiwi: 6
+                }
+            }
+        }))
+        .colors(colors)
+        .render()
+        .placeholder("This chart is empty and you see a placeholder instead");
+
+    // Slider
+    var slider = new du.widgets.Slider("slider", "#slider")
+        .x(10)
+        .y(70)
+        .width(width - 20)
+        .margins({left: 40, top: 20, right: 20, bottom: 40})
+        .fontSize(14)
+        .render();
+
+    // Status
+    var st = new du.widgets.Status("status", "#status")
+        .x(0)
+        .y(60)
+        .width(170)
+        .height(50)
+        .margins({left: 40, top: 20, right: 20, bottom: 40})
+        .fontSize(20)
+        .label("Time:")
+        .status(new Date().toLocaleTimeString())
+        .render();
+    setInterval(function() {
+        st.status(new Date().toLocaleTimeString())
+            .render();
+    }, 900);
 </script>
 </body>
 </html>

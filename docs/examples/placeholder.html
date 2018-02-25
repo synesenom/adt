@@ -19,16 +19,15 @@
             });
     </script>
     <script src="../dl/widgets.min.js"></script>
-    <script src="../dl/widgets.label.min.js"></script>
-    <title>label | dashboard-utils</title>
+    <script src="../../src/widgets.picture.js"></script>
+    <title>placeholder | dashboard-utils</title>
 </head>
 <body>
 <main>
     <div id="widget"></div>
     <h1>description</h1>
     <div id="desc">
-        A label is simply a static text.
-        The content can be HTML formatted if really necessary.
+        A placeholder is a toggleable text replacement of the widget.
     </div>
     <div id="code-doc"></div>
 </main>
@@ -36,17 +35,27 @@
 // create widget
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var label = new du.widgets.Label("mylabel", "#widget")
+var picture = new du.widgets.Picture("mypicture", "#widget")
     .width(width)
     .height(height)
-    .label("&ldquo;I have a dream&rdquo;")
-    .fontSize(24)
-    .fontColor("goldenrod")
+    .src("data/raccoon.jpg")
     .render();
+</script>
+<script class="doc">
+// toggle placeholder when hovered
+picture
+    .mouseover(function(img) {
+        // Show placeholder when hovered
+        picture.placeholder("The image '" + img.src.split('/').pop() + "' is not available");
+    })
+    .mouseleave(function() {
+        // Remove placeholder
+        picture.placeholder();
+    });
 </script>
 <script>
     window.onresize = function() {
-        label
+        picture
             .width(parseFloat(d3.select("#widget").style("width")))
             .height(parseFloat(d3.select("#widget").style("height")))
             .render();

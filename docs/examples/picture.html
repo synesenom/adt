@@ -41,13 +41,20 @@ var picture = new du.widgets.Picture("mypicture", "#widget")
     .src("data/raccoon.jpg")
     .render();
 </script>
+<script class="doc">
+// add interactions
+picture.click(function(img) {
+    // Show picture name
+    alert("Picture name: '" + img.src.split('/').pop() + "'");
+});
+</script>
 <script>
     window.onresize = function() {
         picture
             .width(parseFloat(d3.select("#widget").style("width")))
             .height(parseFloat(d3.select("#widget").style("height")))
             .render();
-    }
+    };
 </script>
 </body>
 </html>

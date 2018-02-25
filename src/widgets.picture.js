@@ -27,6 +27,7 @@
  * @requires d3@v4
  * @requires du.widgets.Widget
  */
+// TODO replace img tag with div and use background-image
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widgets'), exports);
@@ -71,7 +72,7 @@
                 .style("width", _w.attr.width > 0 ? _w.attr.width : null)
                 .style("height", _w.attr.height > 0 ? _w.attr.height : null)
                 .style("position", "relative")
-                .style("pointer-events", "none");
+                .style("pointer-events", "all");
 
             // Adjust aspect ratio and size once loaded
             _img = new Image();
@@ -86,7 +87,16 @@
                     .style("width", width + "px")
                     .style("height", height + "px")
                     .style("margin-left", (_w.attr.width - width) / 2 + "px")
-                    .style("margin-top", (_w.attr.height - height) / 2 + "px");
+                    .style("margin-top", (_w.attr.height - height) / 2 + "px")
+                    .on("mouseover", function() {
+                        _w.attr.mouseover && _w.attr.mouseover(_img);
+                    })
+                    .on("mouseleave", function() {
+                        _w.attr.mouseleave && _w.attr.mouseleave(_img);
+                    })
+                    .on("click", function() {
+                        _w.attr.click && _w.attr.click(_img);
+                    });
             };
         };
 

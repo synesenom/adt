@@ -40,12 +40,12 @@ var data = Array.from(new Array(100).keys()).map(function(i) {
     return {
         x: i,
         y: {
-            first: 10 * Math.pow(i/40, 2),
-            second: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
+            mango: 10 * Math.pow(i/40, 2),
+            kiwi: 10 * Math.log(i+1) * Math.pow(Math.cos(Math.PI*i/15), 2) + 2
         },
         dy: {
-            first: i/10,
-            second: 6
+            mango: i/10,
+            kiwi: 6
         }
     }
 });
@@ -60,10 +60,10 @@ var chart = new du.widgets.LineChart("mychart", "#widget")
     .width(width)
     .height(height)
     .xLabel("days")
-    .yLabel("price in SEK")
+    .yLabel("price")
     .margins(40)
     .fontSize(14)
-    .colors({first: "dodgerblue", second: "limegreen"})
+    .colors({mango: "dodgerblue", kiwi: "limegreen"})
     .render();
 </script>
 <script class="doc">
@@ -94,7 +94,7 @@ var marker = chart.addMarker("mymarker", "first", 50, 89, "trend marker");
             .width(parseFloat(d3.select("#widget").style("width")))
             .height(parseFloat(d3.select("#widget").style("height")))
             .render();
-    }
+    };
 </script>
 </body>
 </html>
