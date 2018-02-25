@@ -224,6 +224,9 @@
                     .attr("transform", "rotate(" + _w.attr.xTickAngle + ")")
                     .style("text-anchor", "start");
             }
+            _svg.g.selectAll(".tick > line")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke-width", "1px");
 
             // Labels
             _svg.labels.x

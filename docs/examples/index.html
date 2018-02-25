@@ -26,6 +26,11 @@
     <script src="../dl/widgets.status.min.js"></script>
 
     <style>
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-backface-visibility: hidden;
+        }
         main {
             width: 1100px;
             max-width: 1100px;
@@ -36,6 +41,7 @@
             float: left;
             width: 33%;
             height: auto;
+            z-index: 999;
         }
         .example {
             position: relative;

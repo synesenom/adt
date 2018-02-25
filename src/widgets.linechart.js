@@ -412,6 +412,9 @@
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .attr("transform", "translate(0," + 1 + ")");
+            _svg.g.selectAll(".tick > line")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke-width", "1px");
 
             // Labels
             _svg.labels.x
