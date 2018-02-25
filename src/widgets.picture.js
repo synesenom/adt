@@ -27,7 +27,6 @@
  * @requires d3@v4
  * @requires du.widgets.Widget
  */
-// TODO replace img tag with div and use background-image
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widgets'), exports);
@@ -68,7 +67,7 @@
 
         _w.render.build = function() {
             // Add widget
-            _svg.g = _w.widget.append("img")
+            _svg.g = _w.widget.append("div")
                 .style("width", _w.attr.width > 0 ? _w.attr.width : null)
                 .style("height", _w.attr.height > 0 ? _w.attr.height : null)
                 .style("position", "relative")
@@ -82,8 +81,10 @@
                 var width = imgAspect > aspect ? _w.attr.width : _w.attr.height * imgAspect;
                 var height = imgAspect < aspect ? _w.attr.height : _w.attr.width / imgAspect;
 
-                _svg.g.attr("src", _w.attr.src);
                 _svg.g
+                    .style("background-image", "url(" + _w.attr.src + ")")
+                    .style("background-repeat", "none")
+                    .style("background-size", width + "px " + height + "px")
                     .style("width", width + "px")
                     .style("height", height + "px")
                     .style("margin-left", (_w.attr.width - width) / 2 + "px")
