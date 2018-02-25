@@ -56,9 +56,9 @@ var height = parseFloat(d3.select("#widget").style("height"));
 var chart = new du.widgets.PieChart("mychart", "#widget")
     .describe("A simple pie chart showing the number of fruits in a virtual basket.")
     .data(data)
-    .x(width/2 - height/2 + 20)
-    .innerRadius(30)
-    .outerRadius(height / 2 - 20)
+    .x(width/2 - height/2 + 10)
+    .innerRadius(height / 8)
+    .outerRadius(height / 2 - 10)
     .label("fruits")
     .margins(30)
     .fontSize(14)
@@ -87,9 +87,9 @@ chart
         width = parseFloat(d3.select("#widget").style("width"));
         height = parseFloat(d3.select("#widget").style("height"));
         chart
-            .x(width/2 - height/2 + 20)
-            .innerRadius(30)
-            .outerRadius(height / 2 - 20)
+            .x(width/2 - height/2 + 10)
+            .innerRadius(height / 8)
+            .outerRadius(height / 2 - 10)
             .render();
     };
 </script>

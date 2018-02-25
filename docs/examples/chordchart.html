@@ -71,7 +71,7 @@ var chart = new du.widgets.ChordChart("mychart", "#widget")
     .data(data)
     .x(width/2 - height/2)
     .radius(height / 2)
-    .thickness(10)
+    .thickness(height / 30)
     .label("fruit trade")
     .margins(60)
     .fontSize(14)
@@ -103,6 +103,7 @@ chart
         chart
             .x(width/2 - height/2)
             .radius(height / 2)
+            .thickness(height / 30)
             .render();
     };
 </script>
