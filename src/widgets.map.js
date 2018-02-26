@@ -960,6 +960,7 @@
              * @memberOf du.widgets.map.Map._mapLayer
              * @private
              */
+            // TODO fix mess with foregroundColor and colors
             function _style() {
                 // Update map elements
                 _svg
@@ -974,7 +975,9 @@
                         // Remove focus
                         _paths
                             .classed("focus", false)
-                            .style("fill", _w.attr.foregroundColor);
+                            .style("fill", _w.attr.colors && _w.attr.colors[d.name]
+                                ? _w.attr.colors[d.name]
+                                : _w.attr.foregroundColor);
 
                         // Additional out click event
                         if (_w.attr.outClick)
@@ -982,12 +985,20 @@
                     });
                 _paths
                     .attr("d", _pathFn)
-                    .style("fill", _w.attr.foregroundColor)
+                    .style("fill", function(d) {
+                        return _w.attr.colors && _w.attr.colors[d.name]
+                            ? _w.attr.colors[d.name]
+                            : _w.attr.foregroundColor;
+                    })
                     .style("stroke", _w.attr.borderColor)
                     .style("cursor", "pointer")
                     .on("mouseover", function (d, i) {
                         // Set color
-                        d3.select(this).style("fill", d3.color(_w.attr.foregroundColor).brighter());
+                        d3.select(this).style("fill",
+                            d3.color(_w.attr.colors && _w.attr.colors[d.name]
+                                ? _w.attr.colors[d.name]
+                                : _w.attr.foregroundColor).brighter()
+                        );
 
                         // Additional actions
                         if (_w.attr.mouseover)
@@ -996,7 +1007,9 @@
                     .on("mouseleave", function (d, i) {
                         // Set color
                         var c = d3.select(this);
-                        var color = d3.color(_w.attr.foregroundColor);
+                        var color = d3.color(_w.attr.colors && _w.attr.colors[d.name]
+                            ? _w.attr.colors[d.name]
+                            : _w.attr.foregroundColor);
                         c.style("fill", c.classed("focus") ? color.brighter() : color);
 
                         // Additional actions
@@ -1016,7 +1029,9 @@
                         }
 
                         // Set/remove focus
-                        var color = d3.color(_w.attr.foregroundColor);
+                        var color = d3.color(_w.attr.colors && _w.attr.colors[d.name]
+                            ? _w.attr.colors[d.name]
+                            : _w.attr.foregroundColor);
                         _paths
                             .classed("focus", function(dd) { return dd === d ? !focused : false; })
                             .style("fill", color);
@@ -1102,8 +1117,14 @@
             function highlight(id, color, duration) {
                 _select(id)
                     .transition().duration(duration ? duration : 0)
-                    .style("fill", typeof color === "string" ? color
-                        : (typeof id === "string") ? d3.color(_w.attr.foregroundColor).brighter() : _w.attr.foregroundColor);
+                    .style("fill", function(d) {
+                        return typeof color === "string" ? color
+                            : (typeof id === "string") ? d3.color(_w.attr.colors && _w.attr.colors[d.name]
+                                ? _w.attr.colors[d.name]
+                                : _w.attr.foregroundColor).brighter() : (_w.attr.colors && _w.attr.colors[d.name]
+                                ? _w.attr.colors[d.name]
+                                : _w.attr.foregroundColor)
+                    });
             }
 
             // Exposed methods
@@ -1722,7 +1743,7 @@
                         return false;
 
                     // Check radius
-                    if (!radius || radius === undefined || radius === null || isNaN(radius))
+                    if (typeof radius !== "number" || isNaN(radius) || Math.abs(radius) === Infinity)
                         return false;
 
                     var safeId = _w.utils.encode(id);
