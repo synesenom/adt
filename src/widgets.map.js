@@ -975,9 +975,11 @@
                         // Remove focus
                         _paths
                             .classed("focus", false)
-                            .style("fill", _w.attr.colors && _w.attr.colors[d.name]
-                                ? _w.attr.colors[d.name]
-                                : _w.attr.foregroundColor);
+                            .style("fill", function (d) {
+                                return _w.attr.colors && _w.attr.colors[d.name]
+                                    ? _w.attr.colors[d.name]
+                                    : _w.attr.foregroundColor;
+                            });
 
                         // Additional out click event
                         if (_w.attr.outClick)
@@ -1028,13 +1030,19 @@
                             _zoom.click(_pathFn.bounds(d));
                         }
 
+                        // Set all color to default
+                        _paths
+                            .classed("focus", function(dd) { return dd === d ? !focused : false; })
+                            .style("fill", function(dd) {
+                                return _w.attr.colors && _w.attr.colors[dd.name]
+                                    ? _w.attr.colors[dd.name]
+                                    : _w.attr.foregroundColor;
+                            });
+
                         // Set/remove focus
                         var color = d3.color(_w.attr.colors && _w.attr.colors[d.name]
                             ? _w.attr.colors[d.name]
                             : _w.attr.foregroundColor);
-                        _paths
-                            .classed("focus", function(dd) { return dd === d ? !focused : false; })
-                            .style("fill", color);
                         c.style("fill", !focused ? color.brighter() : color);
 
                         // Additional actions
@@ -1118,12 +1126,11 @@
                 _select(id)
                     .transition().duration(duration ? duration : 0)
                     .style("fill", function(d) {
+                        var origColor = _w.attr.colors && _w.attr.colors[d.name]
+                            ? _w.attr.colors[d.name]
+                            : _w.attr.foregroundColor;
                         return typeof color === "string" ? color
-                            : (typeof id === "string") ? d3.color(_w.attr.colors && _w.attr.colors[d.name]
-                                ? _w.attr.colors[d.name]
-                                : _w.attr.foregroundColor).brighter() : (_w.attr.colors && _w.attr.colors[d.name]
-                                ? _w.attr.colors[d.name]
-                                : _w.attr.foregroundColor)
+                            : (typeof id === "string") ? d3.color(origColor).brighter() : origColor;
                     });
             }
 
@@ -1500,6 +1507,10 @@
                         latLon[0] === null || latLon[1] === null)
                         return false;
 
+                    // Check radius
+                    if (typeof radius !== "number" || isNaN(radius) || radius <= 0)
+                        return false;
+
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
                         // Map geo coordinates to SVG
@@ -1743,7 +1754,7 @@
                         return false;
 
                     // Check radius
-                    if (typeof radius !== "number" || isNaN(radius) || Math.abs(radius) === Infinity)
+                    if (typeof radius !== "number" || isNaN(radius) || radius <= 0)
                         return false;
 
                     var safeId = _w.utils.encode(id);

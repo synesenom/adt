@@ -39,19 +39,32 @@
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var map = new du.widgets.Map("map", "#widget")
+    .describe("A map showing the capital cities.")
     .width(width)
     .height(height)
     .labels(true)
     .backgroundColor("white")
     .borderColor("white")
-    .foregroundColor("#444")
+    .foregroundColor("#aaa")
     .render();
 </script>
 <script class="doc">
+// add colors to countries
+var colors = {};
+map.countries.population().forEach(function(d) {
+    colors[d.name] = d3.hsl(Math.random()*180, 0.4, 0.5);
+});
+
+// set colors
+map.colors(colors)
+    .render();
+</script>
+
+<script class="doc">
 // show capitals
-// scale population sizes to [0, 1]
+// scale log of population
 var scale = function(x) {
-    var pop = map.countries.population();
+    var pop = map.countries.population().filter(function(d){ return d.population > 0; });
     var min = d3.min(pop, function (d) {
         return Math.log(d.population + 1);
     });
@@ -66,20 +79,20 @@ map.staticLayer.add("capitals");
 map.dynamicLayer.add("capitals");
 map.countries.capital().forEach(function(d) {
     // dot size is proportional to log(population)
+    var latLon = [d.capital.lat, d.capital.lon];
     setTimeout(function() {
         // static layer
         map.staticLayer.draw.circle("capitals",
-            [d.capital.lat, d.capital.lon],
-            scale(map.countries.population(d.name)) * 5 + 0.1,
-            "dodgerblue");
+            latLon,
+            5 * (scale(map.countries.population(d.name)) - 0.2),
+            "#444");
 
         // animation
         map.dynamicLayer.draw.dot("capitals",
-            [d.capital.lat, d.capital.lon],
-            scale(map.countries.population(d.name)) * 20,
-            "dodgerblue",
-            1000);
-    }, Math.random()*30000);
+            latLon,
+            20 * scale(map.countries.population(d.name)),
+            "#444", 1000);
+    }, Math.random()*3000);
 });
 </script>
 <script>
