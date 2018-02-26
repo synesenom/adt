@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700" rel="stylesheet">
+    <script src="../dependencies/d3.v4.min.js"></script>
+    <script src="../dependencies/lodash.4.17.4.min.js"></script>
+    <script src="../dependencies/topojson.v1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css">
+    <link rel="stylesheet" type="text/css" href="../style/examples.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="../dependencies/codedoc.min.js"></script>
+    <script>
+        codedoc.heading()
+            .callback(function() {
+                hljs.initHighlighting.called = false;
+                hljs.initHighlighting();
+            });
+    </script>
+    <script src="../../src/widgets.js"></script>
+    <script src="../../src/widgets.map.js"></script>
+    <title>map | dashboard-utils</title>
+</head>
+<body>
+<main>
+    <div id="widget"></div>
+    <h1>description</h1>
+    <div id="desc">
+        A map can be used when data with <span class="good">geographic location</span> is to be shown.
+        It can be used to display <span class="good">static distributions</span> or
+        <span class="good">dynamic changes</span> in an application showing real-time data.
+    </div>
+    <div id="code-doc"></div>
+</main>
+<script class="doc">
+// create map
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var map = new du.widgets.Map("map", "#widget")
+    .width(width)
+    .height(height)
+    .labels(true)
+    .backgroundColor("white")
+    .borderColor("white")
+    .foregroundColor("#444")
+    .render();
+</script>
+<script class="doc">
+// show capitals
+// scale population sizes to [0, 1]
+var scale = function(x) {
+    var pop = map.countries.population();
+    var min = d3.min(pop, function (d) {
+        return Math.log(d.population + 1);
+    });
+    var max = d3.max(pop, function (d) {
+        return Math.log(d.population + 1);
+    });
+    return (Math.log(x) - min) / (max - min);
+};
+
+// add dots to capitals at random times
+map.staticLayer.add("capitals");
+map.dynamicLayer.add("capitals");
+map.countries.capital().forEach(function(d) {
+    // dot size is proportional to log(population)
+    setTimeout(function() {
+        // static layer
+        map.staticLayer.draw.circle("capitals",
+            [d.capital.lat, d.capital.lon],
+            scale(map.countries.population(d.name)) * 5 + 0.1,
+            "dodgerblue");
+
+        // animation
+        map.dynamicLayer.draw.dot("capitals",
+            [d.capital.lat, d.capital.lon],
+            scale(map.countries.population(d.name)) * 20,
+            "dodgerblue",
+            1000);
+    }, Math.random()*30000);
+});
+</script>
+<script>
+    window.onresize = function() {
+        map
+            .width(parseFloat(d3.select("#widget").style("width")))
+            .height(parseFloat(d3.select("#widget").style("height")))
+            .render();
+    };
+</script>
+</body>
+</html>

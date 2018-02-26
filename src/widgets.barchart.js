@@ -25,6 +25,7 @@
  * @requires d3@v4
  * @requires du.widgets.Widget
  */
+// TODO change data structure to key-value pairs
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widgets'));

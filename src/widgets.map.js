@@ -47,6 +47,7 @@
  * @requires du.widgets.Widget
  */
 // TODO add country name in center of largest land
+// TODO make rendering much faster
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widgets'));
@@ -1190,13 +1191,21 @@
                         var _content = [];
 
                         var append = {
-                            dot: function(x, y, r, color) {
-                                // Add dot
+                            dot: function(x, y, size, color) {
                                 _content.push({
                                     type: "dot",
                                     x: x,
                                     y: y,
-                                    r: r,
+                                    size: size,
+                                    color: color
+                                });
+                            },
+                            circle: function(x, y, radius, color) {
+                                _content.push({
+                                    type: "circle",
+                                    x: x,
+                                    y: y,
+                                    radius: radius,
                                     color: color
                                 });
                             }
@@ -1217,20 +1226,33 @@
 
                         // Draw namespace
                         var draw = {
-                            dot: function(x, y, r, color, old) {
+                            dot: function(x, y, size, color, old) {
+                                // Set color if specified
+                                if (color)
+                                    _canvas.fillStyle = color;
+
+                                // Adjust size and position
+                                var adjustedSize = size / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var adjustedPos = !old ? _zoom.transform([x, y]) : [x, y];
+
+                                // Draw dot
+                                _canvas.fillRect(adjustedPos[0] - adjustedSize / 2, adjustedPos[1] - adjustedSize / 2,
+                                    adjustedSize, adjustedSize);
+                            },
+
+                            circle: function(x, y, radius, color, old) {
                                 // Set color if specified
                                 if (color)
                                     _canvas.fillStyle = color;
 
                                 // Adjust radius and position
-                                var adjustedR = r / (old ? Math.pow(_zoom.level(), 0.9) : 0.6);
-                                var adjustedPos = !old
-                                    ? _zoom.transform([x, y])
-                                    : [x, y];
+                                var adjustedRadius = radius / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var adjustedPos = !old ? _zoom.transform([x, y]) : [x, y];
 
                                 // Draw
-                                _canvas.fillRect(adjustedPos[0] - adjustedR / 2, adjustedPos[1] - adjustedR / 2,
-                                    adjustedR, adjustedR);
+                                _canvas.beginPath();
+                                _canvas.arc(adjustedPos[0], adjustedPos[1], adjustedRadius, 0, 2*Math.PI, false);
+                                _canvas.fill();
                             }
                         };
 
@@ -1257,7 +1279,10 @@
                                 // Finally, draw element
                                 switch (d.type) {
                                     case "dot":
-                                        draw.dot(d.x, d.y, d.r, d.color, true);
+                                        draw.dot(d.x, d.y, d.size, d.color, true);
+                                        break;
+                                    case "circle":
+                                        draw.circle(d.x, d.y, d.radius, d.color, true);
                                         break;
                                     default:
                                         break;
@@ -1407,12 +1432,12 @@
                  * @memberOf du.widgets.map.Map.staticLayer.draw
                  * @param {string} id Identifier of the layer to use.
                  * @param {Array} latLon Array containing the latitude and longitude.
-                 * @param {number} r Radius of the dot.
+                 * @param {number} size Size of the dot.
                  * @param {string} color Color of the dot.
                  * @returns {boolean} True if layer exists, coordinates are valid and dot could be added,
                  * false otherwise.
                  */
-                dot: function(id, latLon, r, color) {
+                dot: function(id, latLon, size, color) {
                     // Check geo coordinates
                     if (!latLon || latLon.length < 2 ||
                         latLon[0] === undefined || latLon[1] === undefined ||
@@ -1425,10 +1450,45 @@
                         var mappedPos = _mapLayer._project(latLon);
 
                         // Add to content
-                        _layers[safeId].append.dot(mappedPos[0], mappedPos[1], r, color);
+                        _layers[safeId].append.dot(mappedPos[0], mappedPos[1], size, color);
 
                         // Draw it right away
-                        _layers[safeId].draw.dot(mappedPos[0], mappedPos[1], r, color);
+                        _layers[safeId].draw.dot(mappedPos[0], mappedPos[1], size, color);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+
+                /**
+                 * Adds a circle to the specified static layer.
+                 *
+                 * @method circle
+                 * @memberOf du.widgets.map.Map.staticLayer.draw
+                 * @param {string} id Identifier of the layer to use.
+                 * @param {Array} latLon Array containing the latitude and longitude for the center of the circle.
+                 * @param {number} radius Radius of the circle.
+                 * @param {string} color Color of the circle.
+                 * @returns {boolean} True if layer exists, coordinates are valid and circle could be added,
+                 * false otherwise.
+                 */
+                circle: function(id, latLon, radius, color) {
+                    // Check geo coordinates
+                    if (!latLon || latLon.length < 2 ||
+                        latLon[0] === undefined || latLon[1] === undefined ||
+                        latLon[0] === null || latLon[1] === null)
+                        return false;
+
+                    var safeId = _w.utils.encode(id);
+                    if (_layers.hasOwnProperty(safeId)) {
+                        // Map geo coordinates to SVG
+                        var mappedPos = _mapLayer._project(latLon);
+
+                        // Add to content
+                        _layers[safeId].append.circle(mappedPos[0], mappedPos[1], radius, color);
+
+                        // Draw it right away
+                        _layers[safeId].draw.circle(mappedPos[0], mappedPos[1], radius, color);
                         return true;
                     } else {
                         return false;
@@ -1648,23 +1708,27 @@
                  * @memberOf du.widgets.map.Map.dynamicLayer.draw
                  * @param {string} id Identifier of the dynamic layer to use.
                  * @param {Array} latLon Array containing the latitude and longitude of the dot center.
-                 * @param {number} r Radius of the dot.
+                 * @param {number} radius Radius of the dot.
                  * @param {string=} color Color of the dot.
                  * @param {number=} duration Duration of the dot animation. If not specified, no animation is performed.
                  * @returns {boolean} True if layer exists, coordinates are valid and dot could be added,
                  * false otherwise.
                  */
-                dot: function(id, latLon, r, color, duration) {
+                dot: function(id, latLon, radius, color, duration) {
                     // Check geo coordinates
                     if (!latLon || latLon.length < 2 ||
                         latLon[0] === undefined || latLon[1] === undefined ||
                         latLon[0] === null || latLon[1] === null)
                         return false;
 
+                    // Check radius
+                    if (!radius || radius === undefined || radius === null || isNaN(radius))
+                        return false;
+
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
                         // Map geo coordinates to SVG
-                        var adjustedR = r / _zoom.level();
+                        var adjustedR = radius / _zoom.level();
                         var mappedPos = _mapLayer._project(latLon);
 
                         var d = _layers[safeId].g.append("circle")
