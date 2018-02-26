@@ -1,7 +1,8 @@
 main {
     margin-bottom: 40px;
 }
-#widget {
+#widget,
+.widget {
     display: block;
     position: relative;
     width: 600px;
@@ -9,14 +10,21 @@ main {
     margin: 0 auto;
     margin-top: 30px;
 }
+.short {
+    height: 60px;
+}
 @media screen and (max-width: 800px) {
     main {
         width: 80%;
         max-width: 90%;
     }
-    #widget {
+    #widget,
+    .widget {
         width: 100%;
         height: 200px;
+    }
+    .short {
+        height: 40px;
     }
     pre code {
         width: 100%;
@@ -25,6 +33,9 @@ main {
 }
 pre {
     width: auto;
+}
+pre code {
+    min-width: 100%;
 }
 .desc {
     position: relative;

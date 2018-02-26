@@ -55,18 +55,16 @@
         var _w = Widget.call(this, name, "status", "div", parent);
 
         /**
-         * Sets the status value (current status).
+         * Sets the current status value.
          *
-         * @method status
+         * @method value
          * @memberOf du.widgets.status.Status
          * @param {string} text Status value text.
          */
-        _w.attr.add(this, "status", "");
+        _w.attr.add(this, "value", "");
 
         // Widget elements.
         var _svg = {};
-        var _label = null;
-        var _status = null;
 
         // Builder
         _w.render.build = function() {
@@ -109,7 +107,7 @@
             _svg.status
                 .style("color", _w.attr.fontColor)
                 .style("font-weight", _w.attr.fontWeight)
-                .text(_w.attr.status);
+                .text(_w.attr.value);
         };
     }
 

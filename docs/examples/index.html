@@ -123,6 +123,7 @@
     <div class="examples"></div>
 </main>
 <script>
+    // TODO add explanation and suggestions to each example
     function addWidget(name) {
         var container = d3.select(".examples").append("div")
             .attr("class", "example-container")
@@ -303,7 +304,7 @@
         .height(height)
         .label("&ldquo;I have a dream&rdquo;")
         .fontSize(24)
-        .fontColor("goldenrod")
+        .fontColor("dodgerblue")
         .render();
 
     // Legend
@@ -427,10 +428,10 @@
         .margins({left: 40, top: 20, right: 20, bottom: 40})
         .fontSize(20)
         .label("Time:")
-        .status(new Date().toLocaleTimeString())
+        .value(new Date().toLocaleTimeString())
         .render();
     setInterval(function() {
-        st.status(new Date().toLocaleTimeString())
+        st.value(new Date().toLocaleTimeString())
             .render();
     }, 900);
 </script>

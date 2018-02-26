@@ -39,12 +39,12 @@ var statusLabel = new du.widgets.Status("status", "#widget")
     .x((width - 240) / 2)
     .width(240)
     .height(height)
-    .label("π ≈ ")
+    .label("π ≈")
     .fontSize(24)
     .render();
 </script>
 <script class="doc">
-// add some changing content
+// add status value
 var k = 0,
     n = 0,
     iMax = 100;
@@ -54,9 +54,9 @@ var k = 0,
             k++;
     }
     n += iMax;
-    iMax = parseInt(iMax * 1.001);
+    iMax = parseInt(Math.max(iMax * 1.001, 10000));
     statusLabel
-        .status((4 * k / n).toFixed(10))
+        .value((4 * k / n).toFixed(10))
         .render();
     setTimeout(estimate, 100);
 })();

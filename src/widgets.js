@@ -42,9 +42,9 @@
 // TODO add heat map
 // TODO add calendar plot
 // TODO make plot data modifiable
-// TODO add placeholder as example
 // TODO add description as an example
 // TODO clean up mouse event chaos
+// TODO add graph widget
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);

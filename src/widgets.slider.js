@@ -25,6 +25,7 @@
  * @requires d3@v4
  * @requires du.widgets.Widget
  */
+// TODO add label
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widgets'), exports);
@@ -80,16 +81,6 @@
         _w.attr.add(this, "step", 0);
 
         /**
-         * Sets the label for the slider.
-         * The label is shown on the left side of the slider.
-         *
-         * @method label
-         * @memberOf du.widgets.slider.Slider
-         * @param {string} text Label text.
-         */
-        _w.attr.add(this, "label", "");
-
-        /**
          * Sets callback attached to the slider. Must accept one parameter describing the value of the slider.
          *
          * @method callback
@@ -137,18 +128,20 @@
             _svg.g = _w.widget.append("g")
                 .attr("transform", "translate(" + _margins.left + ",20)");
 
-            _svg.g.append("line")
+            _svg.track = _svg.g.append("line")
                 .attr("stroke-linecap", "round")
                 .attr("stroke", _w.attr.fontColor)
                 .attr("stroke-width", "9px")
                 .attr("x1", _scale.range()[0])
-                .attr("x2", _scale.range()[1])
+                .attr("x2", _scale.range()[1]);
+            _svg.border = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
                 .style("stroke", "white")
                 .style("opacity", 0.9)
-                .style("stroke-width", "8px")
+                .style("stroke-width", "8px");
+            _svg.line = _svg.border
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
@@ -173,10 +166,11 @@
                         }
                     }));
 
-            _svg.g.insert("g", ".track-overlay")
+            _svg.overlay = _svg.g.insert("g", ".track-overlay")
                 .style("font-size", "10px")
                 .attr("font-family", "inherit")
-                .attr("transform", "translate(0," + 18 + ")")
+                .attr("transform", "translate(0," + 18 + ")");
+            _svg.ticks = _svg.overlay
                 .selectAll("text")
                 .data(_ordinalScale ? _domain : _scale.ticks(5))
                 .enter().append("text")
@@ -197,8 +191,22 @@
 
         // Style updater
         _w.render.style = function () {
-            _w.widget.style("width", (_w.attr.width) + "px");
+            _w.widget.style("width", _w.attr.width + "px");
             _w.widget.style("height", 50 + "px");
+
+            // Elements
+            _scale.range([0, _w.attr.width - _margins.left - _margins.right]);
+            _svg.track
+                .attr("x1", _scale.range()[0])
+                .attr("x2", _scale.range()[1]);
+            _svg.border
+                .attr("x1", _scale.range()[0])
+                .attr("x2", _scale.range()[1]);
+            _svg.line
+                .attr("x1", _scale.range()[0])
+                .attr("x2", _scale.range()[1]);
+            _svg.ticks
+                .attr("x", _scale);
         };
     }
 
