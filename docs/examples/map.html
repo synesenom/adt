@@ -87,7 +87,7 @@ map.countries.capital().forEach(function(d) {
             5 * (scale(map.countries.population(d.name)) - 0.2),
             "#444");
 
-        // animation
+        // dynamic layer
         map.dynamicLayer.draw.dot("capitals",
             latLon,
             20 * scale(map.countries.population(d.name)),

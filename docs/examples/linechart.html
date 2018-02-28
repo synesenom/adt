@@ -18,8 +18,8 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../dl/widgets.min.js"></script>
-    <script src="../dl/widgets.linechart.min.js"></script>
+    <script src="../../src/widgets.js"></script>
+    <script src="../../src/widgets.linechart.js"></script>
     <title>line chart | dashboard-utils</title>
 </head>
 <body>
@@ -61,6 +61,7 @@ var chart = new du.widgets.LineChart("mychart", "#widget")
     .height(height)
     .xLabel("days")
     .yLabel("price")
+    .tooltip(true)
     .margins(40)
     .fontSize(14)
     .colors({mango: "dodgerblue", kiwi: "limegreen"})
@@ -86,7 +87,7 @@ chart
 <script class="doc">
 // additional features
 // add trend marker
-var marker = chart.addMarker("mymarker", "first", 50, 89, "trend marker");
+var marker = chart.addMarker("mymarker", "mango", 50, 89, "trend marker");
 </script>
 <script>
     window.onresize = function() {

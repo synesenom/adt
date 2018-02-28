@@ -46,8 +46,6 @@
  * @requires topojson@v1
  * @requires du.widgets.Widget
  */
-// TODO add country name in center of largest land
-// TODO make rendering much faster
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widgets'));
@@ -618,7 +616,10 @@
                 _layers.map.paths.attr("transform", d3.event.transform);
                 if (_layers.map.labels) {
                     _layers.map.labels
-                        .style("opacity", k > 3 ? Math.pow(k, 4) / 1000 : 0)
+                        .style("opacity", function(d) {
+                            //return k > 3 ? Math.pow(k, 4) / 1000 : 0;
+                            return 0.00001 * Math.max(1, Math.pow(Math.max(d.svg.width, d.svg.height)*k, 2));
+                        })
                         .attr("font-size", 10 / k + "pt")
                         .attr("dy", 5 / k + "pt")
                         .attr("transform", d3.event.transform);
@@ -930,14 +931,7 @@
                 }
             }
 
-            /**
-             * Updates map data.
-             *
-             * @method _update
-             * @memberOf du.widgets.map.Map._mapLayer
-             * @private
-             */
-            function _update() {
+            function _build() {
                 // Update projection and path function
                 _projection
                     .scale(_w.attr.width / (2 * Math.PI))
@@ -1051,15 +1045,15 @@
                     });
 
                 // Add path names
-                /*
-                if (_w.attr.labels && _pathLabels === null) {
+                // FIXME fix this
+                /*if (_w.attr.labels && _pathLabels === null) {
                     _pathLabels = _land.selectAll("text")
                         .data(_countries._paths)
                         .enter().append("text")
-                        .style("fill", "#ddd")
-                        .style("text-shadow", "0 0 1px black")
+                        .style("fill", "black")
                         .attr("font-size", "10pt")
-                        .attr("font-family", "'Montserrat', sans-serif")
+                        .attr("font-family", "inherit")
+                        .attr("font-weight", "bold")
                         .attr("text-anchor", "middle")
                         .attr("dy", "5pt")
                         .style("cursor", "pointer")
@@ -1138,7 +1132,7 @@
             return {
                 _select: _select,
                 _project: _project,
-                _update: _update,
+                _build: _build,
                 _style: _style,
                 dim: dim,
                 highlight: highlight
@@ -1236,6 +1230,14 @@
                                     radius: radius,
                                     color: color
                                 });
+                            },
+                            line: function(segments, width, color) {
+                                _content.push({
+                                    type: "line",
+                                    segments: segments,
+                                    width: width,
+                                    color: color
+                                });
                             }
                         };
 
@@ -1281,6 +1283,29 @@
                                 _canvas.beginPath();
                                 _canvas.arc(adjustedPos[0], adjustedPos[1], adjustedRadius, 0, 2*Math.PI, false);
                                 _canvas.fill();
+                            },
+
+                            line: function(segments, width, color, old) {
+                                // Set color
+                                if (color)
+                                    _canvas.strokeStyle = color;
+
+                                // Adjust width and position
+                                var adjustedWidth = width / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var adjustedSegments = [];
+                                for (var i=0; i<segments.length; i++) {
+                                    adjustedSegments.push(!old ? _zoom.transform(segments[i]) : segments[i]);
+                                }
+
+                                // Draw
+                                _canvas.beginPath();
+                                _canvas.strokeWidth = adjustedWidth;
+                                _canvas.moveTo(segments[0][0], segments[0][1]);
+                                for (i=1; i<segments.length; i++) {
+                                    _canvas.lineTo(segments[i][0], segments[i][1]);
+                                }
+                                _canvas.stroke();
+                                d3.geoPath()
                             }
                         };
 
@@ -1311,6 +1336,9 @@
                                         break;
                                     case "circle":
                                         draw.circle(d.x, d.y, d.radius, d.color, true);
+                                        break;
+                                    case "line":
+                                        draw.line(d.segments, d.width, d.color, true);
                                         break;
                                     default:
                                         break;
@@ -1467,9 +1495,7 @@
                  */
                 dot: function(id, latLon, size, color) {
                     // Check geo coordinates
-                    if (!latLon || latLon.length < 2 ||
-                        latLon[0] === undefined || latLon[1] === undefined ||
-                        latLon[0] === null || latLon[1] === null)
+                    if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
 
                     var safeId = _w.utils.encode(id);
@@ -1502,9 +1528,7 @@
                  */
                 circle: function(id, latLon, radius, color) {
                     // Check geo coordinates
-                    if (!latLon || latLon.length < 2 ||
-                        latLon[0] === undefined || latLon[1] === undefined ||
-                        latLon[0] === null || latLon[1] === null)
+                    if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
 
                     // Check radius
@@ -1524,6 +1548,43 @@
                         return true;
                     } else {
                         return false;
+                    }
+                },
+
+                line: function(id, startLatLon, endLatLon, width, color) {
+                    // Check start coordinates
+                    if (!startLatLon || startLatLon.length < 2 ||
+                        typeof startLatLon[0] !== "number" || typeof startLatLon[1] !== "number")
+                        return false;
+
+                    // Check end coordinates
+                    if (!endLatLon || endLatLon.length < 2 ||
+                        typeof endLatLon[0] !== "number" || typeof endLatLon[1] !== "number")
+                        return false;
+
+                    // Check width
+                    if (typeof width !== "number")
+                        return false;
+
+                    var safeId = _w.utils.encode(id);
+                    if (_layers.hasOwnProperty(safeId)) {
+                        // Create segments
+                        var delta = [endLatLon[0] - startLatLon[0], endLatLon[1] - startLatLon[1]];
+                        var segments = [_mapLayer._project(startLatLon)];
+                        for (var i=1; i<10; i++) {
+                            segments.push(_mapLayer._project([
+                                startLatLon[0] + delta[0]*i/10,
+                                startLatLon[1] + delta[1]*i/10
+                            ]));
+                        }
+                        console.log(segments);
+                        segments.push(_mapLayer._project(endLatLon));
+
+                        // Add to content
+                        _layers[safeId].append.line(segments, width, color);
+
+                        // Draw line
+                        _layers[safeId].draw.line(segments, width, color);
                     }
                 }
             };
@@ -1748,9 +1809,7 @@
                  */
                 dot: function(id, latLon, radius, color, duration) {
                     // Check geo coordinates
-                    if (!latLon || latLon.length < 2 ||
-                        latLon[0] === undefined || latLon[1] === undefined ||
-                        latLon[0] === null || latLon[1] === null)
+                    if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
 
                     // Check radius
@@ -1929,10 +1988,9 @@
             erase: _touchLayer.erase
         };
 
-        // Data updater
-        _w.render.update = function() {
-            // Update map layer
-            _mapLayer._update();
+        // Builder
+        _w.render.build = function() {
+            _mapLayer._build();
         };
 
         // Style updater

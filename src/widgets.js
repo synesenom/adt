@@ -433,6 +433,16 @@
         _attr.add(this, "colors", "#888");
 
         /**
+         * Enables tooltip for the chart widget.
+         * Default is false.
+         *
+         * @method tooltip
+         * @memberOf du.widgets.Widget
+         * @param {boolean} enable If tooltip should be enabled.
+         */
+        _attr.add(this, "tooltip", false);
+
+        /**
          * Collection of some convenience methods.
          *
          * @namespace _utils
@@ -630,6 +640,83 @@
         })();
 
         /**
+         * Shows/hides the tooltip.
+         *
+         * @method _showTooltip
+         * @memberOf du.widgets.Widget
+         * @param {string?} content HTML content of the tooltip. If not specified, tooltip is removed.
+         * @private
+         */
+        function _showTooltip(content) {
+            var tooltipId = "du-widgets-plot-tooltip";
+            var mx = d3.event.pageX;
+            var my = d3.event.pageY;
+            var container = _widget.node().getBoundingClientRect();
+
+            // If content is null or we are outside the charting area
+            // just remove tooltip
+            if (typeof content !== "string" || content === ""
+                || mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
+                || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
+                d3.select("#" + tooltipId)
+                    .style("opacity", 0)
+                    .html("");
+                return;
+            }
+
+            // Create tooltip if needed
+            var tooltip = d3.select("#" + tooltipId);
+            if (d3.select("#" + tooltipId).empty()) {
+                var color = d3.color(_attr.fontColor);
+                color.opacity = 0.3;
+                tooltip = d3.select("body").append("div")
+                    .attr("id", tooltipId)
+                    .style("position", "absolute")
+                    .style("background-color", "white")
+                    .style("border-radius", "2px")
+                    .style("border", "solid 1px " + color)
+                    .style("padding", "5px")
+                    .style("font-family", "Courier")
+                    .style("font-size", "0.7em")
+                    .style("color", _attr.fontColor)
+                    .style("pointer-events", "none")
+                    .style("left", (container.left + container.right) / 2 + 'px')
+                    .style("top", (container.top + container.bottom) / 2 + 'px');
+            }
+
+            // Add content
+            tooltip.html(content);
+
+            // Calculate position
+            var elem = tooltip.node().getBoundingClientRect();
+            var tw = elem.width;
+            var th = elem.height;
+            var tx = mx + 20;
+            var ty = my + 20;
+
+            // Correct
+            if (tx < container.left + _attr.margins.left + 10) {
+                tx += _attr.margins.left + 10;
+            } else if (tx + tw > container.right - _attr.margins.right) {
+                tx -= _attr.margins.right + tw - 10;
+            }
+            if (ty < container.top + _attr.margins.top + 10) {
+                ty += _attr.margins.top + 10;
+            } else if (ty + th > container.bottom - _attr.margins.bottom) {
+                ty -= _attr.margins.bottom + th - 10;
+            }
+
+            // Set position
+            tooltip
+                .style("opacity", 1)
+                .transition();
+            tooltip
+                .transition().duration(200).ease(d3.easeLinear)
+                .style("left", tx + 'px')
+                .style("top", ty + 'px');
+        }
+
+        /**
          * Returns the widget ID.
          *
          * @method id
@@ -745,6 +832,29 @@
             // Widget size
             _widget.style("width", _attr.width + "px")
                 .style("height", _attr.height + "px");
+
+            // Tooltip
+            if (_utils.tooltip !== undefined) {
+                _widget
+                    .style("pointer-events", _attr.tooltip ? "all" : null)
+                    .on("mouseenter", function () {
+                        var m = d3.mouse(_widget.node());
+                        _attr.tooltip && _showTooltip(_utils.tooltip([
+                            m[0] - _attr.margins.left,
+                            m[1] - _attr.margins.top
+                        ]));
+                    })
+                    .on("mousemove", function () {
+                        var m = d3.mouse(_widget.node());
+                        _attr.tooltip && _showTooltip(_utils.tooltip([
+                            m[0] - _attr.margins.left,
+                            m[1] - _attr.margins.top
+                        ]));
+                    })
+                    .on("mouseleave", function () {
+                        _attr.tooltip && _showTooltip();
+                    });
+            }
 
             // Axis and font styles
             _widget.selectAll(".axis path")
@@ -901,44 +1011,6 @@
             render: _render
         };
     }
-
-    /*function Tooltip(content, width, offset) {
-     var _id = makeId("tooltip", "tooltip");
-
-     // If content is null, just remove tooltip
-     if (!content) {
-     d3.select("#" + _id).remove();
-     }
-
-     // Create and style it
-     var tooltip = d3.select("body").append("div")
-     .attr("id", _id)
-     .style("position", "absolute")
-     .style("width", (width ? width : 240) + "px")
-     .style("padding", "8px")
-     .style("border-radius", "2px")
-     .style("background-color", "rgba(0, 0, 0, 0.7)")
-     .style("box-shadow", "0 0 2px white")
-     .style("color", "white")
-     .style("font-size", "0.9em")
-     .style("pointer-events", "none")
-     .style("opacity", 0);
-     d3.select("#" + _id).append("div")
-     .attr("id", "widgets-tooltip-content")
-     .attr("class", "content");
-     document.getElementById("widgets-tooltip-content").appendChild(content);
-
-     // Position it
-     var dx = offset && typeof offset.x === "number" ? offset.x : (width ? width + 20 : 280);
-     var dy = offset && typeof offset.y === "number" ? offset.y : 240;
-     var tx = d3.event.pageX < window.innerWidth - dx ? d3.event.pageX : d3.event.pageX - dx;
-     var ty = d3.event.pageY < window.innerHeight - dy ? d3.event.pageY : d3.event.pageY - dy;
-
-     // Show tooltip
-     tooltip.style("left", (tx + 20) + 'px')
-     .style("top", (ty + 20) + 'px')
-     .style("opacity", 1);
-     }*/
 
     // Add to exports
     return Widget;

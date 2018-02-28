@@ -239,6 +239,45 @@
             return false;
         };
 
+        // Tooltip builder
+        _w.utils.tooltip = function(mouse) {
+            // Get bisection
+            var bisect = d3.bisector(function (d) {
+                return _svg.scale.x(d.x);
+            }).left;
+            var i = bisect(_data, mouse[0]);
+
+            // Get data entry
+            var left = _data[i - 1] ? _data[i - 1] : _data[i];
+            var right = _data[i] ? _data[i] : _data[i - 1];
+            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+
+            // Build tooltip content
+            var content = d3.select(document.createElement("div"));
+            for (var yi in point.y) {
+                var entry = content.append("div")
+                    .style("position", "relative")
+                    .style("max-width", "150px")
+                    .style("height", "10px")
+                    .style("margin", "5px")
+                    .style("padding-right", "10px");
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "10px")
+                    .style("height", "10px")
+                    .style("float", "left")
+                    .style("background-color", _w.attr.colors[yi]);
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "calc(100% - 20px)")
+                    .style("height", "10px")
+                    .style("float", "right")
+                    .style("line-height", "11px")
+                    .text(point.y[yi].toPrecision(6));
+            }
+            return content.node().innerHTML;
+        };
+
         // Builder
         _w.render.build = function() {
             // Add widget
@@ -482,6 +521,9 @@
                     .attr("text-anchor", marker.start.y < marker.end.y ? "start" : "end")
                     .style("fill", _w.attr.fontColor)
             });
+
+            // Tooltip
+
         };
     }
 
