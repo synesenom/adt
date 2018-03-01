@@ -108,6 +108,53 @@
             _w.utils.highlight(_svg, ".area", key, duration);
         };
 
+        // Tooltip builder
+        _w.utils.tooltip = function(mouse) {
+            // Get bisection
+            var bisect = d3.bisector(function (d) {
+                return _svg.scale.x(d.x);
+            }).left;
+            var i = bisect(_data, mouse[0]);
+
+            // Get data entry
+            var left = _data[i - 1] ? _data[i - 1] : _data[i];
+            var right = _data[i] ? _data[i] : _data[i - 1];
+            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+
+            // Build tooltip content
+            var content = d3.select(document.createElement("div"));
+            content.append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .style("border-bottom", "solid 1px " + _w.attr.fontColor)
+                .text(_w.attr.xLabel + ": " + point.x);
+            _.forOwn(point.y, function(y, yi) {
+                var entry = content.append("div")
+                    .style("position", "relative")
+                    .style("max-width", "150px")
+                    .style("height", "10px")
+                    .style("margin", "5px")
+                    .style("padding-right", "10px");
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "10px")
+                    .style("height", "10px")
+                    .style("float", "left")
+                    .style("background-color", _w.attr.colors[yi]);
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "calc(100% - 20px)")
+                    .style("height", "10px")
+                    .style("float", "right")
+                    .style("line-height", "11px")
+                    .text(y.toPrecision(6));
+            });
+            return content.node().innerHTML;
+        };
+
         // Builder
         _w.render.build = function() {
             // Add widget
@@ -155,7 +202,7 @@
             }
 
             // Calculate scale
-            var scale = _w.utils.scale(_w.utils.boundary(data),
+            _svg.scale = _w.utils.scale(_w.utils.boundary(data),
                 _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
                 {x: {type: _w.attr.xType}});
@@ -163,10 +210,10 @@
             // Update axes
             _svg.axes.x
                 .transition().duration(duration)
-                .call(_svg.axisFn.x.scale(scale.x));
+                .call(_svg.axisFn.x.scale(_svg.scale.x));
             _svg.axes.y
                 .transition().duration(duration)
-                .call(_svg.axisFn.y.scale(scale.y));
+                .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Update plots
             if (data.length > 0) {
@@ -185,11 +232,11 @@
                 _.forOwn(data[0].y, function (yk, k) {
                     var area = d3.area()
                         .x(function (d) {
-                            return scale.x(d.x) + 1;
+                            return _svg.scale.x(d.x) + 1;
                         })
                         .y0(_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
                         .y1(function (d) {
-                            return scale.y(d.y[k]);
+                            return _svg.scale.y(d.y[k]);
                         });
                     _svg.g.select(".area." + _w.utils.encode(k))
                         .transition().duration(duration)

@@ -15,8 +15,8 @@ main {
 }
 @media screen and (max-width: 800px) {
     main {
-        width: 80%;
-        max-width: 90%;
+        width: 70%;
+        max-width: 70%;
     }
     #widget,
     .widget {

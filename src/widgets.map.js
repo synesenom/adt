@@ -79,6 +79,43 @@
         "Panama": [-2, 0]
     };
 
+    var Geo = {
+        normalize: function(v) {
+            var l = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+            return [v[0]/l, v[1]/l, v[2]/l];
+        },
+
+        toSpherical: function(v) {
+            var r = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+            return [r, Math.asin(v[2]/r), Math.atan2(v[1], v[0])];
+        },
+
+        toCartesian: function(v) {
+            var c = Math.cos(v[1]);
+            return [v[0]*c*Math.cos(v[2]), v[0]*c*Math.sin(v[2]), v[0]*Math.sin(v[1])];
+        },
+
+        dotProduct: function(u, v) {
+            return u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
+        },
+
+        crossProduct: function(u, v) {
+            return [
+                u[1]*v[2] - u[2]*v[1],
+                u[2]*v[0] - u[0]*v[2],
+                u[0]*v[1] - u[1]*v[0]
+            ];
+        },
+
+        toRad: function(x) {
+            return x * Math.PI / 180;
+        },
+
+        toDeg: function(x) {
+            return x * 180 / Math.PI;
+        }
+    };
+
     /**
      * The map widget class.
      *
@@ -1231,9 +1268,9 @@
                                     color: color
                                 });
                             },
-                            line: function(segments, width, color) {
+                            arrow: function(segments, width, color) {
                                 _content.push({
-                                    type: "line",
+                                    type: "arrow",
                                     segments: segments,
                                     width: width,
                                     color: color
@@ -1285,27 +1322,44 @@
                                 _canvas.fill();
                             },
 
-                            line: function(segments, width, color, old) {
+                            arrow: function(segments, width, color, old) {
                                 // Set color
                                 if (color)
                                     _canvas.strokeStyle = color;
 
-                                // Adjust width and position
+                                // Adjust dimensions
                                 var adjustedWidth = width / (old ? Math.pow(_zoom.level(), 0.9) : 1);
-                                var adjustedSegments = [];
-                                for (var i=0; i<segments.length; i++) {
-                                    adjustedSegments.push(!old ? _zoom.transform(segments[i]) : segments[i]);
-                                }
+                                var adjustedHeadWidth = adjustedWidth*2;
+                                var adjustedHeadHeight = adjustedWidth*5;
+                                var p1 = segments[segments.length-2];
+                                var p2 = segments[segments.length-1];
+                                var v = [p2[0]-p1[0], p2[1]-p1[1]];
+                                var l = Math.sqrt(v[0]*v[0] + v[1]*v[1]);
+                                v = [v[0]/l, v[1]/l];
 
-                                // Draw
+                                // Draw arrow body
                                 _canvas.beginPath();
-                                _canvas.strokeWidth = adjustedWidth;
+                                _canvas.lineWidth = adjustedWidth;
+                                _canvas.lineJoin = _canvas.lineCap = 'round';
                                 _canvas.moveTo(segments[0][0], segments[0][1]);
-                                for (i=1; i<segments.length; i++) {
+                                for (var i=1; i<segments.length-1; i++) {
                                     _canvas.lineTo(segments[i][0], segments[i][1]);
                                 }
+                                _canvas.lineTo(p2[0]-0.9*v[0]*adjustedHeadHeight, p2[1]-0.9*v[1]*adjustedHeadHeight);
                                 _canvas.stroke();
-                                d3.geoPath()
+
+                                // Draw arrow head
+                                var n = [v[1]*adjustedHeadWidth, -v[0]*adjustedHeadWidth];
+                                var a1 = [p2[0]-v[0]*adjustedHeadHeight-n[0], p2[1]-v[1]*adjustedHeadHeight-n[1]];
+                                var a2 = [p2[0]-v[0]*adjustedHeadHeight+n[0], p2[1]-v[1]*adjustedHeadHeight+n[1]];
+                                var c = [p2[0], p2[1]];
+                                _canvas.beginPath();
+                                _canvas.moveTo(a1[0], a1[1]);
+                                _canvas.lineTo(a2[0], a2[1]);
+                                _canvas.lineTo(c[0], c[1]);
+                                _canvas.lineTo(a1[0], a1[1]);
+                                _canvas.fillStyle = color;
+                                _canvas.fill();
                             }
                         };
 
@@ -1337,8 +1391,8 @@
                                     case "circle":
                                         draw.circle(d.x, d.y, d.radius, d.color, true);
                                         break;
-                                    case "line":
-                                        draw.line(d.segments, d.width, d.color, true);
+                                    case "arrow":
+                                        draw.arrow(d.segments, d.width, d.color, true);
                                         break;
                                     default:
                                         break;
@@ -1551,7 +1605,20 @@
                     }
                 },
 
-                line: function(id, startLatLon, endLatLon, width, color) {
+                /**
+                 * Adds an arrow between two points. The body of the arrow follows a geodesic curve.
+                 *
+                 * @method arrow
+                 * @memberOf du.widgets.map.Map
+                 * @param {string} id Identifier of the layer to use.
+                 * @param {Array} startLatLon Array containing the latitude and longitude of the arrow source.
+                 * @param {Array} endLatLon Array containing the latitude and longitude of the arrow target.
+                 * @param {number} width Arrow width. Head size is adjusted to the width.
+                 * @param {string} color Arrow color.
+                 * @returns {boolean} True if layer exists, coordinates are valid and arrow could be added,
+                 * false otherwise.
+                 */
+                arrow: function(id, startLatLon, endLatLon, width, color) {
                     // Check start coordinates
                     if (!startLatLon || startLatLon.length < 2 ||
                         typeof startLatLon[0] !== "number" || typeof startLatLon[1] !== "number")
@@ -1568,23 +1635,36 @@
 
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
-                        // Create segments
-                        var delta = [endLatLon[0] - startLatLon[0], endLatLon[1] - startLatLon[1]];
-                        var segments = [_mapLayer._project(startLatLon)];
-                        for (var i=1; i<10; i++) {
-                            segments.push(_mapLayer._project([
-                                startLatLon[0] + delta[0]*i/10,
-                                startLatLon[1] + delta[1]*i/10
-                            ]));
+                        // Convert geolocation to Cartesian vectors
+                        var u = Geo.toCartesian([1, Geo.toRad(startLatLon[0]), Geo.toRad(startLatLon[1])]);
+                        var v = Geo.toCartesian([1, Geo.toRad(endLatLon[0]), Geo.toRad(endLatLon[1])]);
+
+                        // Calculate second unit vector and angle
+                        var w = Geo.normalize(Geo.crossProduct(Geo.crossProduct(u, v), u));
+                        var tMax = Math.acos(Geo.dotProduct(u, v));
+
+                        // Create segments for body
+                        var segments = [];
+                        for (var i=0; i<=20; i++) {
+                            var x = Math.cos(i*tMax/20),
+                                y = Math.sin(i*tMax/20);
+                            var r = Geo.toSpherical([
+                                u[0]*x + w[0]*y,
+                                u[1]*x + w[1]*y,
+                                u[2]*x + w[2]*y
+                            ]);
+                            segments.push(_mapLayer._project([Geo.toDeg(r[1]), Geo.toDeg(r[2])]));
                         }
-                        console.log(segments);
-                        segments.push(_mapLayer._project(endLatLon));
 
                         // Add to content
-                        _layers[safeId].append.line(segments, width, color);
+                        _layers[safeId].append.arrow(segments, width, color);
 
                         // Draw line
-                        _layers[safeId].draw.line(segments, width, color);
+                        _layers[safeId].draw.arrow(segments, width, color);
+
+                        return true;
+                    } else {
+                        return false;
                     }
                 }
             };

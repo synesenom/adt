@@ -254,7 +254,15 @@
 
             // Build tooltip content
             var content = d3.select(document.createElement("div"));
-            for (var yi in point.y) {
+            content.append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .style("border-bottom", "solid 1px " + _w.attr.fontColor)
+                .text(_w.attr.xLabel + ": " + point.x);
+            _.forOwn(point.y, function(y, yi) {
                 var entry = content.append("div")
                     .style("position", "relative")
                     .style("max-width", "150px")
@@ -273,8 +281,8 @@
                     .style("height", "10px")
                     .style("float", "right")
                     .style("line-height", "11px")
-                    .text(point.y[yi].toPrecision(6));
-            }
+                    .text(y.toPrecision(6));
+            });
             return content.node().innerHTML;
         };
 
