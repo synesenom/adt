@@ -846,7 +846,7 @@
             function _calculateCenters() {
                 _countries._paths.forEach(function(country) {
                     country.svg.center = _pathFn.centroid(country);
-                    country.svg.realCenter = _getRealCenter(country);
+                    //country.svg.realCenter = _getRealCenter(country);
                 });
             }
 
@@ -937,6 +937,7 @@
              * @private
              */
             function _getRealCenter(country) {
+                // This is extremely slow, just don't use it
                 if (country.geometry.coordinates.length === 1) {
                     return _pathFn.centroid(country);
                 }
@@ -968,7 +969,7 @@
                 }
             }
 
-            function _build() {
+            function _update() {
                 // Update projection and path function
                 _projection
                     .scale(_w.attr.width / (2 * Math.PI))
@@ -1169,7 +1170,7 @@
             return {
                 _select: _select,
                 _project: _project,
-                _build: _build,
+                _update: _update,
                 _style: _style,
                 dim: dim,
                 highlight: highlight
@@ -1322,6 +1323,7 @@
                                 _canvas.fill();
                             },
 
+                            // TODO clean this up, make it faster
                             arrow: function(segments, width, color, old) {
                                 // Set color
                                 if (color)
@@ -1343,7 +1345,11 @@
                                 _canvas.lineJoin = _canvas.lineCap = 'round';
                                 _canvas.moveTo(segments[0][0], segments[0][1]);
                                 for (var i=1; i<segments.length-1; i++) {
-                                    _canvas.lineTo(segments[i][0], segments[i][1]);
+                                    if (Math.pow(segments[i][0]-segments[i-1][0], 2)
+                                        + Math.pow(segments[i][1]-segments[i-1][1], 2) < 0.6*_w.attr.width*_w.attr.width)
+                                        _canvas.lineTo(segments[i][0], segments[i][1]);
+                                    else
+                                        _canvas.moveTo(segments[i][0], segments[i][1]);
                                 }
                                 _canvas.lineTo(p2[0]-0.9*v[0]*adjustedHeadHeight, p2[1]-0.9*v[1]*adjustedHeadHeight);
                                 _canvas.stroke();
@@ -1606,10 +1612,10 @@
                 },
 
                 /**
-                 * Adds an arrow between two points. The body of the arrow follows a geodesic curve.
+                 * Adds an arrow between two points on a static layer. The body of the arrow follows a geodesic curve.
                  *
                  * @method arrow
-                 * @memberOf du.widgets.map.Map
+                 * @memberOf du.widgets.map.Map.staticLayer.draw
                  * @param {string} id Identifier of the layer to use.
                  * @param {Array} startLatLon Array containing the latitude and longitude of the arrow source.
                  * @param {Array} endLatLon Array containing the latitude and longitude of the arrow target.
@@ -1644,10 +1650,11 @@
                         var tMax = Math.acos(Geo.dotProduct(u, v));
 
                         // Create segments for body
+                        var length = 100;
                         var segments = [];
-                        for (var i=0; i<=20; i++) {
-                            var x = Math.cos(i*tMax/20),
-                                y = Math.sin(i*tMax/20);
+                        for (var i=0; i<=length; i++) {
+                            var x = Math.cos(i*tMax/length),
+                                y = Math.sin(i*tMax/length);
                             var r = Geo.toSpherical([
                                 u[0]*x + w[0]*y,
                                 u[1]*x + w[1]*y,
@@ -1875,19 +1882,21 @@
              */
             var draw = {
                 /**
-                 * Draws a shrinking dot on a dynamic layer.
+                 * Draws a shrinking circle on a dynamic layer.
                  *
                  * @method dot
                  * @memberOf du.widgets.map.Map.dynamicLayer.draw
                  * @param {string} id Identifier of the dynamic layer to use.
-                 * @param {Array} latLon Array containing the latitude and longitude of the dot center.
-                 * @param {number} radius Radius of the dot.
-                 * @param {string=} color Color of the dot.
-                 * @param {number=} duration Duration of the dot animation. If not specified, no animation is performed.
+                 * @param {Array} latLon Array containing the latitude and longitude of the circle center.
+                 * @param {number} radius Initial radius of the circle.
+                 * @param {string=} color Color of the circle.
+                 * @param {number=} duration Duration of the dot animation. If not specified, 700ms is applied.
+                 * @param {function=} callback Callback to trigger after the animation ends but befor the circle is
+                 * removed from the map.
                  * @returns {boolean} True if layer exists, coordinates are valid and dot could be added,
                  * false otherwise.
                  */
-                dot: function(id, latLon, radius, color, duration) {
+                circle: function(id, latLon, radius, color, duration, callback) {
                     // Check geo coordinates
                     if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
@@ -1909,13 +1918,146 @@
                             .style("fill", color);
                         _layers[safeId].append(d);
 
-                        if (duration) {
-                            d.transition().duration(duration).ease(d3.easeExp)
-                                .attr("r", 0)
-                                .on("end", function() {
-                                    d3.select(this).remove();
-                                });
+                        d.transition().duration(duration ? duration : 700).ease(d3.easeExp)
+                            .attr("r", 0)
+                            .on("end", function() {
+                                callback && callback();
+                                d3.select(this).remove();
+                            });
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+
+                /**
+                 * Draws an arrow that travels from one point to another on a dynamic layer.
+                 * The body of the arrow follows a geodesic curve.
+                 *
+                 * @method arrow
+                 * @memberOf du.widgets.map.Map.dynamicLayer.draw
+                 * @param {string} id Identifier of the dynamic layer to use.
+                 * @param {Array} startLatLon Array containing the latitude and longitude of the arrow source.
+                 * @param {Array} endLatLon Array containing the latitude and longitude of the arrow target.
+                 * @param {number} width Arrow width.
+                 * @param {string} color Arrow color.
+                 * @param {number} duration Duration of the pointing animation. If not specified, 700ms is applied.
+                 * @param {function=} callback Callback to trigger once the animation ends but before the arrow is
+                 * removed from the map.
+                 * @returns {boolean}
+                 */
+                arrow: function(id, startLatLon, endLatLon, width, color, duration, callback) {
+                    // Check start coordinates
+                    if (!startLatLon || startLatLon.length < 2 ||
+                        typeof startLatLon[0] !== "number" || typeof startLatLon[1] !== "number")
+                        return false;
+
+                    // Check end coordinates
+                    if (!endLatLon || endLatLon.length < 2 ||
+                        typeof endLatLon[0] !== "number" || typeof endLatLon[1] !== "number")
+                        return false;
+
+                    // Check width
+                    if (typeof width !== "number")
+                        return false;
+
+                    var safeId = _w.utils.encode(id);
+                    if (_layers.hasOwnProperty(safeId)) {
+                        // Pre-compute geodesic
+                        var u = Geo.toCartesian([1, Geo.toRad(startLatLon[0]), Geo.toRad(startLatLon[1])]);
+                        var v = Geo.toCartesian([1, Geo.toRad(endLatLon[0]), Geo.toRad(endLatLon[1])]);
+                        var w = Geo.normalize(Geo.crossProduct(Geo.crossProduct(u, v), u));
+                        var tMax = Math.acos(Geo.dotProduct(u, v));
+
+                        // Add segments
+                        var length = 100;
+                        var segments = [];
+                        var head = null;
+                        var mappedStart = _mapLayer._project(startLatLon);
+                        var adjustedWidth = width / _zoom.level();
+                        var adjustedHeadWidth = adjustedWidth*2;
+                        var adjustedHeadHeight = adjustedWidth*5;
+                        for (var i=0; i<length; i++) {
+                            segments.push(_layers[safeId].g.append("line")
+                                        .style("stroke", color)
+                                        .style("stroke-width", adjustedWidth)
+                                        .attr("x1", mappedStart[0])
+                                        .attr("y1", mappedStart[1])
+                                        .attr("x2", mappedStart[0])
+                                        .attr("y2", mappedStart[1])
+                            );
+                            head = _layers[safeId].g.append("path")
+                                .style("fill", color)
+                                .style("stroke", "none");
                         }
+
+                        // Animate
+                        var t = 0.1;
+                        var realDuration = duration ? duration : 700;
+                        var animate = function() {
+                            // Body
+                            for (i = 0; i < length; i++) {
+                                var x1 = Math.cos(t * i * tMax / length),
+                                    y1 = Math.sin(t * i * tMax / length);
+                                var r1 = Geo.toSpherical([
+                                    u[0] * x1 + w[0] * y1,
+                                    u[1] * x1 + w[1] * y1,
+                                    u[2] * x1 + w[2] * y1
+                                ]);
+                                r1 = _mapLayer._project([Geo.toDeg(r1[1]), Geo.toDeg(r1[2])]);
+                                var x2 = Math.cos(t * (i + 1) * tMax / length),
+                                    y2 = Math.sin(t * (i + 1) * tMax / length);
+                                var r2 = Geo.toSpherical([
+                                    u[0] * x2 + w[0] * y2,
+                                    u[1] * x2 + w[1] * y2,
+                                    u[2] * x2 + w[2] * y2
+                                ]);
+                                r2 = _mapLayer._project([Geo.toDeg(r2[1]), Geo.toDeg(r2[2])]);
+                                var l2 = Math.pow(r1[0]-r2[0], 2) + Math.pow(r1[1]-r2[1], 2);
+                                segments[i]
+                                    .attr("x1", r1[0])
+                                    .attr("y1", r1[1])
+                                    .attr("x2", r2[0] - (i === length-1 ? 0.1*(r2[0]-r1[0]) : 0))
+                                    .attr("y2", r2[1] - (i === length-1 ? 0.1*(r2[1]-r1[1]) : 0))
+                                    .style("opacity", l2 < 0.5*_w.attr.width*_w.attr.width ? 1 : 0);
+                            }
+
+                            // Head
+                            var p1 = r1;
+                            var p2 = r2;
+                            var v = [p2[0]-p1[0], p2[1]-p1[1]];
+                            var l = Math.sqrt(v[0]*v[0] + v[1]*v[1]);
+                            v = [v[0]/l, v[1]/l];
+                            var n = [v[1]*adjustedHeadWidth, -v[0]*adjustedHeadWidth];
+                            var a1 = [p2[0]-v[0]*adjustedHeadHeight-n[0], p2[1]-v[1]*adjustedHeadHeight-n[1]];
+                            var a2 = [p2[0]-v[0]*adjustedHeadHeight+n[0], p2[1]-v[1]*adjustedHeadHeight+n[1]];
+                            var c = [p2[0], p2[1]];
+                            head.attr("d", "M" + a1[0] + "," + a1[1] + "L" + a2[0] + "," + a2[1] + "L" + c[0] + "," + c[1] + "Z");
+
+                            // Animate further
+                            if (t <= 1) {
+                                t = Math.min(1.01, t+0.01);
+                                setTimeout(animate, realDuration/100);
+                            } else {
+                                // Callback before removal
+                                callback && callback();
+
+                                // After animation, remove arrow
+                                for (i = 0; i < length; i++) {
+                                    segments[i].transition().duration(1000)
+                                        .style("opacity", 0)
+                                        .on("end", function () {
+                                            d3.select(this).remove();
+                                        });
+                                }
+                                head.transition().duration(1000)
+                                    .style("opacity", 0)
+                                    .on("end", function () {
+                                        d3.select(this).remove();
+                                    });
+                            }
+                        };
+                        animate();
                         return true;
                     } else {
                         return false;
@@ -2068,9 +2210,9 @@
             erase: _touchLayer.erase
         };
 
-        // Builder
-        _w.render.build = function() {
-            _mapLayer._build();
+        // Updater
+        _w.render.update = function() {
+            _mapLayer._update();
         };
 
         // Style updater

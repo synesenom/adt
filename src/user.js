@@ -247,6 +247,21 @@
     }
 
     /**
+     * Disables context menu for the page.
+     *
+     * @method noContext
+     * @memberOf du.user
+     */
+    function noContext() {
+        try {
+            d3.select("body")
+                .attr("oncontextmenu", "return false;");
+        } catch (e) {
+            console.error("No DOM, could not hide context menu");
+        }
+    }
+
+    /**
      * Namespace for cheat codes that trigger some events.
      *
      * @namespace cheats
@@ -288,6 +303,7 @@
     return {
         enable: enable,
         disable: disable,
+        noContext: noContext,
         idle: idle,
         leave: leave,
         enter: enter,
