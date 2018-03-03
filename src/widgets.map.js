@@ -79,41 +79,166 @@
         "Panama": [-2, 0]
     };
 
-    var Geo = {
-        normalize: function(v) {
-            var l = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-            return [v[0]/l, v[1]/l, v[2]/l];
-        },
+    /**
+     * Class representing a 2D vector.
+     *
+     * @class Vector2d
+     * @memberOf du.widgets.map
+     * @param {Array} coords Vector coordinates.
+     * @constructor
+     * @private
+     */
+    var Vector2d = function(coords) {
+        var _x = typeof coords[0] === "number" ? coords[0] : 1,
+            _y = typeof coords[1] === "number" ? coords[1] : 0;
 
-        toSpherical: function(v) {
-            var r = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-            return [r, Math.asin(v[2]/r), Math.atan2(v[1], v[0])];
-        },
+        this.x = function() {
+            return _x;
+        };
 
-        toCartesian: function(v) {
-            var c = Math.cos(v[1]);
-            return [v[0]*c*Math.cos(v[2]), v[0]*c*Math.sin(v[2]), v[0]*Math.sin(v[1])];
-        },
+        this.y = function() {
+            return _y;
+        };
 
-        dotProduct: function(u, v) {
-            return u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
-        },
+        this.length = function(len) {
+            var r = Math.sqrt(_x * _x + _y * _y);
+            if (typeof len === "number") {
+                var l = len / r;
+                return new Vector2d([_x * l, _y * l]);
+            }
+            return r;
+        };
 
-        crossProduct: function(u, v) {
-            return [
-                u[1]*v[2] - u[2]*v[1],
-                u[2]*v[0] - u[0]*v[2],
-                u[0]*v[1] - u[1]*v[0]
-            ];
-        },
+        this.angle = function(ang) {
+            var a = Math.atan2(_y, _x);
+            if (typeof ang === "number") {
+                var len = Math.sqrt(_x * _x + _y * _y);
+                return new Vector2d([len * Math.cos(ang), len * Math.sin(ang)]);
+            }
+            return a;
+        };
 
-        toRad: function(x) {
-            return x * Math.PI / 180;
-        },
+        this.toArray = function() {
+            return [_x, _y];
+        };
 
-        toDeg: function(x) {
-            return x * 180 / Math.PI;
-        }
+        this.map = function (func) {
+            return new Vector2d(func([_x, _y]));
+        };
+
+        this.add = function(v) {
+            return new Vector2d([_x+v.x(), _y+v.y()]);
+        };
+
+        this.sub = function(v) {
+            return new Vector2d([_x-v.x(), _y-v.y()]);
+        };
+
+        this.mult = function(s) {
+            return new Vector2d([_x*s, _y*s]);
+        };
+    };
+
+    /**
+     * Class representing a 3D vector.
+     *
+     * @class Vector3d
+     * @memberOf du.widgets.map
+     * @param {Array} coords Vector coordinates.
+     * @constructor
+     * @private
+     */
+    var Vector3d = function(coords) {
+        var _x = typeof coords[0] === "number" ? coords[0] : 1,
+            _y = typeof coords[1] === "number" ? coords[1] : 0,
+            _z = typeof coords[2] === "number" ? coords[2] : 0;
+
+        this.x = function() {
+            return _x;
+        };
+
+        this.y = function() {
+            return _y;
+        };
+
+        this.z = function() {
+            return _z;
+        };
+
+        this.length = function(len) {
+            var r = Math.sqrt(_x * _x + _y * _y + _z * _z);
+            if (typeof len === "number") {
+                var l = len / r;
+                return new Vector3d([_x * l, _y * l, _z * l]);
+            }
+            return r;
+        };
+
+        this.toLatLon = function() {
+            var r = Math.sqrt(_x * _x + _y * _y + _z * _z);
+            return new LatLon([Math.asin(_z / r), Math.atan2(_y, _x)].map(function (x) {
+                return x * 180 / Math.PI;
+            }));
+        };
+
+        this.add = function(v) {
+            return new Vector3d([_x+v.x(), _y+v.y(), _z+v.z()]);
+        };
+
+        this.mult = function(s) {
+            return new Vector3d([_x*s, _y*s, _z*s]);
+        };
+
+        this.dot = function(v) {
+            return _x * v.x() + _y * v.y() + _z * v.z();
+        };
+
+        this.cross = function(v) {
+            return new Vector3d([
+                _y * v.z() - _z * v.y(),
+                _z * v.x() - _x * v.z(),
+                _x * v.y() - _y * v.x()
+            ]);
+        };
+    };
+
+    /**
+     * Class representing a latitude/longitude pair.
+     *
+     * @class LatLon
+     * @memberOf du.widgets.map
+     * @param {Array} latLon Array containing latitude and longitude.
+     * @constructor
+     * @private
+     */
+    var LatLon = function(latLon) {
+        var _lat = typeof latLon[0] === "number" ? latLon[0] : 0,
+            _lon = typeof latLon[1] === "number" ? latLon[1] : 0;
+
+        /**
+         * Returns the array representation of the geolocation.
+         *
+         * @method toArray
+         * @memberOf du.widgets.map.LatLon
+         * @returns {Array} Latitude/longitude in an array.
+         */
+        this.toArray = function() {
+            return  [_lat, _lon];
+        };
+
+        /**
+         * Returns the Cartesian Vector3d representation of the geolocation with unit radius.
+         *
+         * @method toVec
+         * @memberOf du.widgets.map.LatLon
+         * @returns {du.widgets.map.Vector3d} Vector3d representation of the geolocation with unit radius.
+         */
+        this.toVec = function() {
+            var la = _lat * Math.PI / 180,
+                lo = _lon * Math.PI / 180;
+            var c = Math.cos(la);
+            return new Vector3d([c * Math.cos(lo), c * Math.sin(lo), Math.sin(la)]);
+        };
     };
 
     /**
@@ -1300,12 +1425,12 @@
                                     _canvas.fillStyle = color;
 
                                 // Adjust size and position
-                                var adjustedSize = size / (old ? Math.pow(_zoom.level(), 0.9) : 1);
-                                var adjustedPos = !old ? _zoom.transform([x, y]) : [x, y];
+                                var sacledSize = size / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var sacledPos = !old ? _zoom.transform([x, y]) : [x, y];
 
                                 // Draw dot
-                                _canvas.fillRect(adjustedPos[0] - adjustedSize / 2, adjustedPos[1] - adjustedSize / 2,
-                                    adjustedSize, adjustedSize);
+                                _canvas.fillRect(sacledPos[0] - sacledSize / 2, sacledPos[1] - sacledSize / 2,
+                                    sacledSize, sacledSize);
                             },
 
                             circle: function(x, y, radius, color, old) {
@@ -1314,12 +1439,12 @@
                                     _canvas.fillStyle = color;
 
                                 // Adjust radius and position
-                                var adjustedRadius = radius / (old ? Math.pow(_zoom.level(), 0.9) : 1);
-                                var adjustedPos = !old ? _zoom.transform([x, y]) : [x, y];
+                                var scaledRadius = radius / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var scaledPos = !old ? _zoom.transform([x, y]) : [x, y];
 
                                 // Draw
                                 _canvas.beginPath();
-                                _canvas.arc(adjustedPos[0], adjustedPos[1], adjustedRadius, 0, 2*Math.PI, false);
+                                _canvas.arc(scaledPos[0], scaledPos[1], scaledRadius, 0, 2*Math.PI, false);
                                 _canvas.fill();
                             },
 
@@ -1330,40 +1455,41 @@
                                     _canvas.strokeStyle = color;
 
                                 // Adjust dimensions
-                                var adjustedWidth = width / (old ? Math.pow(_zoom.level(), 0.9) : 1);
-                                var adjustedHeadWidth = adjustedWidth*2;
-                                var adjustedHeadHeight = adjustedWidth*5;
-                                var p1 = segments[segments.length-2];
-                                var p2 = segments[segments.length-1];
-                                var v = [p2[0]-p1[0], p2[1]-p1[1]];
-                                var l = Math.sqrt(v[0]*v[0] + v[1]*v[1]);
-                                v = [v[0]/l, v[1]/l];
+                                var scaledWidth = width / (old ? Math.pow(_zoom.level(), 0.9) : 1);
+                                var scaledSegments = [];
+                                segments.forEach(function(segment) {
+                                    scaledSegments.push(!old ? segment.map(_zoom.transform) : segment);
+                                });
+                                var headWidth = scaledWidth*2;
+                                var headHeight = scaledWidth*5;
+                                var p1 = scaledSegments[scaledSegments.length-2];
+                                var p2 = scaledSegments[scaledSegments.length-1];
+                                var v = p2.sub(p1).length(1);
 
                                 // Draw arrow body
                                 _canvas.beginPath();
-                                _canvas.lineWidth = adjustedWidth;
-                                _canvas.lineJoin = _canvas.lineCap = 'round';
-                                _canvas.moveTo(segments[0][0], segments[0][1]);
-                                for (var i=1; i<segments.length-1; i++) {
-                                    if (Math.pow(segments[i][0]-segments[i-1][0], 2)
-                                        + Math.pow(segments[i][1]-segments[i-1][1], 2) < 0.6*_w.attr.width*_w.attr.width)
-                                        _canvas.lineTo(segments[i][0], segments[i][1]);
+                                _canvas.lineWidth = scaledWidth;
+                                _canvas.lineJoin = 'round';
+                                _canvas.moveTo(scaledSegments[0].x(), scaledSegments[0].y());
+                                for (var i=1; i<scaledSegments.length-1; i++) {
+                                    if (scaledSegments[i].sub(scaledSegments[i-1]).length() < 0.6*_w.attr.width)
+                                        _canvas.lineTo(scaledSegments[i].x(), scaledSegments[i].y());
                                     else
-                                        _canvas.moveTo(segments[i][0], segments[i][1]);
+                                        _canvas.moveTo(scaledSegments[i].x(), scaledSegments[i].y());
                                 }
-                                _canvas.lineTo(p2[0]-0.9*v[0]*adjustedHeadHeight, p2[1]-0.9*v[1]*adjustedHeadHeight);
+                                var f = p2.sub(v.mult(0.5*headHeight));
+                                _canvas.lineTo(f.x(), f.y());
                                 _canvas.stroke();
 
                                 // Draw arrow head
-                                var n = [v[1]*adjustedHeadWidth, -v[0]*adjustedHeadWidth];
-                                var a1 = [p2[0]-v[0]*adjustedHeadHeight-n[0], p2[1]-v[1]*adjustedHeadHeight-n[1]];
-                                var a2 = [p2[0]-v[0]*adjustedHeadHeight+n[0], p2[1]-v[1]*adjustedHeadHeight+n[1]];
-                                var c = [p2[0], p2[1]];
+                                var n = v.angle(v.angle()+Math.PI/2).mult(headWidth);
+                                var a1 = p2.sub(v.mult(headHeight)).sub(n);
+                                var a2 = p2.sub(v.mult(headHeight)).add(n);
                                 _canvas.beginPath();
-                                _canvas.moveTo(a1[0], a1[1]);
-                                _canvas.lineTo(a2[0], a2[1]);
-                                _canvas.lineTo(c[0], c[1]);
-                                _canvas.lineTo(a1[0], a1[1]);
+                                _canvas.moveTo(a1.x(), a1.y());
+                                _canvas.lineTo(a2.x(), a2.y());
+                                _canvas.lineTo(p2.x(), p2.y());
+                                _canvas.closePath();
                                 _canvas.fillStyle = color;
                                 _canvas.fill();
                             }
@@ -1553,7 +1679,7 @@
                  * @returns {boolean} True if layer exists, coordinates are valid and dot could be added,
                  * false otherwise.
                  */
-                dot: function(id, latLon, size, color) {
+                dot: function (id, latLon, size, color) {
                     // Check geo coordinates
                     if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
@@ -1586,7 +1712,7 @@
                  * @returns {boolean} True if layer exists, coordinates are valid and circle could be added,
                  * false otherwise.
                  */
-                circle: function(id, latLon, radius, color) {
+                circle: function (id, latLon, radius, color) {
                     // Check geo coordinates
                     if (!latLon || latLon.length < 2 || typeof latLon[0] !== "number" || typeof latLon[1] !== "number")
                         return false;
@@ -1624,7 +1750,7 @@
                  * @returns {boolean} True if layer exists, coordinates are valid and arrow could be added,
                  * false otherwise.
                  */
-                arrow: function(id, startLatLon, endLatLon, width, color) {
+                arrow: function (id, startLatLon, endLatLon, width, color) {
                     // Check start coordinates
                     if (!startLatLon || startLatLon.length < 2 ||
                         typeof startLatLon[0] !== "number" || typeof startLatLon[1] !== "number")
@@ -1641,27 +1767,33 @@
 
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
-                        // Convert geolocation to Cartesian vectors
-                        var u = Geo.toCartesian([1, Geo.toRad(startLatLon[0]), Geo.toRad(startLatLon[1])]);
-                        var v = Geo.toCartesian([1, Geo.toRad(endLatLon[0]), Geo.toRad(endLatLon[1])]);
+                        // Calculate geodesic vectors
+                        var u = new LatLon(startLatLon).toVec();
+                        var v = new LatLon(endLatLon).toVec();
+                        var w = u.cross(v).cross(u).length(1);
+                        var angle = Math.acos(u.dot(v));
 
-                        // Calculate second unit vector and angle
-                        var w = Geo.normalize(Geo.crossProduct(Geo.crossProduct(u, v), u));
-                        var tMax = Math.acos(Geo.dotProduct(u, v));
-
-                        // Create segments for body
+                        // Builds segments
+                        var t = 1;
                         var length = 100;
-                        var segments = [];
-                        for (var i=0; i<=length; i++) {
-                            var x = Math.cos(i*tMax/length),
-                                y = Math.sin(i*tMax/length);
-                            var r = Geo.toSpherical([
-                                u[0]*x + w[0]*y,
-                                u[1]*x + w[1]*y,
-                                u[2]*x + w[2]*y
-                            ]);
-                            segments.push(_mapLayer._project([Geo.toDeg(r[1]), Geo.toDeg(r[2])]));
-                        }
+                        var headHeight = width*5;
+                        var mappedStart = new Vector2d(_mapLayer._project(startLatLon));
+                        var mappedEnd = new Vector2d(_mapLayer._project(endLatLon));
+                        var r1 = mappedStart;
+                        var segments = [r1];
+                        do {
+                            var r2 = new Vector2d(
+                                _mapLayer._project(
+                                    u.mult(Math.cos((t+1) * angle / length))
+                                        .add(w.mult(Math.sin((t+1) * angle / length)))
+                                        .toLatLon().toArray()
+                                )
+                            );
+                            t++;
+                            r1 = r2;
+                            segments.push(r2);
+                        } while (t < length && r2.sub(mappedEnd).length() > headHeight);
+                        segments.push(mappedEnd);
 
                         // Add to content
                         _layers[safeId].append.arrow(segments, width, color);
@@ -1908,19 +2040,19 @@
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
                         // Map geo coordinates to SVG
-                        var adjustedR = radius / _zoom.level();
+                        var scaledR = radius / _zoom.level();
                         var mappedPos = _mapLayer._project(latLon);
 
                         var d = _layers[safeId].g.append("circle")
                             .attr("cx", mappedPos[0])
                             .attr("cy", mappedPos[1])
-                            .attr("r", adjustedR)
+                            .attr("r", scaledR)
                             .style("fill", color);
                         _layers[safeId].append(d);
 
                         d.transition().duration(duration ? duration : 700).ease(d3.easeExp)
                             .attr("r", 0)
-                            .on("end", function() {
+                            .on("end", function () {
                                 callback && callback();
                                 d3.select(this).remove();
                             });
@@ -1963,97 +2095,92 @@
 
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
-                        // Pre-compute geodesic
-                        var u = Geo.toCartesian([1, Geo.toRad(startLatLon[0]), Geo.toRad(startLatLon[1])]);
-                        var v = Geo.toCartesian([1, Geo.toRad(endLatLon[0]), Geo.toRad(endLatLon[1])]);
-                        var w = Geo.normalize(Geo.crossProduct(Geo.crossProduct(u, v), u));
-                        var tMax = Math.acos(Geo.dotProduct(u, v));
-
-                        // Add segments
+                        // Add body
                         var length = 100;
-                        var segments = [];
+                        var body = null;
                         var head = null;
-                        var mappedStart = _mapLayer._project(startLatLon);
-                        var adjustedWidth = width / _zoom.level();
-                        var adjustedHeadWidth = adjustedWidth*2;
-                        var adjustedHeadHeight = adjustedWidth*5;
-                        for (var i=0; i<length; i++) {
-                            segments.push(_layers[safeId].g.append("line")
-                                        .style("stroke", color)
-                                        .style("stroke-width", adjustedWidth)
-                                        .attr("x1", mappedStart[0])
-                                        .attr("y1", mappedStart[1])
-                                        .attr("x2", mappedStart[0])
-                                        .attr("y2", mappedStart[1])
-                            );
-                            head = _layers[safeId].g.append("path")
-                                .style("fill", color)
-                                .style("stroke", "none");
-                        }
+                        var mappedStart = new Vector2d(_mapLayer._project(startLatLon));
+                        var mappedEnd = new Vector2d(_mapLayer._project(endLatLon));
+                        var scaledWidth = width / _zoom.level();
+                        var headWidth = scaledWidth*2;
+                        var headHeight = scaledWidth*5;
+                        body = _layers[safeId].g.append("path")
+                            .style("fill", "none")
+                            .style("stroke", color)
+                            .style("stroke-width", scaledWidth)
+                            .attr("d", "M" + mappedStart.x() + "," + mappedStart.y());
+                        head = _layers[safeId].g.append("path")
+                            .style("fill", color)
+                            .style("stroke", "none");
+
+                        // Compute geodesic vectors
+                        var u = new LatLon(startLatLon).toVec();
+                        var v = new LatLon(endLatLon).toVec();
+                        var w = u.cross(v).cross(u).length(1);
+                        var angle = Math.acos(u.dot(v));
 
                         // Animate
-                        var t = 0.1;
+                        var t = 1;
+                        var r1 = mappedStart;
                         var realDuration = duration ? duration : 700;
                         var animate = function() {
                             // Body
-                            for (i = 0; i < length; i++) {
-                                var x1 = Math.cos(t * i * tMax / length),
-                                    y1 = Math.sin(t * i * tMax / length);
-                                var r1 = Geo.toSpherical([
-                                    u[0] * x1 + w[0] * y1,
-                                    u[1] * x1 + w[1] * y1,
-                                    u[2] * x1 + w[2] * y1
-                                ]);
-                                r1 = _mapLayer._project([Geo.toDeg(r1[1]), Geo.toDeg(r1[2])]);
-                                var x2 = Math.cos(t * (i + 1) * tMax / length),
-                                    y2 = Math.sin(t * (i + 1) * tMax / length);
-                                var r2 = Geo.toSpherical([
-                                    u[0] * x2 + w[0] * y2,
-                                    u[1] * x2 + w[1] * y2,
-                                    u[2] * x2 + w[2] * y2
-                                ]);
-                                r2 = _mapLayer._project([Geo.toDeg(r2[1]), Geo.toDeg(r2[2])]);
-                                var l2 = Math.pow(r1[0]-r2[0], 2) + Math.pow(r1[1]-r2[1], 2);
-                                segments[i]
-                                    .attr("x1", r1[0])
-                                    .attr("y1", r1[1])
-                                    .attr("x2", r2[0] - (i === length-1 ? 0.1*(r2[0]-r1[0]) : 0))
-                                    .attr("y2", r2[1] - (i === length-1 ? 0.1*(r2[1]-r1[1]) : 0))
-                                    .style("opacity", l2 < 0.5*_w.attr.width*_w.attr.width ? 1 : 0);
-                            }
+                            var r2 = new Vector2d(
+                                _mapLayer._project(
+                                    u.mult(Math.cos((t+1) * angle / length))
+                                        .add(w.mult(Math.sin((t+1) * angle / length)))
+                                        .toLatLon().toArray()
+                                )
+                            );
+                            body
+                                .attr("d", body.attr("d")
+                                    + (r2.sub(r1).length() < 0.5 * _w.attr.width ? "L" : "M")
+                                    + r2.x() + "," + r2.y());
 
                             // Head
-                            var p1 = r1;
-                            var p2 = r2;
-                            var v = [p2[0]-p1[0], p2[1]-p1[1]];
-                            var l = Math.sqrt(v[0]*v[0] + v[1]*v[1]);
-                            v = [v[0]/l, v[1]/l];
-                            var n = [v[1]*adjustedHeadWidth, -v[0]*adjustedHeadWidth];
-                            var a1 = [p2[0]-v[0]*adjustedHeadHeight-n[0], p2[1]-v[1]*adjustedHeadHeight-n[1]];
-                            var a2 = [p2[0]-v[0]*adjustedHeadHeight+n[0], p2[1]-v[1]*adjustedHeadHeight+n[1]];
-                            var c = [p2[0], p2[1]];
-                            head.attr("d", "M" + a1[0] + "," + a1[1] + "L" + a2[0] + "," + a2[1] + "L" + c[0] + "," + c[1] + "Z");
+                            if (r2.sub(r1).length() < 0.5 * _w.attr.width) {
+                                var v = r2.sub(r1).length(1);
+                                var n = v.angle(v.angle() + Math.PI / 2).mult(headWidth);
+                                var a1 = r2.sub(n);
+                                var a2 = r2.add(n);
+                                var c = r2.add(v.mult(headHeight));
+                                head.attr("d", "M" + a1.x() + "," + a1.y()
+                                    + "L" + a2.x() + "," + a2.y()
+                                    + "L" + c.x() + "," + c.y()
+                                    + "Z");
+                            }
 
-                            // Animate further
-                            if (t <= 1) {
-                                t = Math.min(1.01, t+0.01);
-                                setTimeout(animate, realDuration/100);
+                            // Animate until not reached target
+                            if (r2.sub(mappedEnd).length() > headHeight) {
+                                t++;
+                                r1 = r2;
+                                setTimeout(animate, realDuration/length);
                             } else {
-                                // Callback before removal
-                                callback && callback();
+                                // Update head position
+                                v = mappedEnd.sub(r2).length(1);
+                                n = v.angle(v.angle()+Math.PI/2).mult(headWidth);
+                                a1 = mappedEnd.sub(v.mult(headHeight)).sub(n);
+                                a2 = mappedEnd.sub(v.mult(headHeight)).add(n);
+                                head.transition().duration(realDuration/length)
+                                    .attr("d", "M" + a1.x() + "," + a1.y()
+                                    + "L" + a2.x() + "," + a2.y()
+                                    + "L" + mappedEnd.x() + "," + mappedEnd.y()
+                                    + "Z")
+                                    .on("end", function() {
+                                        // Callback before removal
+                                        callback && callback();
 
-                                // After animation, remove arrow
-                                for (i = 0; i < length; i++) {
-                                    segments[i].transition().duration(1000)
-                                        .style("opacity", 0)
-                                        .on("end", function () {
-                                            d3.select(this).remove();
-                                        });
-                                }
-                                head.transition().duration(1000)
-                                    .style("opacity", 0)
-                                    .on("end", function () {
-                                        d3.select(this).remove();
+                                        // After animation, remove arrow
+                                        body.transition().duration(1000)
+                                            .style("opacity", 0)
+                                            .on("end", function () {
+                                                d3.select(this).remove();
+                                            });
+                                        d3.select(this).transition().duration(1000)
+                                            .style("opacity", 0)
+                                            .on("end", function () {
+                                                d3.select(this).remove();
+                                            });
                                     });
                             }
                         };
