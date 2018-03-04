@@ -37,10 +37,20 @@ pre {
 pre code {
     min-width: 100%;
 }
-.desc {
+#desc {
     position: relative;
     width: 100%;
     font-size: 1em;
+    text-align: justify;
+}
+#doc-link {
+    position: relative;
+    width: 100%;
+    font-size: 1em;
+    margin-top: 20px;
+}
+h1 {
+    padding-top: 30px;
 }
 .good {
     color: dodgerblue;

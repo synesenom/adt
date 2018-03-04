@@ -29,5 +29,5 @@ for m in modules:
     DocBuilder()\
         .parse("src/%s.js" % m)\
         .html("docs/api/%s.html" % m,
-              style="img#logo{position:fixed;top:20px;right:20px;width:100px;}")
+              style="img#logo{position:fixed;top:20px;right:20px;width:100px;}pre code{width: 100%;}")
 
