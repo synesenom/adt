@@ -19,8 +19,8 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../../src/widgets.js"></script>
-    <script src="../../src/widgets.map.js"></script>
+    <script src="../dl/widgets.min.js"></script>
+    <script src="../dl/widgets.map.min.js"></script>
     <title>map | dashboard-utils</title>
 </head>
 <body>
@@ -88,7 +88,7 @@ map.countries.capital().forEach(function(d) {
             "#444");
 
         // dynamic layer
-        map.dynamicLayer.draw.dot("capitals",
+        map.dynamicLayer.draw.circle("capitals",
             latLon,
             20 * scale(map.countries.population(d.name)),
             "#444", 1000);

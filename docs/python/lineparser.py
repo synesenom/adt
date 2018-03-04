@@ -64,7 +64,12 @@ class DocLine:
         tokens = line.split(' ')
 
         # Find keyword position
-        pos = tokens.index(keyword)
+        try:
+            pos = tokens.index(keyword)
+        except ValueError as e:
+            print(keyword, tokens)
+            print(e)
+            exit(-1)
 
         # Try to extract content
         try:

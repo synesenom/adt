@@ -56,7 +56,7 @@
          * Sets the image source path.
          *
          * @method src
-         * @memberOf du.widgets.picture.Image
+         * @methodOf du.widgets.picture.Image
          * @param {string} path Path to the image source.
          */
         _w.attr.add(this, "src", "");

@@ -27,6 +27,7 @@ class _JS:
             'class': "@class",
             'method': "@method",
             'memberOf': "@memberOf",
+            'methodOf': "@methodOf",
             'requires': "@requires",
             'override': "@override",
             'type': "@type",
