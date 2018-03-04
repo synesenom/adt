@@ -43,8 +43,8 @@ var colors = {
 </script>
 <script class="doc">
 // create widget
-var width = parseFloat(d3.select("#widget").style("width"));
-var height = parseFloat(d3.select("#widget").style("height"));
+var width = parseInt(d3.select("#widget").style("width"));
+var height = parseInt(d3.select("#widget").style("height"));
 var legend = new du.widgets.Legend("mylegend", "#widget")
     .x((width - 280) / 2)
     .y(height / 3)
