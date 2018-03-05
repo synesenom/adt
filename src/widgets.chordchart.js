@@ -57,7 +57,7 @@
      * @constructor
      */
     function ChordChart(name, parent) {
-        var _w = Widget.call(this, name, "chordChart", "svg", parent);
+        var _w = Widget.call(this, name, "chordchart", "svg", parent);
 
         /**
          * Sets radius in pixels.

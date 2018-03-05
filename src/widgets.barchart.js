@@ -49,7 +49,7 @@
      * @constructor
      */
     function BarChart(name, parent) {
-        var _w = Widget.call(this, name, "bar-chart", "svg", parent);
+        var _w = Widget.call(this, name, "barchart", "svg", parent);
 
         /**
          * Makes the bar chart vertical, effectively swapping the axes.

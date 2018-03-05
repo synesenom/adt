@@ -49,7 +49,7 @@
      * @constructor
      */
     function PieChart(name, parent) {
-        var _w = Widget.call(this, name, "pieChart", "svg", parent);
+        var _w = Widget.call(this, name, "piechart", "svg", parent);
 
         /**
          * Sets the inner radius in pixels.

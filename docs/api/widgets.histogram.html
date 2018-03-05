@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700' rel='stylesheet'><link rel='stylesheet' type='text/css' href='https://cdn.rawgit.com/synesenom/whiteprint/master/wp.min.css'><style>img#logo{position:fixed;top:20px;right:20px;width:100px;}pre code{width: 100%;}</style><title>du.widgets.histogram</title></head><body><input type='checkbox' id='menu'><label for='menu' id='open'>☰</label><aside><div class='logo'>du.widgets.histogram</div><nav><div><input type='checkbox' id='s2-du.widgets.histogram'></input><label for='s2-du.widgets.histogram'>histogram</label><div class='s2'><input type='checkbox' id='s3-du.widgets.histogram.Histogram'></input><label for='s3-du.widgets.histogram.Histogram'>Histogram</label><div class='s3'><a href='#api-du.widgets.histogram.Histogram.min'>min</a><a href='#api-du.widgets.histogram.Histogram.max'>max</a><a href='#api-du.widgets.histogram.Histogram.bin'>bin</a><a href='#api-du.widgets.histogram.Histogram.normalize'>normalize</a><a href='#api-du.widgets.histogram.Histogram.data'>data</a><a href='#api-du.widgets.histogram.Histogram.highlight'>highlight</a></div></div></div></nav></aside><main><h2 id='api-du.widgets.histogram'>du.widgets.histogram</h2>Module implementing an interactive histogram. 
+<br><br>Requires: <code>d3@v4</code> <code>du.widgets.Widget</code><h2 id='api-du.widgets.histogram.Histogram'>Histogram</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram(name[, parent])</code></pre>
+<br>The bar chart widget class. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>name</i></td><td><code>string</code></td><td>Identifier of the widget.</td></tr><tr><td><i>parent</i></td><td><code>object</code></td><td>Parent element to append widget to. If not specified, widget is appended to body. <code>optional</code></td></tr></table>
+</div><br><h2 id='api-du.widgets.histogram.Histogram.min'>min</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.min(value)</code></pre>
+<br>Sets the lower boundary of the histogram. Default is unset (calculated automatically from data). 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>Value to set as lower boundary.</td></tr></table>
+</div><br><h2 id='api-du.widgets.histogram.Histogram.max'>max</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.max(value)</code></pre>
+<br>Sets the upper boundary of the histogram. Default is unset (calculated automatically from data). 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>Value to set as upper boundary.</td></tr></table>
+</div><br><h2 id='api-du.widgets.histogram.Histogram.bin'>bin</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.bin(size)</code></pre>
+<br>Sets the bin width of the histogram. Default is unset (calculated automatically from data using the Friedman-Diaconis rule). 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>size</i></td><td><code>number</code></td><td>Bin size to set.</td></tr></table>
+</div><br><h2 id='api-du.widgets.histogram.Histogram.normalize'>normalize</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.normalize(on)</code></pre>
+<br>Normalizes histogram counts to 1. Default is false. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>Whether normalization is on.</td></tr></table>
+</div><br><h2 id='api-du.widgets.histogram.Histogram.data'>data</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.data(data)</code></pre>
+<br>Binds data to the histogram. Data must be an array of values, binning is done by the chart itself. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Array of <code>x: (number|string), y: number</code> objects.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.histogram.Histogram</code></i></td><td>Reference to the current histogram.</td></tr></table></div><br><h2 id='api-du.widgets.histogram.Histogram.highlight'>highlight</h2>
+<div class='card'><pre><code>du.widgets.histogram.Histogram.highlight(key, duration)</code></pre>
+<br>Highlights the specified plot. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>key</i></td><td><code>string</code></td><td>Key of the line to highlight.</td></tr><tr><td><i>duration</i></td><td><code>number</code></td><td>Duration of the highlight animation.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.histogram.Histogram</code></i></td><td>Reference to the current histogram.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>

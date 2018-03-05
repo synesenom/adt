@@ -16,6 +16,7 @@
     <script src="../dl/widgets.chordchart.min.js"></script>
     <script src="../dl/widgets.grid.min.js"></script>
     <script src="../dl/widgets.hint.min.js"></script>
+    <script src="../dl/widgets.histogram.min.js"></script>
     <script src="../dl/widgets.label.min.js"></script>
     <script src="../dl/widgets.legend.min.js"></script>
     <script src="../dl/widgets.linechart.min.js"></script>
@@ -144,6 +145,7 @@
         "chordchart",
         "grid",
         "hint",
+        "histogram",
         "label",
         "legend",
         "linechart",
@@ -294,6 +296,20 @@
         .y(50)
         .text("This is a hint")
         .pin(true)
+        .render();
+
+    var histogram = new du.widgets.Histogram("histogram", "#histogram")
+        .describe("A histogram displaying some distribution.")
+        .data(new Array(1000).fill(0).map(function() {
+            return Math.exp(1 + Math.random()*2);
+        }))
+        .width(width)
+        .height(height)
+        .xLabel("bins")
+        .yLabel("count")
+        .margins({left: 60, top: 20, right: 20, bottom: 40})
+        .fontSize(12)
+        .colors("dodgerblue")
         .render();
 
     // Label

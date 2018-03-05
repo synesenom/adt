@@ -50,7 +50,7 @@
      * @constructor
      */
     function LineChart(name, parent) {
-        var _w = Widget.call(this, name, "lineChart", "svg", parent);
+        var _w = Widget.call(this, name, "linechart", "svg", parent);
 
         /**
          * Sets the type of the X axis.

@@ -9,12 +9,13 @@ var BarChart = require("./src/widgets.barchart");
 var ChordChart = require("./src/widgets.chordchart");
 var Grid = require("./src/widgets.grid");
 var Hint = require("./src/widgets.hint");
-var Image = require("./src/widgets.picture");
+var Histogram = require("./src/widgets.histogram");
 var Info = require("./src/widgets.info");
 var Label = require("./src/widgets.label");
 var Legend = require("./src/widgets.legend");
 var LineChart = require("./src/widgets.linechart");
 var Map = require("./src/widgets.map");
+var Picture = require("./src/widgets.picture");
 var PieChart = require("./src/widgets.piechart");
 var Slider = require("./src/widgets.slider");
 var Status = require("./src/widgets.status");
@@ -34,11 +35,12 @@ module.exports = {
         ChordChart: ChordChart,
         Grid: Grid,
         Hint: Hint,
-        Image: Image,
+        Histogram: Histogram,
         Info: Info,
         Label: Label,
         Legend: Legend,
         LineChart: LineChart,
+        Picture: Picture,
         PieChart: PieChart,
         Map: Map,
         Slider: Slider,

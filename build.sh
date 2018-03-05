@@ -16,6 +16,7 @@ AVAILABLE_MODULES=(
     "widgets.chordchart"
     "widgets.grid"
     "widgets.hint"
+    "widgets.histogram"
     "widgets.info"
     "widgets.label"
     "widgets.legend"
