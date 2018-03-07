@@ -18,7 +18,7 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../dl/widgets.min.js"></script>
+    <script src="../dl/widget.min.js"></script>
     <script src="../dl/widgets.barchart.min.js"></script>
     <script src="../dl/widgets.slider.min.js"></script>
     <title>slider | dashboard-utils</title>
@@ -74,7 +74,6 @@ var colors = {
 <script class="doc">
 // create chart
 var chart = new du.widgets.BarChart("mychart", "#chart")
-    .describe("A colorful bar chart displaying the volume of fruits in a virtual fridge.")
     .data(data[2016])
     .width(parseInt(d3.select("#chart").style("width")))
     .height(parseInt(d3.select("#chart").style("height")))

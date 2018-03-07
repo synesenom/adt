@@ -1,11 +1,22 @@
 /**
  * Module for creating and adding various widgets to an interactive dashboard.
  *
- * This module contains the base class for all widgets, and therefore it is required to be loaded.
+ * This module contains the base class for all widgets, and therefore it is required to be included.
  * All widgets come with some default functionality which are implemented in this module.
- * Furthermore, each widget has their own settings which are defined as properties of the widget. Each property of a
- * widget comes with a setter which is simply a function of the widget with the property name. For example, the
- * property <code>xLabel</code> is set by <code>Widget.xLabel("Some label")</code>.
+ * <br><br>
+ * There are some fundamental characteristics of all widgets that are listed here:
+ * <ul>
+ *     <li> Font family of the widget is inherited from the parent div (or body if parent is not specified).
+ *     <li> Some widgets come with methods to bind mouse events to them (mouseover, mouseleave and click).
+ *     <li> For chart widgets, data can be bound to the (but they are needed to be rendered once data is changed)
+ *          and the specific format of the data is described in the documentation of each chart.
+ *     <li> If otherwise not specified, widget methods are implemented in a way that they return a reference to the
+ *          current widget, in order to allow for chaining of the methods.
+ *     <li> Each widget comes with a method <code>describe</code> which binds an explanation pop-up block to the
+ *          context menu (right mouse click) on the widget.
+ *     <li> Similarly, each widget is shipped with a <code>placeholder</code> method to easily toggle between the
+ *          live widget and a static text replacement of it.
+ * </ul>
  *
  * With a few exception, most of the widget methods return a reference to the widget itself for chaining.
  *
@@ -28,13 +39,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  * @author Enys Mones (enys.mones@sony.com)
- * @module widgets
+ * @module widget
  * @memberOf du
  * @requires d3@v4
  * @requires lodash@4.17.4
  */
-// TODO add example pages
-// TODO add chart tooltip
 // TODO add boxplot
 // TODO add bubblechart
 // TODO add violin plot
@@ -42,9 +51,9 @@
 // TODO add heat map
 // TODO add calendar plot
 // TODO make plot data modifiable
-// TODO add description as an example
 // TODO clean up mouse event chaos
 // TODO add graph widget
+// TODO all mouse event should use the same arguments: data point, element selector
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -52,8 +61,7 @@
         define(['d3', '_', 'exports'], factory);
     } else {
         global.du = global.du || {};
-        global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Widget = factory(global.d3, global._);
+        global.du.Widget = factory(global.d3, global._);
     }
 } (this, function (d3, _) {
     "use strict";
@@ -74,7 +82,7 @@
          * The widget DOM element.
          *
          * @var {object} _widget
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @private
          */
         var _widget;
@@ -83,7 +91,7 @@
          * The widget ID.
          *
          * @var {string} _id
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @private
          */
         var _id = "du-widget-" + type + "-" + name;
@@ -111,7 +119,7 @@
          * Default widget attributes.
          *
          * @var {object} _attr
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @property {number} width Width in pixels.
          * @property {number} height Height in pixels.
          * @property {object} margins Object containing margins for each side.
@@ -129,7 +137,7 @@
              * Attribute categories.
              *
              * @var {object} _categories
-             * @memberOf du.widgets.Widget._attr
+             * @memberOf du.widget.Widget._attr
              * @private
              */
             _categories: {
@@ -137,7 +145,7 @@
                  * Dimension attributes.
                  *
                  * @var {Array} _dim
-                 * @memberOf du.widgets.Widget._attr._categories
+                 * @memberOf du.widget.Widget._attr._categories
                  */
                 dim: []
             },
@@ -146,7 +154,7 @@
              * Adds a new attribute to the widget.
              *
              * @method add
-             * @memberOf du.widgets.Widget._attr
+             * @memberOf du.widget.Widget._attr
              * @param {object} widget The widget to add the attribute to.
              * @param {string} name Name of the attribute.
              * @param {object} value Initial value of the attribute.
@@ -181,7 +189,7 @@
          * Default is false.
          *
          * @method relative
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {boolean} on True if relative position should be turned on.
          */
         _attr.add(this, "relative", false);
@@ -191,7 +199,7 @@
          * Default is 1.
          *
          * @method resize
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {boolean} scale Factor to resize widget with.
          */
         _attr.add(this, "resize", 1);
@@ -201,7 +209,7 @@
          * Default is 0px.
          *
          * @method x
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} x Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
          */
@@ -216,7 +224,7 @@
          * Default is 0px.
          *
          * @method y
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} y Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
          */
@@ -230,7 +238,7 @@
          * Sets widget width in pixels. Default is 200.
          *
          * @method width
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} w Width in pixels.
          */
         _attr.add(this, "width", 200, "dim");
@@ -239,7 +247,7 @@
          * Sets widget height in pixels. Default is 150.
          *
          * @method height
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} h Height in pixels.
          */
         _attr.add(this, "height", 150, "dim");
@@ -248,7 +256,7 @@
          * Sets widget margins. Default is 0 for all sides.
          *
          * @method margins
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {(number|object)} margins A single number to set all sides or an object specifying some of the sides.
          */
         _attr.add(this, "margins", {left: 0, right: 0, top: 0, bottom: 0}, "dim", function(margins) {
@@ -268,7 +276,7 @@
          * Sets widget borders. Default is null for all sides.
          *
          * @method borders
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {object) borders An object specifying some of the sides.
          */
         _attr.add(this, "borders", {left: null, right: null, top: null, bottom: null}, null, function(borders) {
@@ -283,7 +291,7 @@
          * Default is black.
          *
          * @method fontColor
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} color Color to set font and axes to.
          */
         _attr.add(this, "fontColor", "black");
@@ -293,7 +301,7 @@
          * Default is 10.
          *
          * @method fontSize.
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} size Font size in pixels.
          */
         _attr.add(this, "fontSize", 10);
@@ -303,7 +311,7 @@
          * Default is normal.
          *
          * @method fontWeight
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} weight Font weight.
          */
         _attr.add(this, "fontWeight", "normal");
@@ -313,7 +321,7 @@
          * Default is an empty string.
          *
          * @method label
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "label", null);
@@ -323,7 +331,7 @@
          * Default is an empty string.
          *
          * @method xLabel
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "xLabel", null);
@@ -333,7 +341,7 @@
          * Default is an empty string.
          *
          * @method yLabel
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} text Label text.
          */
         _attr.add(this, "yLabel", null);
@@ -355,7 +363,7 @@
          * Default is an SI prefixed number.
          *
          * @method yTickFormat
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {function} format Function that converts a number to a string.
          */
         _attr.add(this, "yTickFormat", function(x) {
@@ -367,7 +375,7 @@
          * Default is 0.
          *
          * @method xTickAngle
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} angle The angle to set.
          */
         _attr.add(this, "xTickAngle", null);
@@ -377,7 +385,7 @@
          * Default is 0.
          *
          * @method yMin
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number} value Value to set vertical minimum to.
          */
         _attr.add(this, "yMin", 0);
@@ -390,7 +398,7 @@
          * Default is null.
          *
          * @method mouseover
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on mouseover.
          */
         _attr.add(this, "mouseover", null);
@@ -403,7 +411,7 @@
          * Default is null.
          *
          * @method mouseleave
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on mouseleave.
          */
         _attr.add(this, "mouseleave", null);
@@ -416,7 +424,7 @@
          * Default is null.
          *
          * @method click
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on click.
          */
         _attr.add(this, "click", null);
@@ -426,7 +434,7 @@
          * Default is #888.
          *
          * @method colors
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {(string|object)} color Single color to set all plot elements or an object specifying the color of
          * each plot.
          */
@@ -437,7 +445,7 @@
          * Default is false.
          *
          * @method tooltip
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {boolean} enable If tooltip should be enabled.
          */
         _attr.add(this, "tooltip", false);
@@ -446,7 +454,7 @@
          * Collection of some convenience methods.
          *
          * @namespace _utils
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @private
          */
         var _utils = (function () {
@@ -454,7 +462,7 @@
              * Encodes a plot key by replacing spaces with double underscore.
              *
              * @method encode
-             * @memberOf du.widgets.Widget.utils
+             * @memberOf du.widget.Widget.utils
              * @param {string} key Key to encode.
              * @returns {string} Encoded key if key is valid, empty string otherwise.
              * @private
@@ -471,7 +479,7 @@
              * Also calculates the sorted range of values for the X axis.
              *
              * @method boundary
-             * @memberOf du.widgets.Widget._utils
+             * @memberOf du.widget.Widget._utils
              * @param {Array} data Array of {x: number, y: object} pairs where y is an object containing various Y
              * values for different keys.
              * @param {{x: Array, y: Array}=} constraints Object containing additional constraints on the boundary.
@@ -560,7 +568,7 @@
              * Calculates axis scales from a boundary.
              *
              * @method scale
-             * @memberOf du.widgets.Widget.utils
+             * @memberOf du.widget.Widget.utils
              * @param {{x: Array, y: Array}} boundary Object describing the boundary.
              * @param {number} width Width of the plotting area.
              * @param {number} height Height of the plotting area.
@@ -605,7 +613,7 @@
              * Highlights an element in the widget.
              *
              * @method highlight
-             * @memberOf du.widgets.Widget.utils
+             * @memberOf du.widget.Widget.utils
              * @param {object} svg The inner SVG of the widget.
              * @param {string} selector Selector of the widget elements.
              * @param {string} key Key of the element to highlight.
@@ -643,7 +651,7 @@
          * Shows/hides the tooltip.
          *
          * @method _showTooltip
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string?} content HTML content of the tooltip. If not specified, tooltip is removed.
          * @private
          */
@@ -720,7 +728,7 @@
          * Returns the widget ID.
          *
          * @method id
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @returns {string}
          */
         this.id = function() {
@@ -731,7 +739,7 @@
          * The rendering methods of the widget.
          *
          * @namespace _render
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @private
          */
         var _render = {
@@ -740,10 +748,10 @@
              * Must be overridden.
              *
              * @method build
-             * @memberOf du.widgets.Widget._render
+             * @memberOf du.widget.Widget._render
              */
             build: function () {
-                //throw new Error("du.widgets.Widgets Error: build() is not implemented");
+                //throw new Error("du.widget.Widgets Error: build() is not implemented");
             },
 
             /**
@@ -751,10 +759,10 @@
              * Must be overridden.
              *
              * @method update
-             * @memberOf du.widgets.Widget._render
+             * @memberOf du.widget.Widget._render
              */
             update: function () {
-                //throw new Error("du.widgets.Widgets Error: update() is not implemented");
+                //throw new Error("du.widget.Widgets Error: update() is not implemented");
             },
 
             /**
@@ -762,10 +770,10 @@
              * Must be overridden.
              *
              * @method style
-             * @memberOf du.widgets.Widget._render
+             * @memberOf du.widget.Widget._render
              */
             style: function () {
-                //throw new Error("du.widgets.Widgets Error: style() is not implemented");
+                //throw new Error("du.widget.Widgets Error: style() is not implemented");
             }
         };
 
@@ -773,9 +781,9 @@
          * Renders the widget. Note that without calling this method, the widget is not rendered at all.
          *
          * @method render
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {number=} duration Duration of the rendering transition. If not specified, 500 ms is applied.
-         * @returns {du.widgets.Widget} Reference to the current widget.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         this.render = function (duration) {
             // Calculate final duration to use
@@ -889,9 +897,9 @@
          * After 15 second or if the user leaves the widget, the description disappears.
          *
          * @method describe
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} content Content of the description. Can be HTML formatted.
-         * @returns {du.widgets.Widget} Reference to the current widget.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         this.describe = function(content) {
             var _description = null;
@@ -943,7 +951,7 @@
          * Useful for showing missing data.
          *
          * @method placeholder
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          * @param {string} content Content to show in place of the widget. Can be HTML formatted. If nothing is passed,
          * the widget is shown again.
          */
@@ -997,7 +1005,7 @@
          * Removes widget from DOM.
          *
          * @method remove
-         * @memberOf du.widgets.Widget
+         * @memberOf du.widget.Widget
          */
         this.remove = function() {
             _widget.remove();

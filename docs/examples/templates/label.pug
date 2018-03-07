@@ -1,0 +1,25 @@
+- var name = "label"
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.label"]
+- var description = "A label is simply a static text. The content can be HTML formatted, but direct formatting should be avoided."
+
+include example.pug
+
+script.doc.
+    // create widget
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var label = new du.widgets.Label("mylabel", "#widget")
+        .width(width)
+        .height(height)
+        .label("&ldquo;I have a dream&rdquo;")
+        .fontSize(24)
+        .fontColor("dodgerblue")
+        .render();
+script.
+    window.onresize = function () {
+        label
+            .width(parseFloat(d3.select("#widget").style("width")))
+            .height(parseFloat(d3.select("#widget").style("height")))
+            .render();
+    };

@@ -49,9 +49,9 @@
 // TODO add country name in center of largest land
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widgets'));
+        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'widgets', 'exports'], factory);
+        define(['d3', '_', 'topojson', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};

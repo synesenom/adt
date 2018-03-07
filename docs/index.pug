@@ -1,0 +1,59 @@
+- var name = "dashboard-utils";
+- var sections = [{name: "description", content: "<span style='color:dodgerblue;font-weight:bold'>dashboard-utils</span> is a collection of useful modules for building interactive dashboards. It is built on top of the original <a href=\'https://github.com/sonyxperiadev/adt\'>adt</a> library that Sony Mobile was so generous to open source."}, {name: "installing", children: [{name: "browser", content: "Just include the required modules (and their dependencies):<pre><code class='css'>&lt;script src='module_name.min.js'&gt;&lt;/script&gt;</code></pre>"}, {name: "node", content: "<pre><code class='bash'>npm install dashboard-utils</code></pre>"}]}, {name: "requirements", content: "Some of the modules rely on external libraries. Here is a complete list of all dependencies:<dl class='custom'><dt><code>d3@4</code></dt><dd>SVG manipulation library. [ <a href='https://d3js.org'>website</a> ]</dd><dt><code>topojson</code></dt><dd>Module for reading TopoJSON files. [ <a href='https://github.com/topojson'>github</a> ]</dd><dt><code>lodash</code></dt><dd>A set of useful utility methods. [ <a href='https://lodash.com'>website</a> ]</dd></dl>For module specific dependencies, see the documentation."}, {name: "examples", content: "<a href='examples'>Here</a> is a list of some of the modules and features which can help you start off with the library."}, {name: "docs", content: "Below you find the contents of the API documentation for the modules. With the exception of the widgets, each module is a standalone script that can be loaded and used as it is right out of the box. For the widgets, the module <code>du.widget</code> needs to be loaded first.", children: [{name: "data", content: "A collection of useful data structures for representing and manipulating various data sets.", links: true}, {name: "rest", content: "Some convenience methods for accessing REST APIs for different file formats.", links: true}, {name: "signals", content: "A module for managing event subscriptions and event emitters.", links: true}, {name: "system", content: "Namespace for system related operations such as logging and version management.", children: [{name: "system.log", content: "An enhanced logger for development and monitoring during production.", links: true}, {name: "system.version", content: "Module for automatic version checking and version updates.", links: true}]}, {name: "user", content: "Collection of methods for handling different user inputs", links: true}, {name: "widget", content: "The base class for all widgets. Methods implemented for this class are available for all dashboard components.", links: true}, {name: "widgets", content: "The namespace of all available dashboard widgets. Widgets can be charts showing data, control elements to interact with the data or static labels or hints.", children: [{name: "widgets.areachart", content: "An interactive area chart for volume like data.", links: true}, {name: "widgets.barchart", content: "An interactive bar chart for categorical data.", links: true}, {name: "widgets.chordchart", content: "An interactive chord chart to visualize flow data.", links: true}, {name: "widgets.grid", content: "A flexible grid that can contain and manage multiple other widgets.", links: true}, {name: "widgets.hint", content: "Small text bubbles for providing aid to the user about the dashboard elements.", links: true}, {name: "widgets.info", content: "An information window that can be used to provide more detailed description (help menu, about) for the dashboard", links: true}, {name: "widgets.label", content: "A static piece of text.", links: true}, {name: "widgets.legend", content: "A block of labels with colored squares to interact with the different quantities shown on the dashboard.", links: true}, {name: "widgets.linechart", content: "An interactive line chart for trend type data.", links: true}, {name: "widgets.map", content: "An interactive world map with convenience methods to show static or dynamic data.", links: true}, {name: "widgets.picture", content: "A static image.", links: true}, {name: "widgets.piechart", content: "An interactive pie chart for visualizing low dimensional categorical data.", links: true}, {name: "widgets.slider", content: "A slider control element to interact with the data in one dimension.", links: true}, {name: "widgets.status", content: "A static label with a value that can be dynamically updated.", links: true}]}]}];
+
+mixin menuEntry(e, id, level)
+    unless e.children
+        a(href='#'+id) #{e.name}
+    else
+        input(id='s' + level + '-' + e.name, type='checkbox')
+        label(for='s' + level + '-' + e.name) #{e.name}
+        div(class='s' + level)
+            each child in e.children
+                +menuEntry(child, id+'-'+child.name, level+1)
+
+//- Adds a main content entry recursively
+mixin mainEntry(e, id, level)
+    - var tag = 'h' + level
+    #{tag}(id=id) #{e.name}
+    if e.content
+        | !{e.content}
+    if e.links
+        br
+        | [&nbsp;
+        a(href='api/' + e.name + '.html') documentation
+        | &nbsp;] [&nbsp;
+        a(href='dl/' + e.name + '.min.js') source
+        | &nbsp;]
+    if e.children
+        each child in e.children
+            +mainEntry(child, id + '-' + child.name, level+1)
+
+doctype html
+html(lang='en')
+head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700')
+    link(rel='stylesheet', type='text/css', href='dependencies/wp.min.css')
+    link(rel='stylesheet', type='text/css', href='dependencies/highlight.min.css')
+    script(src='dependencies/highlight.9.12.0.min.js')
+    script.
+        hljs.initHighlightingOnLoad();
+    title home | #{name}
+body
+    input#menu(type='checkbox')
+    label#open(for='menu') ☰
+
+    //- Navigation bar
+    aside
+        .logo #{name}
+        nav
+            div
+                each section in sections
+                    +menuEntry(section, section.name, 1)
+
+    //- Main content
+    main(style='margin-bottom:30px')
+        label#exit(for='menu')
+        each section in sections
+            +mainEntry(section, section.name, 1)

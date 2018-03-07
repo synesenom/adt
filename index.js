@@ -1,49 +1,27 @@
-var data = require("./src/data");
-var rest = require("./src/rest");
-var signals = require("./src/signals");
-var systemLog = require("./src/system.log");
-var systemVersion = require("./src/system.version");
-var user = require("./src/user");
-var AreaChart = require("./src/widgets.areachart");
-var BarChart = require("./src/widgets.barchart");
-var ChordChart = require("./src/widgets.chordchart");
-var Grid = require("./src/widgets.grid");
-var Hint = require("./src/widgets.hint");
-var Histogram = require("./src/widgets.histogram");
-var Info = require("./src/widgets.info");
-var Label = require("./src/widgets.label");
-var Legend = require("./src/widgets.legend");
-var LineChart = require("./src/widgets.linechart");
-var Map = require("./src/widgets.map");
-var Picture = require("./src/widgets.picture");
-var PieChart = require("./src/widgets.piechart");
-var Slider = require("./src/widgets.slider");
-var Status = require("./src/widgets.status");
-
 module.exports = {
-    data: data,
-    rest: rest,
-    signals: signals,
+    data: require("./src/data"),
+    rest: require("./src/rest"),
+    signals: require("./src/signals"),
     system: {
-        log: systemLog,
-        version: systemVersion
+        log: require("./src/system.log"),
+        version: require("./src/system.version")
     },
-    user: user,
+    user: require("./src/user"),
     widgets: {
-        AreaChart: AreaChart,
-        BarChart: BarChart,
-        ChordChart: ChordChart,
-        Grid: Grid,
-        Hint: Hint,
-        Histogram: Histogram,
-        Info: Info,
-        Label: Label,
-        Legend: Legend,
-        LineChart: LineChart,
-        Picture: Picture,
-        PieChart: PieChart,
-        Map: Map,
-        Slider: Slider,
-        Status: Status
+        AreaChart: require("./src/widgets.areachart"),
+        BarChart: require("./src/widgets.barchart"),
+        ChordChart: require("./src/widgets.chordchart"),
+        Grid: require("./src/widgets.grid"),
+        Hint: require("./src/widgets.hint"),
+        Histogram: require("./src/widgets.histogram"),
+        Info: require("./src/widgets.info"),
+        Label: require("./src/widgets.label"),
+        Legend: require("./src/widgets.legend"),
+        LineChart: require("./src/widgets.linechart"),
+        Map: require("./src/widgets.map"),
+        Picture: require("./src/widgets.picture"),
+        PieChart: require("./src/widgets.piechart"),
+        Slider: require("./src/widgets.slider"),
+        Status: require("./src/widgets.status")
     }
 };

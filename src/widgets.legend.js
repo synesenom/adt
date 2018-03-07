@@ -25,17 +25,17 @@
  * @module legend
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires du.widgets.Widget
+ * @requires du.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('./widgets'));
+        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'widgets', 'exports'], factory);
+        define(['d3', '_', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Legend = factory(global.d3, global._, global.du.widgets.Widget, global);
+        global.du.widgets.Legend = factory(global.d3, global._, global.du.Widget);
     }
 } (this, function (d3, _, Widget) {
     "use strict";

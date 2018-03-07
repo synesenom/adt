@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700" rel="stylesheet">
+    <script src="../dependencies/d3.v4.min.js"></script>
+    <script src="../dependencies/lodash.4.17.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css">
+    <link rel="stylesheet" type="text/css" href="../style/examples.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="../dependencies/codedoc.min.js"></script>
+    <script>
+        codedoc.heading()
+            .callback(function() {
+                hljs.initHighlighting.called = false;
+                hljs.initHighlighting();
+            });
+    </script>
+    <script src="../dl/widget.min.js"></script>
+    <script src="../dl/widgets.piechart.min.js"></script>
+    <title>description | dashboard-utils</title>
+</head>
+<body>
+<main>
+    <div id="widget"></div>
+    <h1>description</h1>
+    <div id="desc">
+        A description of a widget is a pop-up block that can be used to detail the content and function of the
+        corresponding widget.
+        Each widget comes with the method <code>describe</code> that binds the description menu to the right-click
+        event on the widget.
+    </div>
+    <div id="code-doc"></div>
+    <div id="doc-link">
+        [ <a href="../api/widget.html">documentation</a> ]
+    </div>
+</main>
+<script class="doc">
+// generate some data
+var data = [
+    {name: "orange", value: 3, color: "orange"},
+    {name: "mango", value: 4, color: "tomato"},
+    {name: "banana", value: 4, color: "gold"},
+    {name: "apple", value: 2, color: "yellowgreen"}
+];
+</script>
+<script class="doc">
+// create chart
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var chart = new du.widgets.PieChart("mychart", "#widget")
+    .describe("A pie chart showing the available delicious fruit in a basket")
+    .data(data)
+    .x(width/2 - height/2 + 10)
+    .innerRadius(height / 8)
+    .outerRadius(height / 2 - 10)
+    .label("fruits")
+    .margins(30)
+    .fontSize(14)
+    .ticks(true)
+    .render();
+</script>
+<script>
+    window.onresize = function() {
+        width = parseFloat(d3.select("#widget").style("width"));
+        height = parseFloat(d3.select("#widget").style("height"));
+        chart
+            .x(width/2 - height/2 + 10)
+            .innerRadius(height / 8)
+            .outerRadius(height / 2 - 10)
+            .render();
+    };
+</script>
+</body>
+</html>

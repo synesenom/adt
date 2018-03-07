@@ -10,7 +10,7 @@ AVAILABLE_MODULES=(
     "system.log"
     "system.version"
     "user"
-    "widgets"
+    "widget"
     "widgets.areachart"
     "widgets.barchart"
     "widgets.chordchart"

@@ -18,7 +18,7 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../dl/widgets.min.js"></script>
+    <script src="../dl/widget.min.js"></script>
     <script src="../dl/widgets.histogram.min.js"></script>
     <title>histogram | dashboard-utils</title>
 </head>
@@ -43,7 +43,6 @@
 var data = new Array(1000).fill(0).map(function() {
     return Math.exp(1 + Math.random()*2);
 });
-console.log(data);
 </script>
 <script class="doc">
 // create chart
@@ -52,7 +51,6 @@ console.log(data);
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var chart = new du.widgets.Histogram("mychart", "#widget")
-    .describe("A histogram displaying some distribution.")
     .data(data)
     .width(width)
     .height(height)

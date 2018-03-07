@@ -18,7 +18,7 @@
                 hljs.initHighlighting();
             });
     </script>
-    <script src="../dl/widgets.min.js"></script>
+    <script src="../dl/widget.min.js"></script>
     <script src="../dl/widgets.areachart.min.js"></script>
     <title>area chart | dashboard-utils</title>
 </head>
@@ -57,7 +57,6 @@ var data = Array.from(new Array(100).keys()).map(function(i) {
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var chart = new du.widgets.AreaChart("mychart", "#widget")
-    .describe("An area chart showing two hypothetical density functions.")
     .data(data)
     .width(width)
     .height(height)

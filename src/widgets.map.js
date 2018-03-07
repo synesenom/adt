@@ -44,18 +44,18 @@
  * @requires lodash@4.17.4
  * @requires d3@v4
  * @requires topojson@v1
- * @requires du.widgets.Widget
+ * @requires du.Widget
  */
 // TODO separate paths content from module
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widgets'));
+        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'widgets', 'exports'], factory);
+        define(['d3', '_', 'topojson', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.du.widgets.Widget);
+        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.du.Widget);
     }
 } (this, function (d3, _, topojson, Widget) {
     "use strict";

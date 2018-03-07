@@ -23,17 +23,17 @@
  * @module grid
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires du.widgets.Widget
+ * @requires du.widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widgets'), exports);
+        module.exports = factory(require('d3'), require('./widget'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'widgets', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Grid = factory(global.d3, global.du.widgets.Widget, global);
+        global.du.widgets.Grid = factory(global.d3, global.du.Widget);
     }
 } (this, function (d3, Widget) {
     "use strict";
@@ -95,7 +95,7 @@
          * otherwise it is measured from the right.
          * @param {string=} dim Distance dimension. If not specified, pixels are used.
          * @returns {du.widgets.grid.Grid} Reference to the current widget.
-         * @override {du.widgets.Widget.x}
+         * @override {du.widget.Widget.x}
          */
         this.x = function (x, dim) {
             // Convert percentage to pixel
@@ -113,7 +113,7 @@
          * otherwise it is measured from the bottom.
          * @param {string=} dim Distance dimension. If not specified, pixels are used.
          * @returns {du.widgets.grid.Grid} Reference to the current widget.
-         * @override {du.widgets.Widget.y}
+         * @override {du.widget.Widget.y}
          */
         this.y = function (y, dim) {
             // Convert percentage to pixel
@@ -238,12 +238,12 @@
          *
          * @method add
          * @memberOf du.widgets.grid.Grid
-         * @param {du.widgets.Widget} widget Widget to add.
+         * @param {du.widget.Widget} widget Widget to add.
          * @param {number} column Column index of the cell to add widget to.
          * @param {number} row Row index of the cell to add widget to.
          * @param {number} width Number of columns to occupy.
          * @param {number} height Number of rows to occupy.
-         * @returns {?du.widgets.Widget} The added widget if cells are available and free, null pointer othetwise.
+         * @returns {?du.widget.Widget} The added widget if cells are available and free, null pointer othetwise.
          */
         this.add = function (widget, column, row, width, height) {
             // Check if widget is inside grid
@@ -300,7 +300,7 @@
          * @memberOf du.widgets.grid.Grid
          * @param {number} row Row of the cell to get widget for.
          * @param {number} column Column of the cell to get widget for.
-         * @returns {?du.widgets.Widget} The widget in the specified cell if cell is in grid and it is not empty,
+         * @returns {?du.widget.Widget} The widget in the specified cell if cell is in grid and it is not empty,
          * null pointer otherwise.
          */
         this.get = function(row, column) {
