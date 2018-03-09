@@ -1,0 +1,45 @@
+- var name = "histogram"
+- var links = {source: "widgets.histogram", docs: "widgets.histogram"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.histogram"]
+- var description = "A histogram shows the <span class='good'>binned counts</span> of a set of values. It is useful if we want to understand how the data is <span class='good'>distributed</span> over the range of possible values. In a histogram, bars are related to each other as they <span class='good'>sum up</span> to the total number of data points."
+include templates/example
+script.doc.
+    // generate some data
+    var data = new Array(1000).fill(0).map(function () {
+        return Math.exp(1 + Math.random() * 2);
+    });
+script.doc.
+    // create chart
+    // Do no set bins and calculate them using the
+    // Friedman-Diaconis rule
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var histogram = new du.widgets.Histogram("mychart", "#widget")
+        .data(data)
+        .width(width)
+        .height(height)
+        .xLabel("bins")
+        .yLabel("count")
+        .margins(60)
+        .fontSize(14)
+        .colors("dodgerblue")
+        .normalize(true)
+        .render();
+script.doc.
+    // add interactions
+    histogram
+        .mouseover(function (k, i) {
+            // Highlight hovered bin
+            histogram.highlight(i, 300);
+        })
+        .mouseleave(function () {
+            // Remove highlights by passing null
+            histogram.highlight(null, 300);
+        })
+        .click(function (k, i) {
+            // Show an alert on click
+            alert("Bin clicked: '" + i + "'");
+        })
+        .render();
++resize()

@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.linechart.min.js"></script><script src="../dl/widgets.grid.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+    .callback(function() {
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+});</script><title>grid | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Grids are useful for organizing multiple widgets in a structured manner. Once widgets are added to the grid, they are automatically rescaled when the grid width/height is changed.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.grid.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.grid.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
+var data = Array.from(new Array(100).keys()).map(function (i) {
+    return {
+        x: i,
+        y: {
+            mango: 10 * Math.pow(i / 40, 2),
+            kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+        },
+        dy: {
+            mango: i / 10,
+            kiwi: 6
+        }
+    }
+});</script><script class="doc">// create grid
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var grid = new du.widgets.Grid("mygrid", "#widget")
+    .width(width)
+    .height(height)
+    .margins(5)
+    .rows(2)
+    .cols(3)
+    .render();</script><script class="doc">// add widgets
+// Note that we don't need to set parent, the grid automatically
+// becomes the widget's parent. Also, widgets are always rendered
+// with the grid.
+grid.add(new du.widgets.LineChart("chart1")
+    .margins({left: 30, top: 10, right: 10, bottom: 20})
+    .fontSize(10)
+    .colors({mango: "tomato", kiwi: "limegreen"})
+    .data(data), 0, 0, 1, 2);
+grid.add(new du.widgets.LineChart("chart2")
+    .margins({left: 30, top: 10, right: 10, bottom: 20})
+    .fontSize(10)
+    .colors({mango: "tomato", kiwi: "limegreen"})
+    .data(data), 1, 0, 1, 1);
+grid.add(new du.widgets.LineChart("chart3")
+    .margins({left: 30, top: 10, right: 10, bottom: 20})
+    .fontSize(10)
+    .colors({mango: "tomato", kiwi: "limegreen"})
+    .data(data), 2, 0, 1, 1);
+grid.add(new du.widgets.LineChart("chart4")
+    .margins({left: 30, top: 10, right: 10, bottom: 20})
+    .fontSize(10)
+    .colors({mango: "tomato", kiwi: "limegreen"})
+    .data(data), 1, 1, 2, 1);</script><script>window.onresize = function () {
+    grid
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

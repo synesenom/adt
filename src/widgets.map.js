@@ -47,6 +47,7 @@
  * @requires du.Widget
  */
 // TODO separate paths content from module
+// TODO fix static layer rescale bug
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));

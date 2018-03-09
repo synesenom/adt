@@ -1,0 +1,39 @@
+- var name = "dashboard-utils"
+- var dependencyDir = "../dependencies/"
+- var cssDependencies = ["wp"]
+- var jsDependencies = ["d3.v4", "lodash.4.17.4", "topojson.v1"]
+- var modulesDir = "../dl/"
+- var modules = ["widget", "widgets.areachart", "widgets.barchart", "widgets.chordchart", "widgets.grid", "widgets.hint", "widgets.histogram","widgets.label", "widgets.legend", "widgets.linechart", "widgets.map", "widgets.picture", "widgets.piechart", "widgets.slider", "widgets.status"]
+- var examples = ["areachart", "barchart", "chordchart", "grid", "hint", "histogram", "label", "legend", "linechart", "map", "picture", "piechart", "placeholder", "slider", "status"]
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700')
+        each css in cssDependencies
+            link(rel='stylesheet', type='text/css', href=dependencyDir + css + '.min.css')
+        link(rel='stylesheet', type='text/css', href='../style/examples-page.css')
+        each js in jsDependencies
+            script(src=dependencyDir + js + '.min.js')
+        each module in modules
+            script(src=modulesDir + module + '.min.js')
+        title catalogue | #{name}
+
+    body
+        main
+            h1 catalogue
+            .examples
+                each example in examples
+                    if example
+                        .example-container
+                            .example
+                                a(href=example + '.html')
+                                    .widget-container
+                                        - var title = example.charAt(0).toUpperCase() + example.slice(1,  example.length)
+                                        .widget-name #{title}
+                                            div.widget(id=example)
+
+    script
+        include:uglify-js js/examples.js

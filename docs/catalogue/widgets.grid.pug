@@ -1,0 +1,58 @@
+- var name = "grid"
+- var links = {source: "widgets.grid", docs: "widgets.grid"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.linechart", "widgets.grid"]
+- var description = "Grids are useful for organizing multiple widgets in a structured manner. Once widgets are added to the grid, they are automatically rescaled when the grid width/height is changed."
+include templates/example
+script.doc.
+    // generate some data
+    var data = Array.from(new Array(100).keys()).map(function (i) {
+        return {
+            x: i,
+            y: {
+                mango: 10 * Math.pow(i / 40, 2),
+                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+            },
+            dy: {
+                mango: i / 10,
+                kiwi: 6
+            }
+        }
+    });
+script.doc.
+    // create grid
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var grid = new du.widgets.Grid("mygrid", "#widget")
+        .width(width)
+        .height(height)
+        .margins(5)
+        .rows(2)
+        .cols(3)
+        .render();
+script.doc.
+    // add widgets
+    // Note that we don't need to set parent, the grid automatically
+    // becomes the widget's parent. Also, widgets are always rendered
+    // with the grid.
+    grid.add(new du.widgets.LineChart("chart1")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .colors({mango: "tomato", kiwi: "limegreen"})
+        .data(data), 0, 0, 1, 2);
+    grid.add(new du.widgets.LineChart("chart2")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .colors({mango: "tomato", kiwi: "limegreen"})
+        .data(data), 1, 0, 1, 1);
+    grid.add(new du.widgets.LineChart("chart3")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .colors({mango: "tomato", kiwi: "limegreen"})
+        .data(data), 2, 0, 1, 1);
+    grid.add(new du.widgets.LineChart("chart4")
+        .margins({left: 30, top: 10, right: 10, bottom: 20})
+        .fontSize(10)
+        .colors({mango: "tomato", kiwi: "limegreen"})
+        .data(data), 1, 1, 2, 1);
++resize()

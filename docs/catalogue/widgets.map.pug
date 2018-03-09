@@ -1,0 +1,65 @@
+- var name = "map"
+- var links = {source: "widgets.map", docs: "widgets.map"}
+- var libs = ["d3.v4", "lodash.4.17.4", "topojson.v1"]
+- var modules = ["widget", "widgets.map"]
+- var description = "A map can be used when data with <span class='good'>geographic location</span> is to be shown. It can be used to display <span class='good'>static distributions</span> or <span class='good'>dynamic changes</span> in an application showing real-time data."
+include templates/example
+script.doc.
+    // create map
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var map = new du.widgets.Map("map", "#widget")
+        .width(width)
+        .height(height)
+        .labels(true)
+        .backgroundColor("white")
+        .borderColor("white")
+        .foregroundColor("#aaa")
+        .render();
+script.doc.
+    // add colors to countries
+    var colors = {};
+    map.countries.population().forEach(function (d) {
+        colors[d.name] = d3.hsl(Math.random() * 180, 0.4, 0.5);
+    });
+
+    // set colors
+    map.colors(colors)
+        .render();
+script.doc.
+    // show capitals
+    // scale log of population
+    var scale = function (x) {
+        var pop = map.countries.population().filter(function (d) {
+            return d.population > 0;
+        });
+        var min = d3.min(pop, function (d) {
+            return Math.log(d.population + 1);
+        });
+        var max = d3.max(pop, function (d) {
+            return Math.log(d.population + 1);
+        });
+        return (Math.log(x) - min) / (max - min);
+    };
+
+    // add dots to capitals at random times
+    map.staticLayer.add("capitals");
+    map.dynamicLayer.add("capitals");
+    map.countries.capital().forEach(function (d) {
+        // dot size is proportional to log(population)
+        var latLon = [d.capital.lat, d.capital.lon];
+        setTimeout(function () {
+            // static layer
+            map.staticLayer.draw.circle("capitals",
+                latLon,
+                5 * (scale(map.countries.population(d.name)) - 0.2),
+                "#444");
+
+            // dynamic layer
+            map.dynamicLayer.draw.circle("capitals",
+                latLon,
+                20 * scale(map.countries.population(d.name)),
+                "#444", 1000);
+        }, Math.random() * 3000);
+    });
++resize()

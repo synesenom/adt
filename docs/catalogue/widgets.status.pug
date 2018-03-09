@@ -1,0 +1,45 @@
+- var name = "status"
+- var links = {source: "widgets.status", docs: "widgets.status"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.status"]
+- var description = "A status is a changing status value along with a static label."
+- var style = "font-family:'Courier',monospace"
+include templates/example
+script.doc.
+    // create widget
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var statusLabel = new du.widgets.Status("status", "#widget")
+        .x((width - 240) / 2)
+        .width(240)
+        .height(height)
+        .label("π ≈")
+        .fontSize(24)
+        .render();
+script.doc.
+    // add status value
+    var k = 0,
+        n = 0,
+        iMax = 100;
+    (function estimate() {
+        for (var i = 0; i < iMax; i++) {
+            if (Math.pow(Math.random(), 2) + Math.pow(Math.random(), 2) < 1)
+                k++;
+        }
+        n += iMax;
+        iMax = parseInt(Math.max(iMax * 1.001, 10000));
+        statusLabel
+            .value((4 * k / n).toFixed(10))
+            .render();
+        setTimeout(estimate, 100);
+    })();
+script.
+    window.onresize = function () {
+        var width = parseFloat(d3.select("#widget").style("width"));
+        var height = parseFloat(d3.select("#widget").style("height"));
+        statusLabel
+            .x((width - 240) / 2)
+            .width(240)
+            .height(height)
+            .render();
+    };

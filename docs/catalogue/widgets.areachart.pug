@@ -1,0 +1,49 @@
+- var name = "areachart"
+- var links = {source: "widgets.areachart", docs: "widgets.areachart"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.areachart"]
+- var description = "Area charts are used to show <span class='good'>numerical series</span> in which consecutive values have a relationship. Good examples are time series of <span class='good'>volume type data</span> (e.g., sales) or a density distribution of some quantity (probability density).<br><br> Due to its transparent nature, only a <span class='bad'>few plots</span> should be used to avoid unrecognizable boundaries."
+include templates/example
+script.doc.
+    // generate some data
+    var data = Array.from(new Array(100).keys()).map(function (i) {
+        return {
+            x: i,
+            y: {
+                mango: 10 * Math.pow(i / 40, 2),
+                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+            }
+        }
+    });
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var areachart = new du.widgets.AreaChart("mychart", "#widget")
+        .data(data)
+        .width(width)
+        .height(height)
+        .xLabel("value")
+        .yLabel("probability density")
+        .margins(40)
+        .fontSize(14)
+        .tooltip(true)
+        .colors({mango: "tomato", kiwi: "limegreen"})
+        .render();
+script.doc.
+    // add interactions
+    areachart
+        .mouseover(function (k) {
+            // Highlight hovered plot
+            chart.highlight(k, 300);
+        })
+        .mouseleave(function () {
+            // Remove highlights by passing null
+            chart.highlight(null, 300);
+        })
+        .click(function (k) {
+            // Show an alert on click
+            alert("Plot clicked: '" + k + "'");
+        })
+        .render();
++resize()

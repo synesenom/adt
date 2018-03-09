@@ -1,0 +1,54 @@
+- var name = "piechart"
+- var links = {source: "widgets.piechart", docs: "widgets.piechart"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.piechart"]
+- var description = "A pie chart represents one dimensional <span class='good'>categorical data</span> of positive numbers only. The angle of each sector is proportional to the value of the corresponding category. It is useful when <span class='good'>fractions</span> of a whole (especially percentages) are to be shown for a <span class='good'>few categories</span> (5-7) and the focus is on <span class='good'>large differences</span> among categories rather than nuances.<br><br>However, <span class='bad'>changes</span> are hard to perceive on a pie chart, and should be used only for static data. Furthermore, <span class='bad'>small values</span> are difficult to distinguish or notice and therefore, avoid using pie charts when the data spans multiple orders of magnitude."
+include templates/example
+script.doc.
+    // generate some data
+    var data = [
+        {name: "orange", value: 3, color: "orange"},
+        {name: "mango", value: 4, color: "tomato"},
+        {name: "banana", value: 4, color: "gold"},
+        {name: "apple", value: 2, color: "yellowgreen"}
+    ];
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var piechart = new du.widgets.PieChart("mychart", "#widget")
+        .data(data)
+        .x(width / 2 - height / 2 + 10)
+        .innerRadius(height / 8)
+        .outerRadius(height / 2 - 10)
+        .label("fruits")
+        .margins(30)
+        .fontSize(14)
+        .ticks(true)
+        .render();
+script.doc.
+    // add interactions
+    piechart
+        .mouseover(function (k) {
+            // Highlight hovered segment
+            piechart.highlight(k, 300);
+        })
+        .mouseleave(function () {
+            // Remove highlights by passing null
+            piechart.highlight(null, 300);
+        })
+        .click(function (k) {
+            // Show an alert on click
+            alert("Plot clicked: '" + k + "'");
+        })
+        .render();
+script.
+    window.onresize = function () {
+        width = parseFloat(d3.select("#widget").style("width"));
+        height = parseFloat(d3.select("#widget").style("height"));
+        piechart
+            .x(width / 2 - height / 2 + 10)
+            .innerRadius(height / 8)
+            .outerRadius(height / 2 - 10)
+            .render();
+    };

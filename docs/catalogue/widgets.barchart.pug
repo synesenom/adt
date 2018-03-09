@@ -1,0 +1,58 @@
+- var name = "barchart"
+- var links = {source: "widgets.barchart", docs: "widgets.barchart"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.barchart"]
+- var description = "A bar chart displays one dimensional <span class='good'>categorical data</span>. Useful when there is <span class='good'>no relationship</span> between the values, for instance if the data is the result of a counting process. Also, it can handle <span class='good'>more categories</span> than a pie chart."
+include templates/example
+script.doc.
+    // generate some data
+    var data = [
+        {x: 'apple', y: 13},
+        {x: 'banana', y: 4},
+        {x: 'mango', y: 6},
+        {x: 'orange', y: 2},
+        {x: 'melon', y: 11},
+        {x: 'kiwi', y: 7},
+        {x: 'pear', y: 3}
+    ];
+    var colors = {
+        apple: "lime",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange",
+        melon: "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    };
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var barchart = new du.widgets.BarChart("mychart", "#widget")
+        .data(data)
+        .width(width)
+        .height(height)
+        .xLabel("fruit name")
+        .yLabel("stock")
+        .margins(60)
+        .fontSize(14)
+        .colors(colors)
+        .vertical(true)
+        .render();
+script.doc.
+    // add interactions
+    barchart
+        .mouseover(function (k) {
+            // Highlight hovered bar
+            chart.highlight(k, 300);
+        })
+        .mouseleave(function () {
+            // Remove highlights by passing null
+            chart.highlight(null, 300);
+        })
+        .click(function (k) {
+            // Show an alert on click
+            alert("Plot clicked: '" + k + "'");
+        })
+        .render();
++resize()

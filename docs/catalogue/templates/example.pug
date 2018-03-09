@@ -1,0 +1,50 @@
+doctype html
+
+mixin resize(elem)
+    script.
+        window.onresize = function () {
+            #{elem || name}
+                .width(parseFloat(d3.select('#widget').style('width')))
+                .height(parseFloat(d3.select('#widget').style('height')))
+                .render();
+        };
+
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700')
+        link(rel='stylesheet', type='text/css', href='../dependencies/wp.min.css')
+        link(rel='stylesheet', type='text/css', href='../style/examples.css')
+        link(rel='stylesheet', type='text/css', href='../dependencies/highlight.min.css')
+        each lib in libs
+            script(src='../dependencies/' + lib + '.min.js')
+        each module in modules
+            script(src='../dl/' + module + '.min.js')
+        script(src='../dependencies/codedoc.min.js')
+        script(src='../dependencies/highlight.9.12.0.min.js')
+        script(type='text/javascript').
+            codedoc.heading()
+                .callback(function() {
+                    hljs.initHighlighting.called = false;
+                    hljs.initHighlighting();
+            });
+        title #{name} | dashboard-utils
+    body
+        main
+            #widget(style=(style? style : ""))
+            if div
+                div(id=div.i, class=div.c)
+            h1 description
+            #desc !{description}
+            #code-doc
+            if links
+                #doc-link
+                    if links.source
+                        | [&nbsp;
+                        a(href='../dl/' + links.source + '.min.js') source
+                        | &nbsp;]&nbsp;
+                    if links.docs
+                        | [&nbsp;
+                        a(href='../api/' + links.docs + '.html') documentation
+                        | &nbsp;]

@@ -1,0 +1,55 @@
+- var name = "legend"
+- var links = {source: "widgets.legend", docs: "widgets.legend"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.legend"]
+- var description = "A legend is a list of labels together with colored squares."
+include templates/example
+script.doc.
+    // prepare colors
+    var colors = {
+        mango: "tomato",
+        orange: "orange",
+        "a fruit with a really long name": "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    }
+script.doc.
+    // create widget
+    var width = parseInt(d3.select("#widget").style("width"));
+    var height = parseInt(d3.select("#widget").style("height"));
+    var legend = new du.widgets.Legend("mylegend", "#widget")
+        .x(Math.max(10, (width - 280) / 2))
+        .y(height / 3)
+        .width(300)
+        .height(150)
+        .colors(colors)
+        .fontSize(20)
+        .twoColumns(true)
+        .render();
+script.doc.
+    // add interactions
+    legend
+        .mouseover(function (k) {
+            // Highlight hovered legend
+            legend.highlight(k, 300);
+        })
+        .mouseleave(function () {
+            // Remove highlights by passing null
+            legend.highlight(null, 300);
+        })
+        .click(function (k) {
+            // Show an alert on click
+            alert("Plot clicked: '" + k + "'");
+        })
+        .render();
+script.
+    window.onresize = function () {
+        var width = parseFloat(d3.select("#widget").style("width"));
+        var height = parseFloat(d3.select("#widget").style("height"));
+        legend
+            .x(Math.max(10, (width - 280) / 2))
+            .y(height / 3)
+            .width(300)
+            .height(150)
+            .render();
+    };

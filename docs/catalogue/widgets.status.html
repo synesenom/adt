@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.status.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+    .callback(function() {
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+});</script><title>status | dashboard-utils</title></head><body><main><div id="widget" style="font-family:'Courier',monospace;"></div><h1>description</h1><div id="desc">A status is a changing status value along with a static label.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.status.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.status.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// create widget
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var statusLabel = new du.widgets.Status("status", "#widget")
+    .x((width - 240) / 2)
+    .width(240)
+    .height(height)
+    .label("π ≈")
+    .fontSize(24)
+    .render();</script><script class="doc">// add status value
+var k = 0,
+    n = 0,
+    iMax = 100;
+(function estimate() {
+    for (var i = 0; i < iMax; i++) {
+        if (Math.pow(Math.random(), 2) + Math.pow(Math.random(), 2) < 1)
+            k++;
+    }
+    n += iMax;
+    iMax = parseInt(Math.max(iMax * 1.001, 10000));
+    statusLabel
+        .value((4 * k / n).toFixed(10))
+        .render();
+    setTimeout(estimate, 100);
+})();</script><script>window.onresize = function () {
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    statusLabel
+        .x((width - 240) / 2)
+        .width(240)
+        .height(height)
+        .render();
+};</script>

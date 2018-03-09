@@ -68,7 +68,7 @@
          *
          * @method twoColumns
          * @memberOf du.widgets.legend.Legend
-         * @param {number} on Whether legend should be two columned.
+         * @param {boolean} on Whether legend should be two columned.
          */
         _w.attr.add(this, "twoColumns", false);
 

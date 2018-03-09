@@ -6,9 +6,11 @@
   "repository": "https://github.com/synesenom/dashboard-utils",
   "dependencies": {
     "d3": "4.13.0",
+    "jstransformer-uglify-js": "^1.2.0",
     "lodash": "^4.17.5",
     "pug": "^2.0.0-rc.4",
     "pug-cli": "^1.0.0-alpha6",
+    "pug-filters": "^3.0.1",
     "topojson": "^3.0.2"
   },
   "devDependencies": {

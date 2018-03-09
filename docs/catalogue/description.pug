@@ -1,0 +1,39 @@
+- var name = "description"
+- var links = {source: "widget", docs: "widget"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.piechart"]
+- var description = "A description of a widget is a pop-up block that can be used to detail the content and function of the corresponding widget. Each widget comes with the method <code>describe</code> that binds the description menu to the right-click event on the widget."
+include templates/example
+script.doc.
+    // generate some data
+    var data = [
+        {name: "orange", value: 3, color: "orange"},
+        {name: "mango", value: 4, color: "tomato"},
+        {name: "banana", value: 4, color: "gold"},
+        {name: "apple", value: 2, color: "yellowgreen"}
+    ];
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var piechart = new du.widgets.PieChart("mychart", "#widget")
+        .describe("A pie chart showing the available delicious fruit in a basket")
+        .data(data)
+        .x(width / 2 - height / 2 + 10)
+        .innerRadius(height / 8)
+        .outerRadius(height / 2 - 10)
+        .label("fruits")
+        .margins(30)
+        .fontSize(14)
+        .ticks(true)
+        .render();
+script.
+    window.onresize = function () {
+        width = parseFloat(d3.select("#widget").style("width"));
+        height = parseFloat(d3.select("#widget").style("height"));
+        piechart
+            .x(width / 2 - height / 2 + 10)
+            .innerRadius(height / 8)
+            .outerRadius(height / 2 - 10)
+            .render();
+    };

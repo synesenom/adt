@@ -1,0 +1,76 @@
+- var name = "slider"
+- var links = {source: "widgets.slider", docs: "widgets.slider"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.barchart", "widgets.slider"]
+- var description = "A slider is a <span class='good'>one dimensional control</span> widget that can be used to adjust the data to be shown on a chart or the dashboard. It can be <span class='good'>discrete or continuous</span> depending on the use case."
+- var div = {i: 'slider', c: 'widget short'}
+include templates/example
+script.doc.
+    // generate some data
+    var data = {
+        2016: [
+            {x: 'banana', y: 4},
+            {x: 'mango', y: 6},
+            {x: 'kiwi', y: 7},
+            {x: 'pear', y: 3}
+        ],
+        2017: [
+            {x: 'banana', y: 2},
+            {x: 'mango', y: 7},
+            {x: 'kiwi', y: 2},
+            {x: 'pear', y: 8}
+        ],
+        2018: [
+            {x: 'banana', y: 3},
+            {x: 'mango', y: 1},
+            {x: 'kiwi', y: 9},
+            {x: 'pear', y: 2}
+        ]
+    };
+    var colors = {
+        apple: "lime",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange",
+        melon: "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    };
+script.doc.
+    // create chart
+    var barchart = new du.widgets.BarChart("mychart", "#widget")
+        .data(data[2016])
+        .width(parseInt(d3.select("#widget").style("width")))
+        .height(parseInt(d3.select("#widget").style("height")))
+        .xLabel("fruit name")
+        .yLabel("stock")
+        .margins(60)
+        .fontSize(14)
+        .colors(colors)
+        .vertical(true)
+        .render();
+script.doc.
+    // add slider
+    var slider = new du.widgets.Slider("slider", "#slider")
+        .width(parseInt(d3.select("#slider").style("width")))
+        .height(parseInt(d3.select("#slider").style("height")))
+        .min(2016)
+        .max(2018)
+        .step(1)
+        .callback(function (v) {
+            // Update chart
+            barchart.data(data[v])
+                .render();
+        })
+        .render();
+script.
+    window.onresize = function () {
+        barchart
+            .width(parseInt(d3.select("#widget").style("width")))
+            .height(parseInt(d3.select("#widget").style("height")))
+            .render();
+        slider
+            .width(parseInt(d3.select("#slider").style("width")))
+            .height(parseInt(d3.select("#slider").style("height")))
+            .render();
+    };
