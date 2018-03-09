@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.linechart"]
 - var description = "Line charts are most commonly used to show <span class='good'>temporal changes</span> or trends in quantitative data. As the data points are connected, it is expected that consecutive points are <span class='good'>related</span> to each other."
-include templates/example
+include pug/example
 script.doc.
     // generate some data
     var data = Array.from(new Array(100).keys()).map(function (i) {

@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.chordchart"]
 - var description = "Chord charts represent <span class='good'>flow data</span> (provided as a matrix) between a set of categories. The angle of each sector (circumference) is proportional to the total out-flux of that category, and chords show the net in-flux, that is, they are colored by the category which has larger in-flux from the other. They are a convenient summary if there are <span class='good'>few categories</span>."
-include templates/example
+include pug/example
 script.doc.
     // generate some data
     var data = [

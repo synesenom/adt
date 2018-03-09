@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.histogram"]
 - var description = "A histogram shows the <span class='good'>binned counts</span> of a set of values. It is useful if we want to understand how the data is <span class='good'>distributed</span> over the range of possible values. In a histogram, bars are related to each other as they <span class='good'>sum up</span> to the total number of data points."
-include templates/example
+include pug/example
 script.doc.
     // generate some data
     var data = new Array(1000).fill(0).map(function () {

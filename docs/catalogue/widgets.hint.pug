@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.hint"]
 - var description = "Hints are small text bubbles that can be used to direct the attention to some interesting parts of the dashboard and thus facilitate engagement. By default they disappear once the mouse is moved, but you can also pin them to the dashboard to add permanent messages."
-include templates/example
+include pug/example
 script.doc.
     // add hints
     var hint1 = new du.widgets.Hint("hint", "#widget")

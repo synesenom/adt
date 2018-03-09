@@ -47,7 +47,6 @@
  * @requires du.Widget
  */
 // TODO separate paths content from module
-// TODO fix static layer rescale bug
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));
@@ -2088,6 +2087,17 @@
                     .call(_zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
             }
 
+            /**
+             * Returns the last (current) zoom transformation.
+             *
+             * @method current
+             * @memberOf du.widgets.map.Map._zoom
+             * @returns {object} Last zoom transformation.
+             */
+            function current() {
+                return _transform;
+            }
+
             // Public methods
             return {
                 init: init,
@@ -2097,7 +2107,8 @@
                 click: click,
                 transform: transform,
                 invert: invert,
-                level: level
+                level: level,
+                current: current
             };
         })();
 
@@ -2579,6 +2590,13 @@
              */
             var _layers = {};
 
+            function _scaleCoords(pos, a, b) {
+                return [
+                    a[0] * pos[0] + b[0],//(pos[0] + _w.attr.centerX * (scaleX - 1)) / scaleX,
+                    a[1] * pos[1] + b[1]//(pos[1] + _w.attr.height * (scaleX - scaleY) / 2 + _w.attr.centerY * (scaleX - 1)) / scaleX
+                ];
+            }
+
             /**
              * Returns an array of existing static layers.
              *
@@ -2632,9 +2650,24 @@
 
                         // Rescales content when map dimensions have changed
                         function rescaleContent(scaleX, scaleY) {
+                            // Pre-compute transform coefficients
+                            var a = [1 / scaleX, 1 / scaleX],
+                                b = [_w.attr.centerX * (scaleX - 1) / scaleX,
+                                    (_w.attr.height * (scaleX - scaleY) / 2 + _w.attr.centerY * (scaleX - 1)) / scaleX];
                             _content.forEach(function (d) {
-                                d.x = (d.x + _w.attr.centerX * (scaleX - 1)) / scaleX;
-                                d.y = (d.y + _w.attr.height * (scaleX - scaleY) / 2 + _w.attr.centerY * (scaleX - 1)) / scaleX;
+                                switch(d.type) {
+                                    case "dot":
+                                    case "circle":
+                                        d.params.pos = _scaleCoords(d.params.pos, a, b);
+                                        break;
+                                    case "arrow":
+                                        for (var i=0; i<d.params.segments.length; i++) {
+                                            d.params.segments[i] = new Vector2d(
+                                                _scaleCoords(d.params.segments[i].toArray(), a, b)
+                                            );
+                                        }
+                                        break;
+                                }
                             });
                         }
 
@@ -2787,6 +2820,9 @@
                     layer.rescaleContent(scaleX, scaleY);
                     layer.render();
                 });
+
+                // Transform
+                _zoomLayer(_zoom.current());
             }
 
             /**

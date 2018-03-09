@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.areachart"]
 - var description = "Area charts are used to show <span class='good'>numerical series</span> in which consecutive values have a relationship. Good examples are time series of <span class='good'>volume type data</span> (e.g., sales) or a density distribution of some quantity (probability density).<br><br> Due to its transparent nature, only a <span class='bad'>few plots</span> should be used to avoid unrecognizable boundaries."
-include templates/example
+include pug/example
 script.doc.
     // generate some data
     var data = Array.from(new Array(100).keys()).map(function (i) {

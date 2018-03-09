@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4", "topojson.v1"]
 - var modules = ["widget", "widgets.map"]
 - var description = "A map can be used when data with <span class='good'>geographic location</span> is to be shown. It can be used to display <span class='good'>static distributions</span> or <span class='good'>dynamic changes</span> in an application showing real-time data."
-include templates/example
+include pug/example
 script.doc.
     // create map
     var width = parseFloat(d3.select("#widget").style("width"));

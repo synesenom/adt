@@ -3,7 +3,7 @@
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.piechart"]
 - var description = "A pie chart represents one dimensional <span class='good'>categorical data</span> of positive numbers only. The angle of each sector is proportional to the value of the corresponding category. It is useful when <span class='good'>fractions</span> of a whole (especially percentages) are to be shown for a <span class='good'>few categories</span> (5-7) and the focus is on <span class='good'>large differences</span> among categories rather than nuances.<br><br>However, <span class='bad'>changes</span> are hard to perceive on a pie chart, and should be used only for static data. Furthermore, <span class='bad'>small values</span> are difficult to distinguish or notice and therefore, avoid using pie charts when the data spans multiple orders of magnitude."
-include templates/example
+include pug/example
 script.doc.
     // generate some data
     var data = [
