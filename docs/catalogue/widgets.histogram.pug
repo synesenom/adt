@@ -29,17 +29,17 @@ script.doc.
 script.doc.
     // add interactions
     histogram
-        .mouseover(function (k, i) {
+        .mouseover(function (k) {
             // Highlight hovered bin
-            histogram.highlight(i, 300);
+            histogram.highlight(k, 300);
         })
         .mouseleave(function () {
             // Remove highlights by passing null
             histogram.highlight(null, 300);
         })
-        .click(function (k, i) {
+        .click(function (k) {
             // Show an alert on click
-            alert("Bin clicked: '" + i + "'");
+            alert("Bin clicked: '" + k + "'");
         })
         .render();
 +resize()

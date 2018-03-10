@@ -290,13 +290,13 @@
                 // Interactions
                 _svg.bars
                     .on("mouseover", function (d, i) {
-                        _w.attr.mouseover && _w.attr.mouseover(d, "bin-" + i);
+                        _w.attr.mouseover && _w.attr.mouseover("bin-" + i);
                     })
                     .on("mouseleave", function (d, i) {
-                        _w.attr.mouseleave && _w.attr.mouseleave(d, "bin-" + i);
+                        _w.attr.mouseleave && _w.attr.mouseleave("bin-" + i);
                     })
                     .on("click", function (d, i) {
-                        _w.attr.click && _w.attr.click(d, "bin-" + i);
+                        _w.attr.click && _w.attr.click("bin-" + i);
                     });
             }
         };

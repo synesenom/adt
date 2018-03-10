@@ -371,20 +371,14 @@
                 .each(function(d){ d.name = _nameByIndex.get(d.index); })
                 .attr("class", "group")
                 .style("pointer-events", "all")
-                .on("mouseover", function(d, i) {
-                    if (_w.attr.mouseover) {
-                        _w.attr.mouseover(d.name, i);
-                    }
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d, i) {
-                    if (_w.attr.mouseleave) {
-                        _w.attr.mouseleave(d.name, i);
-                    }
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d, i) {
-                    if (_w.attr.click) {
-                        _w.attr.click(d.name, i);
-                    }
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.name);
                 });
             _svg.newGroups.append("path")
                 .attr("id", function (d) {

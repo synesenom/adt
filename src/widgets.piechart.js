@@ -236,16 +236,16 @@
 
             // Interactions
             _svg.paths
-                .on("mouseover", function (d, i) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.data.name, i);
+                .on("mouseover", function (d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.data.name);
                 });
             _svg.paths
-                .on("mouseleave", function (d, i) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.data.name, i);
+                .on("mouseleave", function (d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.data.name);
                 });
             _svg.paths
-                .on("click", function (d, i) {
-                    _w.attr.click && _w.attr.click(d.data.name, i);
+                .on("click", function (d) {
+                    _w.attr.click && _w.attr.click(d.data.name);
                 });
         };
     }

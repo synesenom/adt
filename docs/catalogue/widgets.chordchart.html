@@ -44,11 +44,11 @@ var chordchart = new du.widgets.ChordChart("mychart", "#widget")
 chordchart
     .mouseover(function (k) {
         // Highlight hovered group
-        chart.highlight(k, 300);
+        chordchart.highlight(k, 300);
     })
     .mouseleave(function () {
         // Remove highlights by passing null
-        chart.highlight(null, 300);
+        chordchart.highlight(null, 300);
     })
     .click(function (k) {
         // Show an alert on click

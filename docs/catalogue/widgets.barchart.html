@@ -37,11 +37,11 @@ var barchart = new du.widgets.BarChart("mychart", "#widget")
 barchart
     .mouseover(function (k) {
         // Highlight hovered bar
-        chart.highlight(k, 300);
+        barchart.highlight(k, 300);
     })
     .mouseleave(function () {
         // Remove highlights by passing null
-        chart.highlight(null, 300);
+        barchart.highlight(null, 300);
     })
     .click(function (k) {
         // Show an alert on click

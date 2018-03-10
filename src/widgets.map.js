@@ -2412,8 +2412,7 @@
                         );
 
                         // Additional actions
-                        if (_w.attr.mouseover)
-                            _w.attr.mouseover(d.name, i);
+                        _w.attr.mouseover && _w.attr.mouseover(d.name);
                     })
                     .on("mouseleave", function (d, i) {
                         // Set color
@@ -2424,8 +2423,7 @@
                         c.style("fill", c.classed("focus") ? color.brighter() : color);
 
                         // Additional actions
-                        if (_w.attr.mouseleave)
-                            _w.attr.mouseleave(d.name, i);
+                        _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                     })
                     .on("click", function (d, i) {
                         // Check if country is already in focus
@@ -2457,8 +2455,7 @@
                         c.style("fill", !focused ? color.brighter() : color);
 
                         // Additional actions
-                        if (_w.attr.click)
-                            _w.attr.click(d.name, i);
+                        _w.attr.click && _w.attr.click(d.name);
                     });
 
                 // Add path names

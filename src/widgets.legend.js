@@ -160,27 +160,17 @@
 
                 legend.text
                     .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
-                    .style("line-height", _w.attr.fontSize + "px");
-                if (_w.attr.mouseover) {
-                    legend.text
-                        .style("cursor", "pointer")
-                        .on("mouseover", function() {
-                            _w.attr.mouseover(label);
-                        });
-                }
-                if (_w.attr.mouseleave) {
-                    legend.text
-                        .on("mouseleave", function() {
-                            _w.attr.mouseleave(label);
-                        });
-                }
-                if (_w.attr.click) {
-                    legend.text
-                        .style("cursor", "pointer")
-                        .on("click", function() {
-                            _w.attr.click(label);
-                        });
-                }
+                    .style("line-height", _w.attr.fontSize + "px")
+                    .style("cursor", _w.attr.mouseover || _w.attr.click ? "pointer" : null)
+                    .on("mouseover", function() {
+                        _w.attr.mouseover && _w.attr.mouseover(label);
+                    })
+                    .on("mouseleave", function() {
+                        _w.attr.mouseleave && _w.attr.mouseleave(label);
+                    })
+                    .on("click", function() {
+                        _w.attr.click && _w.attr.click(label);
+                    });
             });
         }
     }

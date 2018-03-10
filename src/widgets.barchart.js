@@ -253,32 +253,32 @@
                 // Interactions (for ticks as well)
                 if (_w.attr.mouseover) {
                     _svg.bars
-                        .on("mouseover", function (d, i) {
-                            _w.attr.mouseover(d.x, i);
+                        .on("mouseover", function (d) {
+                            _w.attr.mouseover && _w.attr.mouseover(d.x);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("mouseover", function (d, i) {
-                            _w.attr.mouseover(_data[i].x, i);
+                            _w.attr.mouseover && _w.attr.mouseover(_data[i].x);
                         });
                 }
                 if (_w.attr.mouseleave) {
                     _svg.bars
-                        .on("mouseleave", function (d, i) {
-                            _w.attr.mouseleave(d.x, i);
+                        .on("mouseleave", function (d) {
+                            _w.attr.mouseleave && _w.attr.mouseleave(d.x);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("mouseleave", function (d, i) {
-                            _w.attr.mouseleave(_data[i].x, i);
+                            _w.attr.mouseleave&& _w.attr.mouseleave(_data[i].x);
                         });
                 }
                 if (_w.attr.click) {
                     _svg.bars
-                        .on("click", function (d, i) {
-                            _w.attr.click(d.x, i);
+                        .on("click", function (d) {
+                            _w.attr.click && _w.attr.click(d.x);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("click", function (d, i) {
-                            _w.attr.click(_data[i].x, i);
+                            _w.attr.click && _w.attr.click(_data[i].x);
                         });
                 }
             }

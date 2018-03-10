@@ -392,9 +392,10 @@
 
         /**
          * Sets a callback when various elements of the widget are hovered.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the
-         * plot elements (lines, bars, axis ticks), for the map it is bound to the countries, whereas for standalone
-         * widgets such as a legend, it is bound to the widget itself.
+         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
+         * and the method passed should accept one parameter which is the selector of the plot element (its name in
+         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a legend, it is bound to the widget itself.
          * Default is null.
          *
          * @method mouseover
@@ -405,9 +406,10 @@
 
         /**
          * Sets a callback when the mouse leaves various elements of the widget.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the
-         * plot elements (lines, bars, axis ticks), for the map it is bound to the countries, whereas for standalone
-         * widgets such as a legend, it is bound to the widget itself.
+         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
+         * and the method passed should accept one parameter which is the selector of the plot element (its name in
+         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a legend, it is bound to the widget itself.
          * Default is null.
          *
          * @method mouseleave
@@ -418,9 +420,10 @@
 
         /**
          * Sets a callback when the various elements of the widget are clicked.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the
-         * plot elements (lines, bars, axis ticks), for the map it is bound to the countries, whereas for standalone
-         * widgets such as a legend, it is bound to the widget itself.
+         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
+         * and the method passed should accept one parameter which is the selector of the plot element (its name in
+         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a legend, it is bound to the widget itself.
          * Default is null.
          *
          * @method click

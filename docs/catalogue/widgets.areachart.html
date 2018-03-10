@@ -28,11 +28,11 @@ var areachart = new du.widgets.AreaChart("mychart", "#widget")
 areachart
     .mouseover(function (k) {
         // Highlight hovered plot
-        chart.highlight(k, 300);
+        areachart.highlight(k, 300);
     })
     .mouseleave(function () {
         // Remove highlights by passing null
-        chart.highlight(null, 300);
+        areachart.highlight(null, 300);
     })
     .click(function (k) {
         // Show an alert on click
