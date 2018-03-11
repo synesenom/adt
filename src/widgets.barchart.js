@@ -155,7 +155,7 @@
                     _svg.bars = _svg.g.selectAll(".bar")
                         .data(_data)
                         .enter().append("rect")
-                        .attr("class", function(d) { return "bar " + _w.utils.encode("" + d.x); })
+                        .attr("class", function(d) { return "bar " + _w.utils.encode(d.x); })
                         .style("pointer-events", "all")
                         .style("stroke", "none")
                         .style("shape-rendering", "geometricPrecision");

@@ -53,7 +53,7 @@
 // TODO make plot data modifiable
 // TODO clean up mouse event chaos
 // TODO add graph widget
-// TODO all mouse event should use the same arguments: data point, element selector
+// TODO make all plot selectors properly encoded
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -392,10 +392,11 @@
 
         /**
          * Sets a callback when various elements of the widget are hovered.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
-         * and the method passed should accept one parameter which is the selector of the plot element (its name in
-         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
-         * For standalone widgets such as a legend, it is bound to the widget itself.
+         * The behavior of this callback is specific to the widget type: for chart widgets, it is bound to the plot
+         * elements and the plot's name is passed to the specified callback as argument. This can be used as a selector
+         * for e.g, highlighting elements in the widget.
+         * For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a label, it is bound to the widget itself.
          * Default is null.
          *
          * @method mouseover
@@ -406,10 +407,11 @@
 
         /**
          * Sets a callback when the mouse leaves various elements of the widget.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
-         * and the method passed should accept one parameter which is the selector of the plot element (its name in
-         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
-         * For standalone widgets such as a legend, it is bound to the widget itself.
+         * The behavior of this callback is specific to the widget type: for chart widgets, it is bound to the plot
+         * elements and the plot's name is passed to the specified callback as argument. This can be used as a selector
+         * for e.g, highlighting elements in the widget.
+         * For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a label, it is bound to the widget itself.
          * Default is null.
          *
          * @method mouseleave
@@ -420,10 +422,11 @@
 
         /**
          * Sets a callback when the various elements of the widget are clicked.
-         * The behavior of this callback is specific to each widget: for chart widgets, it is bound to the plot elements
-         * and the method passed should accept one parameter which is the selector of the plot element (its name in
-         * most cases). For the map it is bound to countries and the name of the country is passed as parameter.
-         * For standalone widgets such as a legend, it is bound to the widget itself.
+         * TThe behavior of this callback is specific to the widget type: for chart widgets, it is bound to the plot
+         * elements and the plot's name is passed to the specified callback as argument. This can be used as a selector
+         * for e.g, highlighting elements in the widget.
+         * For the map it is bound to countries and the name of the country is passed as parameter.
+         * For standalone widgets such as a label, it is bound to the widget itself.
          * Default is null.
          *
          * @method click
@@ -467,13 +470,13 @@
              * @method encode
              * @memberOf du.widget.Widget.utils
              * @param {string} key Key to encode.
-             * @returns {string} Encoded key if key is valid, empty string otherwise.
+             * @returns {(number|string)} Encoded key if key is valid, empty string otherwise.
              * @private
              */
             function _encode(key) {
-                if (!key)
+                if (typeof key !== "number" && typeof key !== "string")
                     return "";
-                return key.replace(/ /g, '__');
+                return (""+key).replace(/ /g, '__');
             }
 
             /**

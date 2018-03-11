@@ -29,15 +29,15 @@
 // TODO add mouse events
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widget'));
+        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'src/widget', 'exports'], factory);
+        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.AreaChart = factory(global.d3, global.du.Widget);
+        global.du.widgets.AreaChart = factory(global.d3, global._, global.du.Widget);
     }
-} (this, function (d3, Widget) {
+} (this, function (d3, _, Widget) {
     "use strict";
 
     /**
