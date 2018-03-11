@@ -53,7 +53,6 @@
 // TODO make plot data modifiable
 // TODO add graph widget
 // TODO add 2d slider
-// TODO add transition to render methods
 // TODO set d3 color20 as default colors
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {

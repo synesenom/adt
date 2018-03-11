@@ -288,10 +288,7 @@
             // Plot
             if (_svg.bars !== undefined) {
                 _svg.bars
-                    .style("fill", _w.attr.colors);
-
-                // Interactions
-                _svg.bars
+                    .style("fill", _w.attr.colors)
                     .on("mouseover", function (d, i) {
                         _w.attr.mouseover && _w.attr.mouseover("bin-" + i);
                     })
