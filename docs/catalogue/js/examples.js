@@ -10,6 +10,7 @@ var colors = {
     pear: "khaki"
 };
 
+// Area chart
 new du.widgets.AreaChart("areachart", "#areachart")
     .width(width)
     .height(height)
@@ -29,6 +30,7 @@ new du.widgets.AreaChart("areachart", "#areachart")
     .colors(colors)
     .render();
 
+// Bar chart
 new du.widgets.BarChart("barchart", "#barchart")
     .width(width)
     .height(height)
@@ -49,6 +51,7 @@ new du.widgets.BarChart("barchart", "#barchart")
     .colors(colors)
     .render();
 
+// Chord chart
 new du.widgets.ChordChart("chordchart", "#chordchart")
     .x(width / 2 - height / 2)
     .radius(height / 2)
@@ -75,6 +78,21 @@ new du.widgets.ChordChart("chordchart", "#chordchart")
     .colors(colors)
     .render();
 
+// Description
+d3.select("#description").append("div")
+    .style("margin-top", "50px")
+    .style("margin-left", "30px")
+    .style("width", "auto")
+    .style("max-width", "200px")
+    .style("padding", "10px")
+    .style("background", "white")
+    .style("box-shadow", "0 0 1px black")
+    .style("border-radius", "3px")
+    .style("color", "black")
+    .style("font-size", "0.8em")
+    .text("This is a chart showing some cool data");
+
+// Grid
 var grid = new du.widgets.Grid("grid", "#grid")
     .width(width)
     .height(height)
@@ -122,6 +140,7 @@ grid.add(new du.widgets.AreaChart("subchart2")
     }))
     .colors(colors), 1, 0, 1, 1);
 
+// Hint
 new du.widgets.Hint("hint", "#hint")
     .x(70)
     .y(50)
@@ -129,6 +148,7 @@ new du.widgets.Hint("hint", "#hint")
     .pin(true)
     .render();
 
+// Histogram
 new du.widgets.Histogram("histogram", "#histogram")
     .data(new Array(1000).fill(0).map(function () {
         return Math.exp(1 + Math.random() * 2);
@@ -142,6 +162,7 @@ new du.widgets.Histogram("histogram", "#histogram")
     .colors("dodgerblue")
     .render();
 
+// Label
 new du.widgets.Label("label", "#label")
     .width(width)
     .height(height)
@@ -150,6 +171,7 @@ new du.widgets.Label("label", "#label")
     .fontColor("dodgerblue")
     .render();
 
+// Legend
 new du.widgets.Legend("widgets.legend", "#legend")
     .x(40)
     .y(50)
@@ -160,6 +182,7 @@ new du.widgets.Legend("widgets.legend", "#legend")
     .twoColumns(true)
     .render();
 
+// Line chart
 new du.widgets.LineChart("linechart", "#linechart")
     .width(width)
     .height(height)
@@ -183,26 +206,25 @@ new du.widgets.LineChart("linechart", "#linechart")
     .colors(colors)
     .render();
 
-window.addEventListener("load", function () {
-    setTimeout(function () {
-        new du.widgets.Map("map", "#map")
-            .x(0)
-            .y(0)
-            .width(width)
-            .height(height)
-            .backgroundColor("#aac6ff")
-            .borderColor("white")
-            .foregroundColor("#dc9a2f")
-            .render();
-    }, 500);
-});
+// Map
+new du.widgets.Map("map", "#map")
+    .x(0)
+    .y(0)
+    .width(width)
+    .height(height)
+    .backgroundColor("#aac6ff")
+    .borderColor("white")
+    .foregroundColor("#dc9a2f")
+    .render();
 
+// Picture
 new du.widgets.Picture("widgets.picture", "#picture")
     .width(width)
     .height(height)
     .src("data/macika.jpg")
     .render();
 
+// Pie chart
 new du.widgets.PieChart("piechart", "#piechart")
     .x(30)
     .y(0)
@@ -226,6 +248,7 @@ new du.widgets.PieChart("piechart", "#piechart")
     })
     .render();
 
+// Placeholder
 new du.widgets.LineChart("placeholder", "#placeholder")
     .width(width)
     .height(height)
@@ -250,6 +273,7 @@ new du.widgets.LineChart("placeholder", "#placeholder")
     .render()
     .placeholder("This chart is empty and you see a placeholder instead");
 
+// Slider
 new du.widgets.Slider("widgets.slider", "#slider")
     .x(10)
     .y(70)
@@ -258,6 +282,7 @@ new du.widgets.Slider("widgets.slider", "#slider")
     .fontSize(14)
     .render();
 
+// Status
 var st = new du.widgets.Status("status", "#status")
     .x(0)
     .y(60)
