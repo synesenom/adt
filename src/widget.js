@@ -950,6 +950,7 @@
                             .style("border-radius", "3px")
                             .style("color", "black")
                             .style("font-size", "0.8em")
+                            .style("line-height", "1.35em")
                             .html(content);
 
                         // Remove after a while

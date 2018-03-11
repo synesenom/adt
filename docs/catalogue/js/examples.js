@@ -83,13 +83,14 @@ d3.select("#description").append("div")
     .style("margin-top", "50px")
     .style("margin-left", "30px")
     .style("width", "auto")
-    .style("max-width", "200px")
+    .style("max-width", "170px")
     .style("padding", "10px")
     .style("background", "white")
     .style("box-shadow", "0 0 1px black")
     .style("border-radius", "3px")
     .style("color", "black")
     .style("font-size", "0.8em")
+    .style("line-height", "1.35em")
     .text("This is a chart showing some cool data");
 
 // Grid
