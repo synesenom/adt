@@ -112,11 +112,12 @@
 
         /**
          * Binds data to the chord chart.
+         * Expected data format: array of object with properties {source}, {target} and {value} corresponding to the
+         * flows in the matrix to visualize. Missing source/target pairs default to zero flow.
          *
          * @method data
          * @memberOf du.widgets.chordchart.ChordChart
-         * @param {Array} data Array of {source, target, value} objects denoting the size of chord from segment to
-         * segment.
+         * @param {Array} data Data to plot.
          * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         this.data = function(data) {

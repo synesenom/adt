@@ -1,7 +1,7 @@
 var width = 260;
 var height = 200;
 var colors = {
-    apple: "yellowgreen",
+    plum: "darkmagenta",
     banana: "gold",
     mango: "tomato",
     orange: "orange",
@@ -38,7 +38,7 @@ new du.widgets.BarChart("barchart", "#barchart")
     .fontSize(12)
     .vertical(true)
     .data([
-        {x: 'apple', y: 13},
+        {x: 'plum', y: 13},
         {x: 'banana', y: 4},
         {x: 'mango', y: 6},
         {x: 'orange', y: 2},
@@ -57,20 +57,20 @@ new du.widgets.ChordChart("chordchart", "#chordchart")
     .fontSize(12)
     .ticks(true)
     .data([
-        {source: "melon", target: "apple", value: 1},
+        {source: "melon", target: "plum", value: 1},
         {source: "melon", target: "pear", value: 2},
         {source: "melon", target: "kiwi", value: 3},
-        {source: "apple", target: "melon", value: 4},
-        {source: "apple", target: "pear", value: 5},
-        {source: "apple", target: "kiwi", value: 6},
+        {source: "plum", target: "melon", value: 4},
+        {source: "plum", target: "pear", value: 5},
+        {source: "plum", target: "kiwi", value: 6},
         {source: "pear", target: "melon", value: 7},
-        {source: "pear", target: "apple", value: 8},
+        {source: "pear", target: "plum", value: 8},
         {source: "pear", target: "kiwi", value: 9},
         {source: "kiwi", target: "melon", value: 10},
-        {source: "kiwi", target: "apple", value: 11},
+        {source: "kiwi", target: "plum", value: 11},
         {source: "kiwi", target: "pear", value: 12},
-        {source: "orange", target: "apple", value: 1},
-        {source: "apple", target: "orange", value: 2}
+        {source: "orange", target: "plum", value: 1},
+        {source: "plum", target: "orange", value: 2}
     ])
     .colors(colors)
     .render();
@@ -99,7 +99,7 @@ grid.add(new du.widgets.BarChart("subchart3")
     .fontSize(10)
     .vertical(true)
     .data([
-        {x: 'apple', y: 13},
+        {x: 'plum', y: 13},
         {x: 'banana', y: 4},
         {x: 'mango', y: 6},
         {x: 'orange', y: 2},
@@ -216,7 +216,7 @@ new du.widgets.PieChart("piechart", "#piechart")
         {name: "orange", value: 3, color: "orange"},
         {name: "mango", value: 4, color: "tomato"},
         {name: "banana", value: 4, color: "gold"},
-        {name: "apple", value: 2, color: "yellowgreen"}
+        {name: "plum", value: 2, color: "yellowgreen"}
     ])
     .render();
 

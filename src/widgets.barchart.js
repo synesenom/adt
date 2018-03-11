@@ -23,20 +23,21 @@
  * @module barchart
  * @memberOf du.widgets
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
 // TODO change data structure to key-value pairs
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widget'));
+        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'src/widget', 'exports'], factory);
+        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.BarChart = factory(global.d3, global.du.Widget);
+        global.du.widgets.BarChart = factory(global.d3, global._, global.du.Widget);
     }
-} (this, function (d3, Widget) {
+} (this, function (d3, _, Widget) {
     "use strict";
 
     /**
@@ -68,14 +69,25 @@
 
         /**
          * Binds data to the bar chart.
+         * Expected data format: object with property names as the categories and properties as the values.
+         * Data is sorted by the category names.
          *
          * @method data
          * @memberOf du.widgets.barchart.BarChart
-         * @param {Array} data Array of {x: (number|string), y: number} objects.
+         * @param {Array} data Data to plot.
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         this.data = function(data) {
-            _data = data;
+            // Transform data to array
+            _data = [];
+            _.forOwn(data, function(v, k) {
+                _data.push({x: k, y: v});
+            });
+
+            // Sort by category name
+            _data.sort(function(a, b) {
+                return a.x.localeCompare(b.x);
+            });
             return this;
         };
 

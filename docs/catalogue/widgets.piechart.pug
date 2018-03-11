@@ -10,8 +10,14 @@ script.doc.
         {name: "orange", value: 3, color: "orange"},
         {name: "mango", value: 4, color: "tomato"},
         {name: "banana", value: 4, color: "gold"},
-        {name: "apple", value: 2, color: "yellowgreen"}
+        {name: "plum", value: 2, color: "darkmagenta"}
     ];
+    var colors = {
+        plum: "darkmagenta",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange"
+    };
 script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));
@@ -23,7 +29,9 @@ script.doc.
         .outerRadius(height / 2 - 10)
         .label("fruits")
         .margins(30)
+        .fontColor("white")
         .fontSize(14)
+        .colors(colors)
         .ticks(true)
         .render();
 script.doc.

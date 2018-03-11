@@ -82,11 +82,12 @@
 
         /**
          * Binds data to the histogram.
-         * Data must be an array of values, binning is done by the chart itself.
+         * Expected data format: array of single numbers.
+         * Data is binned by the widget.
          *
          * @method data
          * @memberOf du.widgets.histogram.Histogram
-         * @param {Array} data Array of {x: (number|string), y: number} objects.
+         * @param {Array} data Data to plot.
          * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         this.data = function(data) {

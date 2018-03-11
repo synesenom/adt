@@ -21,8 +21,8 @@
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>If chord should be inverted.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.chordchart.ChordChart</code></i></td><td>Reference to the current ChordChart.</td></tr></table></div><br><h2 id='api-du.widgets.chordchart.ChordChart.data'>data</h2>
 <div class='card'><pre><code>du.widgets.chordchart.ChordChart.data(data)</code></pre>
-<br>Binds data to the chord chart. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Array of <code>source, target, value</code> objects denoting the size of chord from segment to segment.</td></tr></table>
+<br>Binds data to the chord chart. Expected data format: array of object with properties <code>source</code>, <code>target</code> and <code>value</code> corresponding to the flows in the matrix to visualize. Missing source/target pairs default to zero flow. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.chordchart.ChordChart</code></i></td><td>Reference to the current ChordChart.</td></tr></table></div><br><h2 id='api-du.widgets.chordchart.ChordChart.highlight'>highlight</h2>
 <div class='card'><pre><code>du.widgets.chordchart.ChordChart.highlight(key, duration)</code></pre>
 <br>Highlights the specified segment. 

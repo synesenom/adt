@@ -78,24 +78,30 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
-        var _scaleFactor = 1.0;
 
         /**
          * Binds data to the area plot.
+         * Expected data format: array of objects with properties {x} and {y}, where {x} is a number or time, {y}
+         * is an object containing the values for each quantity to plot.
+         * Data is sorted by the {x} values.
          *
          * @method data
          * @memberOf du.widgets.areachart.AreaChart
-         * @param {Array} data Array of {x, y} objects where X is a number or Date, Y is an object containing the y
-         * values for each area to plot.
+         * @param {Array} data Data to plot.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         this.data = function(data, scale) {
-            _data = data;
-
-            // Set scale
-            if (typeof scale === "number" && scale > 0)
-                _scaleFactor = scale;
+            var realScale = scale || 1;
+            _data = data.sort(function (a, b) {
+                return a.x - b.x;
+            }).map(function(d) {
+                var s = {x: d.x, y: {}};
+                _.forOwn(d.y, function(v, k) {
+                    s.y[k] = v / realScale;
+                });
+                return s;
+            });
             return this;
         };
 
@@ -193,20 +199,8 @@
 
         // Data updater
         _w.render.update = function(duration) {
-            // Prepare data
-            var data = _.cloneDeep(_data);
-            data.sort(function (a, b) {
-                return a.x - b.x;
-            });
-            for (var i = 0; i < data.length; i++) {
-                for (var y in data[i].y) {
-                    if (data[i].y.hasOwnProperty(y))
-                        data[i].y[y] /= _scaleFactor;
-                }
-            }
-
             // Calculate scale
-            _svg.scale = _w.utils.scale(_w.utils.boundary(data),
+            _svg.scale = _w.utils.scale(_w.utils.boundary(_data),
                 _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
                 {x: {type: _w.attr.xType}});
@@ -220,11 +214,11 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Update plots
-            if (data.length > 0) {
+            if (_data.length > 0) {
                 // Add areas if needed
                 if (_svg.areas === undefined) {
                     _svg.areas = {};
-                    _.forOwn(data[0].y, function (yk, k) {
+                    _.forOwn(_data[0].y, function (yk, k) {
                         _svg.areas[k] = _svg.g.append("path")
                             .attr("class", "area " + _w.utils.encode(k))
                             .style("shape-rendering", "geometricPrecision");
@@ -232,7 +226,7 @@
                 }
 
                 // Update data
-                _.forOwn(data[0].y, function (yk, k) {
+                _.forOwn(_data[0].y, function (yk, k) {
                     var area = d3.area()
                         .x(function (d) {
                             return _svg.scale.x(d.x) + 1;
@@ -243,7 +237,7 @@
                         });
                     _svg.g.select(".area." + _w.utils.encode(k))
                         .transition().duration(duration)
-                        .attr("d", area(data));
+                        .attr("d", area(_data));
                 });
             }
         };

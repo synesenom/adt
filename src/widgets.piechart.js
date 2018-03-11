@@ -87,16 +87,16 @@
         var _svg = null;
         var _data = [{
             name: "data",
-            value: 1,
-            color: "white"
+            value: 1
         }];
 
         /**
          * Binds new data to pie chart.
+         * Expected data format: array of objects with properties {name} and {value}.
          *
          * @method data
          * @memberOf du.widgets.piechart.PieChart
-         * @param {Array} data Array of objects with keys 'name', 'value' and 'color'.
+         * @param {Array} data Data to plot.
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.data = function (data) {
@@ -151,7 +151,7 @@
                     return _w.utils.encode(d.data.name);
                 })
                 .attr("fill", function (d) {
-                    return d.data.color;
+                    return _w.attr.colors[d.data.name];
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("pointer-events", "all")

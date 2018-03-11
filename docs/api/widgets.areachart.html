@@ -13,8 +13,8 @@
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>The opacity value to set.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.areachart.AreaChart</code></i></td><td>Reference to the current AreaChart.</td></tr></table></div><br><h2 id='api-du.widgets.areachart.AreaChart.data'>data</h2>
 <div class='card'><pre><code>du.widgets.areachart.AreaChart.data(data, scale)</code></pre>
-<br>Binds data to the area plot. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Array of <code>x, y</code> objects where X is a number or Date, Y is an object containing the y values for each area to plot.</td></tr><tr><td><i>scale</i></td><td><code>number</code></td><td>Optional scaling parameter. Each data point is divided by this value.</td></tr></table>
+<br>Binds data to the area plot. Expected data format: array of objects with properties <code>x</code> and <code>y</code>, where <code>x</code> is a number or time, <code>y</code> is an object containing the values for each quantity to plot. Data is sorted by the <code>x</code> values. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr><tr><td><i>scale</i></td><td><code>number</code></td><td>Optional scaling parameter. Each data point is divided by this value.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.areachart.AreaChart</code></i></td><td>Reference to the current AreaChart.</td></tr></table></div><br><h2 id='api-du.widgets.areachart.AreaChart.highlight'>highlight</h2>
 <div class='card'><pre><code>du.widgets.areachart.AreaChart.highlight(key, duration)</code></pre>
 <br>Highlights the specified plot. 

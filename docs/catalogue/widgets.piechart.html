@@ -7,8 +7,14 @@ var data = [
     {name: "orange", value: 3, color: "orange"},
     {name: "mango", value: 4, color: "tomato"},
     {name: "banana", value: 4, color: "gold"},
-    {name: "apple", value: 2, color: "yellowgreen"}
-];</script><script class="doc">// create chart
+    {name: "plum", value: 2, color: "darkmagenta"}
+];
+var colors = {
+    plum: "darkmagenta",
+    banana: "gold",
+    mango: "tomato",
+    orange: "orange"
+};</script><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var piechart = new du.widgets.PieChart("mychart", "#widget")
@@ -18,7 +24,9 @@ var piechart = new du.widgets.PieChart("mychart", "#widget")
     .outerRadius(height / 2 - 10)
     .label("fruits")
     .margins(30)
+    .fontColor("white")
     .fontSize(14)
+    .colors(colors)
     .ticks(true)
     .render();</script><script class="doc">// add interactions
 piechart

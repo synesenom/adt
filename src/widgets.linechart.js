@@ -86,18 +86,34 @@
 
         /**
          * Binds data to the line plot.
-         * Data must be an array of {x: number, y: object} where y is an object containing the Y values for each line
-         * to plot. The data can optionally contain a {dy} property that corresponds to the error drawn around the line.
-         * Error is only drawn for lines that are defined as property in {dy}.
+         * Expected data format: array of objects with properties {x} and {y}, where {x} is a number or time, {y}
+         * is an object containing the values for each quantity to plot. Each data point can optionally contain a {dy}
+         * property with the errors corresponding to the keys in {y}.
+         * Data is sorted by the {x} values.
          *
          * @method data
          * @memberOf du.widgets.linechart.LineChart
-         * @param {Array} data Array of data points.
+         * @param {Array} data Data to plot.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
          * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         this.data = function(data, scale) {
-            _data = data;
+            var realScale = scale || 1;
+            _data = data.sort(function (a, b) {
+                return a.x - b.x;
+            }).map(function(d) {
+                var s = {x: d.x, y: {}};
+                _.forOwn(d.y, function(v, k) {
+                    s.y[k] = v / realScale;
+                });
+                if (d.dy) {
+                    s.dy = {};
+                    _.forOwn(d.dy, function(v, k) {
+                        s.dy[k] = v / realScale;
+                    });
+                }
+                return s;
+            });
 
             // Scale data
             if (typeof scale === "number" && scale > 0)
@@ -359,25 +375,8 @@
 
         // Data updater
         _w.render.update = function(duration) {
-            // Prepare data
-            var data = _.cloneDeep(_data);
-            data.sort(function (a, b) {
-                return a.x - b.x;
-            });
-            for (var i = 0; i < data.length; i++) {
-                for (var y in data[i].y) {
-                    if (data[i].y.hasOwnProperty(y))
-                        data[i].y[y] /= _scaleFactor;
-
-                    // Check if we have error
-                    if (data[i].hasOwnProperty('dy') && data[i].dy.hasOwnProperty(y)) {
-                        data[i].dy[y] /= _scaleFactor;
-                    }
-                }
-            }
-
             // Calculate scale
-            var boundary = _w.utils.boundary(data, {y: [_w.attr.yMin, null]});
+            var boundary = _w.utils.boundary(_data, {y: [_w.attr.yMin, null]});
             _svg.scale = _w.utils.scale(boundary,
                 _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
@@ -392,12 +391,12 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Update plots
-            if (data.length > 0) {
+            if (_data.length > 0) {
                 // Add lines if needed
                 if (_svg.lines === undefined) {
                     // Error bands
                     _svg.errors = {};
-                    _.forOwn(data[0].y, function (yk, k) {
+                    _.forOwn(_data[0].y, function (yk, k) {
                         _svg.errors[k] = _svg.g.append("path")
                             .attr("class", "error " + _w.utils.encode(k))
                             .style("fill-opacity", 0.2)
@@ -407,7 +406,7 @@
 
                     // Add lines
                     _svg.lines = {};
-                    _.forOwn(data[0].y, function (yk, k) {
+                    _.forOwn(_data[0].y, function (yk, k) {
                         _svg.lines[k] = _svg.g.append("path")
                             .attr("class", "line " + _w.utils.encode(k))
                             .style("fill", "none")
@@ -417,8 +416,8 @@
                 }
 
                 // Update data
-                _.forOwn(data[0].y, function (yk, k) {
-                    if (data[0].hasOwnProperty('dy') && data[0].dy.hasOwnProperty(k)) {
+                _.forOwn(_data[0].y, function (yk, k) {
+                    if (_data[0].hasOwnProperty('dy') && _data[0].dy.hasOwnProperty(k)) {
                         var error = d3.area()
                             .x(function (d) {
                                 return _svg.scale.x(d.x) + 2;
@@ -429,7 +428,7 @@
                             });
                         _svg.errors[k]
                             .transition().duration(duration)
-                            .attr("d", error(data));
+                            .attr("d", error(_data));
                     }
                     var line = d3.line()
                         .x(function (d) {
@@ -440,7 +439,7 @@
                         });
                     _svg.lines[k]
                         .transition().duration(duration)
-                        .attr("d", line(data));
+                        .attr("d", line(_data));
                 });
             }
         };

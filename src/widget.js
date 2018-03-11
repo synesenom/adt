@@ -53,9 +53,9 @@
 // TODO make plot data modifiable
 // TODO add graph widget
 // TODO add 2d slider
-// TODO fix return values for methods that don't return anything
 // TODO add description of data format for each widget
 // TODO add transition to render methods
+// TODO set d3 color20 as default colors
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);

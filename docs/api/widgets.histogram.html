@@ -21,8 +21,8 @@
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>Whether normalization is on.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.histogram.Histogram</code></i></td><td>Reference to the current Histogram.</td></tr></table></div><br><h2 id='api-du.widgets.histogram.Histogram.data'>data</h2>
 <div class='card'><pre><code>du.widgets.histogram.Histogram.data(data)</code></pre>
-<br>Binds data to the histogram. Data must be an array of values, binning is done by the chart itself. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Array of <code>x: (number|string), y: number</code> objects.</td></tr></table>
+<br>Binds data to the histogram. Expected data format: array of single numbers. Data is binned by the widget. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.histogram.Histogram</code></i></td><td>Reference to the current Histogram.</td></tr></table></div><br><h2 id='api-du.widgets.histogram.Histogram.highlight'>highlight</h2>
 <div class='card'><pre><code>du.widgets.histogram.Histogram.highlight(key, duration)</code></pre>
 <br>Highlights the specified plot. 
