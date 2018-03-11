@@ -28,7 +28,6 @@
  * @requires d3@v4
  * @requires du.Widget
  */
-// TODO fix bug with disappearing hint when position is out of window
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'), exports);
@@ -103,6 +102,7 @@
             /**
              * @property {string} text The hint text.
              * @memberOf du.widgets.hint.Hint
+             * @returns {du.widgets.hint.Hint} Reference to the current Hint.
              */
             _w.attr.add(this, "text", "");
 
@@ -112,6 +112,7 @@
              * @method pin
              * @memberOf du.widgets.hint.Hint
              * @param {boolean} pinned Whether the hint should be pinned.
+             * @returns {du.widgets.hint.Hint} Reference to the current Hint.
              */
             _w.attr.add(this, "pin", false);
 
@@ -152,6 +153,7 @@
                 }
             };
 
+            // Style updater
             _w.render.style = function (duration) {
                 _w.widget
                     .style("width", "auto")

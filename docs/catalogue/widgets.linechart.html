@@ -42,7 +42,8 @@ linechart
         // Show an alert on click
         alert("Plot clicked: '" + k + "'");
     })
-    .render();</script><script>window.onresize = function () {
+    .render();</script><script class="doc">// add marker
+linechart.addMarker("mymarker", "mango", 34, 87, "trend");</script><script>window.onresize = function () {
     linechart
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

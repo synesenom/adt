@@ -57,6 +57,7 @@
          * @method min
          * @memberOf du.widgets.slider.Slider
          * @param {number} value Lower boundary.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
          */
         _w.attr.add(this, "min", 0);
 
@@ -66,6 +67,7 @@
          * @method max
          * @memberOf du.widgets.slider.Slider
          * @param {number} value Upper boundary.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
          */
         _w.attr.add(this, "max", 1);
 
@@ -77,6 +79,7 @@
          * @method step
          * @memberOf du.widgets.slider.Slider
          * @param {number} value Step size.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
          */
         _w.attr.add(this, "step", 0);
 
@@ -86,6 +89,7 @@
          * @method callback
          * @memberOf du.widgets.slider.Slider
          * @param {function} func The callback to call on value change.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
          */
         _w.attr.add(this, "callback", null);
 

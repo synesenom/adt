@@ -65,6 +65,7 @@
          * @method radius
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {number} size Size of the radius in pixels.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         _w.attr.add(this, "radius", 100, "dim");
 
@@ -75,6 +76,7 @@
          * @method thickness
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {number} size Size of the thickness in pixels.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         _w.attr.add(this, "thickness", 10, "dim");
 
@@ -85,6 +87,7 @@
          * @method ticks
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {boolean} on Whether to have ticks or not.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         _w.attr.add(this, "ticks", false);
 
@@ -95,6 +98,7 @@
          * @method invert
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {boolean} on If chord should be inverted.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         _w.attr.add(this, "invert", false);
 
@@ -113,6 +117,7 @@
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {Array} data Array of {source, target, value} objects denoting the size of chord from segment to
          * segment.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         this.data = function(data) {
             _indexByName.clear();
@@ -306,9 +311,10 @@
          * @memberOf du.widgets.chordchart.ChordChart
          * @param {string} key Key of the segment to highlight.
          * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".ribbon", key, duration);
+            return _w.utils.highlight(this, _svg, ".ribbon", key, duration);
         };
 
         // Builder

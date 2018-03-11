@@ -56,8 +56,9 @@
          * Sets the image source path.
          *
          * @method src
-         * @methodOf du.widgets.picture.Image
+         * @methodOf du.widgets.picture.Picture
          * @param {string} path Path to the image source.
+         * @returns {du.widgets.picture.Picture} Reference to the current Picture.
          */
         _w.attr.add(this, "src", "");
 
@@ -65,6 +66,7 @@
         var _svg = {};
         var _img = null;
 
+        // Builder
         _w.render.build = function() {
             // Add widget
             _svg.g = _w.widget.append("div")

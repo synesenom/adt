@@ -25,7 +25,7 @@
  * @module status
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
 (function (global, factory) {
@@ -60,6 +60,7 @@
          * @method value
          * @memberOf du.widgets.status.Status
          * @param {string} text Status value text.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         _w.attr.add(this, "value", "");
 

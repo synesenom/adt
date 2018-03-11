@@ -94,7 +94,7 @@
          * @param {number} x Distance from the window side. If positive, position is measured from the left,
          * otherwise it is measured from the right.
          * @param {string=} dim Distance dimension. If not specified, pixels are used.
-         * @returns {du.widgets.grid.Grid} Reference to the current widget.
+         * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          * @override {du.widget.Widget.x}
          */
         this.x = function (x, dim) {
@@ -112,7 +112,7 @@
          * @param {number} y Distance from the window side. If positive, position is measured from the top,
          * otherwise it is measured from the bottom.
          * @param {string=} dim Distance dimension. If not specified, pixels are used.
-         * @returns {du.widgets.grid.Grid} Reference to the current widget.
+         * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          * @override {du.widget.Widget.y}
          */
         this.y = function (y, dim) {
@@ -129,7 +129,7 @@
          * @method rows
          * @memberOf du.widgets.grid.Grid
          * @param {number} size Number of rows.
-         * @returns {du.widgets.grid.Grid} Reference to the current grid.
+         * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          */
         this.rows = function (size) {
             _rows = size;
@@ -144,17 +144,12 @@
          * @method cols
          * @memberOf du.widgets.grid.Grid
          * @param {number} size Number of cols.
-         * @returns {du.widgets.grid.Grid} Reference to the current grid.
+         * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          */
         this.cols = function (size) {
             _columns = size;
             _resize();
             return this;
-        };
-
-        // TODO remove this
-        this.w = function() {
-            return "#du-widget-grid-" + name;
         };
 
         /**
@@ -163,6 +158,7 @@
          * @method show
          * @memberOf du.widgets.grid.Grid
          * @param {boolean=} on True if grid should be shown, false otherwise.
+         * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          */
         this.show = function(on) {
             if (on) {
@@ -243,7 +239,8 @@
          * @param {number} row Row index of the cell to add widget to.
          * @param {number} width Number of columns to occupy.
          * @param {number} height Number of rows to occupy.
-         * @returns {?du.widget.Widget} The added widget if cells are available and free, null pointer othetwise.
+         * @returns {?du.widget.Widget} Reference to the added widget if cells are available and free, null pointer
+         * otherwise.
          */
         this.add = function (widget, column, row, width, height) {
             // Check if widget is inside grid
@@ -300,8 +297,8 @@
          * @memberOf du.widgets.grid.Grid
          * @param {number} row Row of the cell to get widget for.
          * @param {number} column Column of the cell to get widget for.
-         * @returns {?du.widget.Widget} The widget in the specified cell if cell is in grid and it is not empty,
-         * null pointer otherwise.
+         * @returns {?du.widget.Widget} Reference to the widget in the specified cell if cell is in grid and it is not
+         * empty, null pointer otherwise.
          */
         this.get = function(row, column) {
             if (_cells[column] && _cells[column][row]) {
@@ -311,6 +308,7 @@
             }
         };
 
+        // Style updater
         _w.render.style = function() {
             _w.widget
                 .style("position", "absolute")

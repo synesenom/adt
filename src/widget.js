@@ -52,8 +52,10 @@
 // TODO add calendar plot
 // TODO make plot data modifiable
 // TODO add graph widget
+// TODO add 2d slider
 // TODO fix return values for methods that don't return anything
 // TODO add description of data format for each widget
+// TODO add transition to render methods
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -191,6 +193,7 @@
          * @method relative
          * @memberOf du.widget.Widget
          * @param {boolean} on True if relative position should be turned on.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "relative", false);
 
@@ -201,6 +204,7 @@
          * @method resize
          * @memberOf du.widget.Widget
          * @param {boolean} scale Factor to resize widget with.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "resize", 1);
 
@@ -212,6 +216,7 @@
          * @memberOf du.widget.Widget
          * @param {number} x Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "x", 0, "dim", function(x, dim) {
             _attr.x = x;
@@ -227,6 +232,7 @@
          * @memberOf du.widget.Widget
          * @param {number} y Position value.
          * @param {string} dim Dimension (unit) of the position. Supported values: px, %.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "y", 0, "dim", function(y, dim) {
             _attr.y = y;
@@ -240,6 +246,7 @@
          * @method width
          * @memberOf du.widget.Widget
          * @param {number} w Width in pixels.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "width", 200, "dim");
 
@@ -249,6 +256,7 @@
          * @method height
          * @memberOf du.widget.Widget
          * @param {number} h Height in pixels.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "height", 150, "dim");
 
@@ -258,6 +266,7 @@
          * @method margins
          * @memberOf du.widget.Widget
          * @param {(number|object)} margins A single number to set all sides or an object specifying some of the sides.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "margins", {left: 0, right: 0, top: 0, bottom: 0}, "dim", function(margins) {
             if (typeof margins === "number") {
@@ -265,10 +274,9 @@
                     _attr.margins[m] = margins;
                 });
             } else {
-                for (var side in margins) {
-                    if (_attr.margins.hasOwnProperty(side))
-                        _attr.margins[side] = margins[side];
-                }
+                _.forOwn(margins, function(margin, side) {
+                    _attr.margins[side] = margins[side];
+                });
             }
         });
 
@@ -277,13 +285,18 @@
          *
          * @method borders
          * @memberOf du.widget.Widget
-         * @param {object) borders An object specifying some of the sides.
+         * @param {object) borders A string to use for all sides or an object specifying some of the sides.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "borders", {left: null, right: null, top: null, bottom: null}, null, function(borders) {
-            for (var side in borders) {
-                if (_attr.borders.hasOwnProperty(side))
-                    _attr.borders[side] = borders[side];
+            if (typeof borders === "string") {
+                ["top", "left", "bottom", "right"].forEach(function(m) {
+                    _attr.borders[m] = borders;
+                });
             }
+            _.forOwn(borders, function(border, side) {
+                _attr.borders[side] = borders[side];
+            });
         });
 
         /**
@@ -293,6 +306,7 @@
          * @method fontColor
          * @memberOf du.widget.Widget
          * @param {string} color Color to set font and axes to.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "fontColor", "black");
 
@@ -303,6 +317,7 @@
          * @method fontSize.
          * @memberOf du.widget.Widget
          * @param {number} size Font size in pixels.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "fontSize", 10);
 
@@ -313,6 +328,7 @@
          * @method fontWeight
          * @memberOf du.widget.Widget
          * @param {string} weight Font weight.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "fontWeight", "normal");
 
@@ -323,6 +339,7 @@
          * @method label
          * @memberOf du.widget.Widget
          * @param {string} text Label text.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "label", null);
 
@@ -333,6 +350,7 @@
          * @method xLabel
          * @memberOf du.widget.Widget
          * @param {string} text Label text.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "xLabel", null);
 
@@ -343,6 +361,7 @@
          * @method yLabel
          * @memberOf du.widget.Widget
          * @param {string} text Label text.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "yLabel", null);
 
@@ -353,6 +372,7 @@
          * @method tickFormat
          * @memberOf du.widget.Widget
          * @param {function} format Function that converts a number to a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "tickFormat", function(x) {
             return x > 1 ? d3.format(".2s")(x) : x;
@@ -365,6 +385,7 @@
          * @method yTickFormat
          * @memberOf du.widget.Widget
          * @param {function} format Function that converts a number to a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "yTickFormat", function(x) {
             return x > 1 ? d3.format(".2s")(x) : x;
@@ -377,6 +398,7 @@
          * @method xTickAngle
          * @memberOf du.widget.Widget
          * @param {number} angle The angle to set.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "xTickAngle", null);
 
@@ -387,6 +409,7 @@
          * @method yMin
          * @memberOf du.widget.Widget
          * @param {number} value Value to set vertical minimum to.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "yMin", 0);
 
@@ -402,6 +425,7 @@
          * @method mouseover
          * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on mouseover.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "mouseover", null);
 
@@ -417,6 +441,7 @@
          * @method mouseleave
          * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on mouseleave.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "mouseleave", null);
 
@@ -432,6 +457,7 @@
          * @method click
          * @memberOf du.widget.Widget
          * @param {function} callback Callback to trigger on click.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "click", null);
 
@@ -443,6 +469,7 @@
          * @memberOf du.widget.Widget
          * @param {(string|object)} color Single color to set all plot elements or an object specifying the color of
          * each plot.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "colors", "#888");
 
@@ -453,6 +480,7 @@
          * @method tooltip
          * @memberOf du.widget.Widget
          * @param {boolean} enable If tooltip should be enabled.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "tooltip", false);
 
@@ -620,13 +648,15 @@
              *
              * @method highlight
              * @memberOf du.widget.Widget.utils
+             * @param {du.widget.Widget} widget The current widget that called the method.
              * @param {object} svg The inner SVG of the widget.
              * @param {string} selector Selector of the widget elements.
              * @param {string} key Key of the element to highlight.
              * @param {number} duration Duration of the highlight animation.
+             * @returns {du.widget.Widget} The widget calling the method.
              * @private
              */
-            function _highlight(svg, selector, key, duration) {
+            function _highlight(widget, svg, selector, key, duration) {
                 if (svg !== null) {
                     if (typeof key === "string") {
                         svg.g.selectAll(selector).transition();
@@ -642,6 +672,7 @@
                             .style("opacity", 1);
                     }
                 }
+                return widget;
             }
 
             // Exposed methods
@@ -654,7 +685,7 @@
         })();
 
         /**
-         * Shows/hides the tooltip.
+         * Shows/hides the within-widget tooltip.
          *
          * @method _showTooltip
          * @memberOf du.widget.Widget
@@ -735,7 +766,7 @@
          *
          * @method id
          * @memberOf du.widget.Widget
-         * @returns {string}
+         * @returns {string} Identifier of the current widget.
          */
         this.id = function() {
             return _id;
@@ -751,40 +782,35 @@
         var _render = {
             /**
              * Builds widget if it is not yet created.
-             * Must be overridden.
+             * May be overridden.
              *
              * @method build
              * @memberOf du.widget.Widget._render
              */
-            build: function () {
-                //throw new Error("du.widget.Widgets Error: build() is not implemented");
-            },
+            build: null,
 
             /**
              * Updates the widget data.
-             * Must be overridden.
+             * May be overridden.
              *
              * @method update
              * @memberOf du.widget.Widget._render
              */
-            update: function () {
-                //throw new Error("du.widget.Widgets Error: update() is not implemented");
-            },
+            update: null,
 
             /**
              * Updates widget style.
-             * Must be overridden.
+             * May be overridden.
              *
              * @method style
              * @memberOf du.widget.Widget._render
              */
-            style: function () {
-                //throw new Error("du.widget.Widgets Error: style() is not implemented");
-            }
+            style: null
         };
 
         /**
          * Renders the widget. Note that without calling this method, the widget is not rendered at all.
+         * After any changes in style or bound data, this method should be called.
          *
          * @method render
          * @memberOf du.widget.Widget
@@ -823,12 +849,12 @@
 
             // Build widget if first time render
             if (!this._isBuilt) {
-                _render.build(dur);
+                _render.build && _render.build(dur);
                 this._isBuilt = true;
             }
 
             // Update data
-            _render.update(dur);
+            _render.update && _render.update(dur);
 
             // Widget position
             if (_attr.relative) {
@@ -891,7 +917,7 @@
                 .attr("font-family", "inherit");
 
             // Additional styling
-            _render.style();
+            _render.style && _render.style();
 
             _widget.style("display", "block");
             return this;
@@ -960,6 +986,7 @@
          * @memberOf du.widget.Widget
          * @param {string} content Content to show in place of the widget. Can be HTML formatted. If nothing is passed,
          * the widget is shown again.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         this.placeholder = function(content) {
             var duration = 300;
@@ -1005,6 +1032,7 @@
                     ph.remove();
                 }
             }
+            return this;
         };
 
         /**

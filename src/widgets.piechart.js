@@ -58,6 +58,7 @@
          * @method innerRadius
          * @memberOf du.widgets.piechart.PieChart
          * @param {number} size Size of the inner radius in pixels.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         _w.attr.add(this, "innerRadius", 0, "dim");
 
@@ -68,6 +69,7 @@
          * @method outerRadius
          * @memberOf du.widgets.piechart.PieChart
          * @param {number} size Size of the outer radius in pixels.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         _w.attr.add(this, "outerRadius", 50, "dim");
 
@@ -77,6 +79,7 @@
          * @method ticks
          * @memberOf du.widgets.piechart.PieChart
          * @param {boolean} add Adds ticks.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         _w.attr.add(this, "ticks", false);
 
@@ -94,6 +97,7 @@
          * @method data
          * @memberOf du.widgets.piechart.PieChart
          * @param {Array} data Array of objects with keys 'name', 'value' and 'color'.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.data = function (data) {
             _data = data;
@@ -107,10 +111,12 @@
          * @memberOf du.widgets.piechart.PieChart
          * @param {string} key Key of the segment to highlight.
          * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, "path", key, duration);
-            _w.utils.highlight(_svg, "text", key, duration);
+            _w.utils.highlight(this, _svg, "path", key, duration);
+            _w.utils.highlight(this, _svg, "text", key, duration);
+            return this;
         };
 
         // Builder

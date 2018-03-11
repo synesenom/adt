@@ -58,6 +58,7 @@
          * @method vertical
          * @memberOf du.widgets.barchart.BarChart
          * @param {boolean} vertical Whether to set bar chart to vertical.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         _w.attr.add(this, "vertical", false);
 
@@ -71,7 +72,7 @@
          * @method data
          * @memberOf du.widgets.barchart.BarChart
          * @param {Array} data Array of {x: (number|string), y: number} objects.
-         * @returns {du.widgets.barchart.BarChart} Reference to the current bar chart.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         this.data = function(data) {
             _data = data;
@@ -85,11 +86,10 @@
          * @memberOf du.widgets.barchart.BarChart
          * @param {string} key Key of the line to highlight.
          * @param {number} duration Duration of the highlight animation.
-         * @returns {du.widgets.barchart.BarChart} Reference to the current bar chart.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".bar", key, duration);
-            return this;
+            return _w.utils.highlight(this, _svg, ".bar", key, duration);
         };
 
         // Builder

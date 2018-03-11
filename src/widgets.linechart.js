@@ -23,21 +23,21 @@
  * @module linechart
  * @memberOf du.widgets
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
 // TODO add log axes
-// TODO make marker separate widget
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widget'), exports);
+        module.exports = factory(require('d3'), require('lodash'), require('./widget'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'src/widget', 'exports'], factory);
+        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.LineChart = factory(global.d3, global.du.Widget);
+        global.du.widgets.LineChart = factory(global.d3, global._, global.du.Widget);
     }
-} (this, function (d3, Widget) {
+} (this, function (d3, _, Widget) {
     "use strict";
 
     /**
@@ -60,6 +60,7 @@
          * @method xType
          * @memberOf du.widgets.linechart.LineChart
          * @param {string} type Type of the X axis.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         _w.attr.add(this, "xType", "number");
 
@@ -73,6 +74,7 @@
          * @method legend
          * @memberOf du.widgets.linechart.LineChart
          * @param {boolean} on Whether legend should be added.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         _w.attr.add(this, "legend", false);
 
@@ -92,6 +94,7 @@
          * @memberOf du.widgets.linechart.LineChart
          * @param {Array} data Array of data points.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         this.data = function(data, scale) {
             _data = data;
@@ -109,11 +112,13 @@
          * @memberOf du.widgets.linechart.LineChart
          * @param {string} key Key of the line to highlight.
          * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".line", key, duration);
-            _w.utils.highlight(_svg, ".error", key, duration);
-            _w.utils.highlight(_svg, ".marker", key, duration);
+            _w.utils.highlight(this, _svg, ".line", key, duration);
+            _w.utils.highlight(this, _svg, ".error", key, duration);
+            _w.utils.highlight(this, _svg, ".marker", key, duration);
+            return this;
         };
         var highlight = this.highlight;
 
@@ -372,7 +377,7 @@
             }
 
             // Calculate scale
-            var boundary = _w.utils.boundary(data, {y: [_w.attr.yMin, null]})
+            var boundary = _w.utils.boundary(data, {y: [_w.attr.yMin, null]});
             _svg.scale = _w.utils.scale(boundary,
                 _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,

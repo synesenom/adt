@@ -23,10 +23,9 @@
  * @module areachart
  * @memberOf du.widgets
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
-// TODO add transition to render methods
-// TODO add mouse events
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('./widget'));
@@ -48,6 +47,7 @@
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
+     * @extends {du.widget.Widget}
      */
     function AreaChart(name, parent) {
         var _w = Widget.call(this, name, "areachart", "svg", parent);
@@ -60,6 +60,7 @@
          * @method xType
          * @memberOf du.widgets.areachart.AreaChart
          * @param {string} type Type of the X axis.
+         * @returns {du.widget.Widget} Reference to the current widget.
          */
         _w.attr.add(this, "xType", "number");
 
@@ -70,6 +71,7 @@
          * @method opacity
          * @memberOf du.widgets.areachart.AreaChart
          * @param {number} value The opacity value to set.
+         * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         _w.attr.add(this, "opacity", 0.3);
 
@@ -86,6 +88,7 @@
          * @param {Array} data Array of {x, y} objects where X is a number or Date, Y is an object containing the y
          * values for each area to plot.
          * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
+         * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         this.data = function(data, scale) {
             _data = data;
@@ -103,9 +106,10 @@
          * @memberOf du.widgets.areachart.AreaChart
          * @param {string} key Key of the area to highlight.
          * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".area", key, duration);
+            return _w.utils.highlight(this, _svg, ".area", key, duration);
         };
 
         // Tooltip builder

@@ -4,7 +4,7 @@
 - var jsDependencies = ["d3.v4", "lodash.4.17.4", "topojson.v1"]
 - var modulesDir = "../dl/"
 - var modules = ["widget", "widgets.areachart", "widgets.barchart", "widgets.chordchart", "widgets.grid", "widgets.hint", "widgets.histogram","widgets.label", "widgets.legend", "widgets.linechart", "widgets.map", "widgets.picture", "widgets.piechart", "widgets.slider", "widgets.status"]
-- var examples = ["areachart", "barchart", "chordchart", "grid", "hint", "histogram", "label", "legend", "linechart", "map", "picture", "piechart", "placeholder", "slider", "status"]
+- var examples = [{name: "areachart", path: "widgets.areachart"}, {name: "barchart", path: "widgets.barchart"}, {name: "chordchart", path: "widgets.chordchart"}, {name: "grid", path: "widgets.grid"}, {name: "hint", path: "widgets.hint"}, {name: "histogram", path: "widgets.histogram"}, {name: "label", path: "widgets.label"}, {name: "legend", path: "widgets.legend"}, {name: "linechart", path: "widgets.linechart"}, {name: "map", path: "widgets.map"}, {name: "picture", path: "widgets.picture"}, {name: "piechart", path: "widgets.piechart"}, {name: "placeholder", path: "placeholder"}, {name: "slider", path: "widgets.slider"}, {name: "status", path: "widgets.status"}];
 
 doctype html
 html(lang='en')
@@ -29,11 +29,11 @@ html(lang='en')
                     if example
                         .example-container
                             .example
-                                a(href=example + '.html')
+                                a(href=example.path + '.html')
                                     .widget-container
-                                        - var title = example.charAt(0).toUpperCase() + example.slice(1,  example.length)
+                                        - var title = example.name.charAt(0).toUpperCase() + example.name.slice(1,  example.name.length)
                                         .widget-name #{title}
-                                            div.widget(id=example)
+                                            div.widget(id=example.name)
 
     script
         include:uglify-js js/examples.js

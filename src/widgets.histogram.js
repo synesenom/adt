@@ -39,6 +39,7 @@
          * @method min
          * @methodOf du.widgets.histogram.Histogram
          * @param {number} value Value to set as lower boundary.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         _w.attr.add(this, "min", null);
 
@@ -49,6 +50,7 @@
          * @method max
          * @methodOf du.widgets.histogram.Histogram
          * @param {number} value Value to set as upper boundary.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         _w.attr.add(this, "max", null);
 
@@ -59,6 +61,7 @@
          * @method bin
          * @methodOf du.widgets.histogram.Histogram
          * @param {number} size Bin size to set.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         _w.attr.add(this, "bin", null);
 
@@ -69,6 +72,7 @@
          * @method normalize
          * @methodOf du.widgets.histogram.Histogram
          * @param {boolean} on Whether normalization is on.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         _w.attr.add(this, "normalize", false);
 
@@ -83,7 +87,7 @@
          * @method data
          * @memberOf du.widgets.histogram.Histogram
          * @param {Array} data Array of {x: (number|string), y: number} objects.
-         * @returns {du.widgets.histogram.Histogram} Reference to the current histogram.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         this.data = function(data) {
             _data = data.sort(function(a, b) {
@@ -99,11 +103,10 @@
          * @memberOf du.widgets.histogram.Histogram
          * @param {string} key Key of the line to highlight.
          * @param {number} duration Duration of the highlight animation.
-         * @returns {du.widgets.histogram.Histogram} Reference to the current histogram.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".bar", key, duration);
-            return this;
+            return _w.utils.highlight(this, _svg, ".bar", key, duration);
         };
 
         // Builder

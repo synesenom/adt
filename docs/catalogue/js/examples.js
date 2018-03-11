@@ -190,7 +190,6 @@ window.addEventListener("load", function () {
             .y(0)
             .width(width)
             .height(height)
-            .labels(true)
             .backgroundColor("#aac6ff")
             .borderColor("white")
             .foregroundColor("#dc9a2f")

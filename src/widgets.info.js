@@ -65,6 +65,7 @@
              * @method content
              * @memberOf du.widgets.info.Info
              * @param {string} text Content of the info box. Can be HTML formatted.
+             * @returns {du.widgets.info.Info} Reference to the current Info.
              */
             _w.attr.add(this, "content", "");
 
@@ -75,6 +76,7 @@
              * @method backgroundColor
              * @memberOf du.widgets.info.Info
              * @param {string} color Color to set background to.
+             * @returns {du.widgets.info.Info} Reference to the current Info.
              */
             _w.attr.add(this, "backgroundColor", "black");
 

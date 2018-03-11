@@ -57,12 +57,14 @@
          * @method align
          * @memberOf du.widgets.label.Label
          * @param {string} alignment The alignment to set.
+         * @returns {du.widgets.label.Label} Reference to the current Label.
          */
         _w.attr.add(this, "align", "center");
 
         // Widget elements
         var _svg = {};
 
+        // Builder
         _w.render.build = function() {
             _svg.g = _w.widget.append("div")
                 .style("position", "absolute")

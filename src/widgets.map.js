@@ -41,8 +41,8 @@
  * @author Enys Mones (enys.mones@sony.com)
  * @module map
  * @memberOf du.widgets
- * @requires lodash@4.17.4
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires topojson@v1
  * @requires du.Widget
  */
@@ -1489,6 +1489,7 @@
     function Map(name, parent) {
         var _id = "du-widgets-map";
         var _w = Widget.call(this, name, "map", "div", parent);
+        var widget = this;
 
         /**
          * Sets horizontal position of the map center relative to the widget's center.
@@ -1497,6 +1498,7 @@
          * @method centerX
          * @memberOf du.widgets.map.Map
          * @param {number} dx Horizontal distance to set.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "centerX", 0);
 
@@ -1507,6 +1509,7 @@
          * @method centerY
          * @memberOf du.widgets.map.Map
          * @param {number} dy Vertical distance to set.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "centerY", 0);
 
@@ -1517,6 +1520,7 @@
          * @method backgroundColor
          * @memberOf du.widgets.map.Map
          * @param {string} color Background color.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "backgroundColor", "white");
 
@@ -1527,6 +1531,7 @@
          * @method foregroundColor
          * @memberOf du.widgets.map.Map
          * @param {string} color Foreground color.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "foregroundColor", "black");
 
@@ -1537,6 +1542,7 @@
          * @method borderColor
          * @memberOf du.widgets.map.Map
          * @param {string} color Border color.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "borderColor", "white");
 
@@ -1547,10 +1553,11 @@
          * @method outClick
          * @memberOf du.widgets.map.Map
          * @param {function} callback Callback to set.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "outClick", null);
 
-        _w.attr.add(this, "labels", false);
+        //_w.attr.add(this, "labels", false);
 
         /**
          * Disables zooming functionality.
@@ -1559,6 +1566,7 @@
          * @method noZoom
          * @memberOf du.widgets.map.Map
          * @param {boolean} disable Whether zooming should be disabled.
+         * @returns {du.widgets.map.Map} Reference to the current Map.
          */
         _w.attr.add(this, "noZoom", false);
 
@@ -2516,8 +2524,17 @@
                 }
             }
 
+            /**
+             * Dims map to the specified opacity level.
+             *
+             * @method dim
+             * @memberOf du.widgets.map.Map
+             * @param {number} level Opacity level to dim map to.
+             * @returns {du.widgets.map.Map} Reference to the current Map.
+             */
             function dim(level) {
                 _paths.style("opacity", level ? level : 1);
+                return widget;
             }
 
             /**
@@ -2529,6 +2546,7 @@
              * highlighted.
              * @param {string=} color Optional color to use for highlight (default is the bright version of foreground).
              * @param {string=} duration Optional duration length in ms (default is 0).
+             * @returns {du.widgets.map.Map} Reference to the current Map.
              */
             function highlight(id, color, duration) {
                 _select(id)
@@ -2540,6 +2558,7 @@
                         return typeof color === "string" ? color
                             : (typeof id === "string") ? d3.color(origColor).brighter() : origColor;
                     });
+                return widget;
             }
 
             // Exposed methods
@@ -2549,7 +2568,7 @@
                 _update: _update,
                 _style: _style,
                 dim: dim,
-                highlight: highlight,
+                highlight: highlight
             };
         })();
 
@@ -2704,7 +2723,6 @@
                                 _canvas.fill();
                             },
 
-                            // TODO clean this up, make it faster
                             arrow: function (params, old) {
                                 // Set color
                                 if (params.color)
@@ -2862,6 +2880,7 @@
              * @method highlight
              * @memberOf du.widgets.map.Map.staticLayer
              * @param {string} id Identifier of the static layer to highlight. If not given, highlight is cancelled.
+             * @returns {du.widgets.map.Map} Reference to the current Map.
              */
             function highlight(id) {
                 var safeId = _w.utils.encode(id);
@@ -2878,6 +2897,7 @@
                             .style("opacity", 1);
                     });
                 }
+                return widget;
             }
 
             /**
@@ -3231,6 +3251,7 @@
              * @method highlight
              * @memberOf du.widgets.map.Map.dynamicLayer
              * @param {string} id Identifier of the layer to highlight. If not given, highlight is cancelled.
+             * @returns {du.widgets.map.Map} Reference to the current Map.
              */
             function highlight(id) {
                 var safeId = _w.utils.encode(id);
@@ -3247,6 +3268,7 @@
                             .style("opacity", 1);
                     });
                 }
+                return widget;
             }
 
             /**

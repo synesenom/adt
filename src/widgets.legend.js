@@ -25,6 +25,7 @@
  * @module legend
  * @memberOf du.widgets
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
 (function (global, factory) {
@@ -59,6 +60,7 @@
          * @method color
          * @memberOf du.widgets.legend.Legend
          * @param {string} color Color to use.
+         * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
         _w.attr.add(this, "color", "white");
 
@@ -69,6 +71,7 @@
          * @method twoColumns
          * @memberOf du.widgets.legend.Legend
          * @param {boolean} on Whether legend should be two columned.
+         * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
         _w.attr.add(this, "twoColumns", false);
 
@@ -82,9 +85,10 @@
          * @memberOf du.widgets.legend.Legend
          * @param {string} key Label of the legend to highlight.
          * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(_svg, ".legend-entry", key, duration);
+            return _w.utils.highlight(this, _svg, ".legend-entry", key, duration);
         };
 
         // Builder
