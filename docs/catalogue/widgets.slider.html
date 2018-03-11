@@ -4,31 +4,28 @@
         hljs.initHighlighting();
 });</script><title>slider | dashboard-utils</title></head><body><main><div id="widget"></div><div class="widget short" id="slider"></div><h1>description</h1><div id="desc">A slider is a <span class='good'>one dimensional control</span> widget that can be used to adjust the data to be shown on a chart or the dashboard. It can be <span class='good'>discrete or continuous</span> depending on the use case.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.slider.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.slider.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
 var data = {
-    2016: [
-        {x: 'banana', y: 4},
-        {x: 'mango', y: 6},
-        {x: 'kiwi', y: 7},
-        {x: 'pear', y: 3}
-    ],
-    2017: [
-        {x: 'banana', y: 2},
-        {x: 'mango', y: 7},
-        {x: 'kiwi', y: 2},
-        {x: 'pear', y: 8}
-    ],
-    2018: [
-        {x: 'banana', y: 3},
-        {x: 'mango', y: 1},
-        {x: 'kiwi', y: 9},
-        {x: 'pear', y: 2}
-    ]
+    2016: {
+        banana: 4,
+        mango: 6,
+        kiwi: 7,
+        pear: 3
+    },
+    2017: {
+        banana: 2,
+        mango: 7,
+        kiwi: 2,
+        pear: 8
+    },
+    2018: {
+        banana: 3,
+        mango: 1,
+        kiwi: 9,
+        pear: 2
+    }
 };
 var colors = {
-    apple: "lime",
     banana: "gold",
     mango: "tomato",
-    orange: "orange",
-    melon: "green",
     kiwi: "limegreen",
     pear: "khaki"
 };</script><script class="doc">// create chart

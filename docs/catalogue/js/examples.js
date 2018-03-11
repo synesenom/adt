@@ -37,15 +37,15 @@ new du.widgets.BarChart("barchart", "#barchart")
     .margins({left: 60, top: 20, right: 20, bottom: 40})
     .fontSize(12)
     .vertical(true)
-    .data([
-        {x: 'plum', y: 13},
-        {x: 'banana', y: 4},
-        {x: 'mango', y: 6},
-        {x: 'orange', y: 2},
-        {x: 'melon', y: 11},
-        {x: 'kiwi', y: 7},
-        {x: 'pear', y: 3}
-    ])
+    .data({
+        plum: 13,
+        banana: 4,
+        mango: 6,
+        orange: 2,
+        melon: 11,
+        kiwi: 7,
+        pear: 3
+    })
     .colors(colors)
     .render();
 
@@ -98,15 +98,15 @@ grid.add(new du.widgets.BarChart("subchart3")
     .margins({left: 50, top: 10, right: 10, bottom: 20})
     .fontSize(10)
     .vertical(true)
-    .data([
-        {x: 'plum', y: 13},
-        {x: 'banana', y: 4},
-        {x: 'mango', y: 6},
-        {x: 'orange', y: 2},
-        {x: 'melon', y: 11},
-        {x: 'kiwi', y: 7},
-        {x: 'pear', y: 3}
-    ])
+    .data({
+        plum: 13,
+        banana: 4,
+        mango: 6,
+        orange: 2,
+        melon: 11,
+        kiwi: 7,
+        pear: 3
+    })
     .colors(colors), 0, 1, 2, 1);
 grid.add(new du.widgets.AreaChart("subchart2")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
@@ -213,11 +213,17 @@ new du.widgets.PieChart("piechart", "#piechart")
     .fontSize(14)
     .ticks(true)
     .data([
-        {name: "orange", value: 3, color: "orange"},
-        {name: "mango", value: 4, color: "tomato"},
-        {name: "banana", value: 4, color: "gold"},
-        {name: "plum", value: 2, color: "yellowgreen"}
+        {name: "orange", value: 3},
+        {name: "mango", value: 4},
+        {name: "banana", value: 4},
+        {name: "plum", value: 2}
     ])
+    .colors({
+        plum: "darkmagenta",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange"
+    })
     .render();
 
 new du.widgets.LineChart("placeholder", "#placeholder")
