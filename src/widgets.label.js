@@ -25,7 +25,6 @@
  * @requires d3@v4
  * @requires du.Widget
  */
- // TODO set text only on build not in style updater
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'), exports);

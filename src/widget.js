@@ -51,9 +51,9 @@
 // TODO add heat map
 // TODO add calendar plot
 // TODO make plot data modifiable
-// TODO clean up mouse event chaos
 // TODO add graph widget
-// TODO make all plot selectors properly encoded
+// TODO fix return values for methods that don't return anything
+// TODO add description of data format for each widget
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);

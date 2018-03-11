@@ -33,7 +33,6 @@
  * @requires d3@v4
  * @requires du.Widget
  */
-// TODO update style for ticks in render.style()
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'), exports);
@@ -406,10 +405,7 @@
                     })
                     .attr("text-anchor", function (d) {
                         return d.angle > Math.PI ? "end" : "begin";
-                    })
-                    .style("font-size", _w.attr.fontSize * 0.8 + "px")
-                    .style("font-weight", _w.attr.fontWeight)
-                    .style("fill", _w.attr.fontColor);
+                    });
             }
 
             // Exiting groups
@@ -504,6 +500,14 @@
             // Chart
             _svg.g
                 .attr("transform", "translate(" + _w.attr.radius + "," + _w.attr.radius + ")");
+
+            // Ticks
+            if (_w.attr.ticks) {
+                _svg.newGroups.selectAll("text")
+                    .style("font-size", _w.attr.fontSize * 0.8 + "px")
+                    .style("font-weight", _w.attr.fontWeight)
+                    .style("fill", _w.attr.fontColor);
+            }
 
             // Label
             _svg.label

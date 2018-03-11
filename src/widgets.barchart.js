@@ -155,7 +155,9 @@
                     _svg.bars = _svg.g.selectAll(".bar")
                         .data(_data)
                         .enter().append("rect")
-                        .attr("class", function(d) { return "bar " + _w.utils.encode(d.x); })
+                        .attr("class", function (d) {
+                            return "bar " + _w.utils.encode(d.x);
+                        })
                         .style("pointer-events", "all")
                         .style("stroke", "none")
                         .style("shape-rendering", "geometricPrecision");
@@ -165,7 +167,7 @@
                             .attr("width", 0);
                     } else {
                         _svg.bars
-                            .attr("y", _w.attr.height-_w.attr.margins.top-_w.attr.margins.bottom-1)
+                            .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
                             .attr("height", 0);
                     }
                 }
@@ -174,18 +176,28 @@
                 _svg.bars.data(_data);
                 if (_w.attr.vertical) {
                     _svg.bars
-                        .attr("y", function(d) { return scale.x(d.x); })
+                        .attr("y", function (d) {
+                            return scale.x(d.x);
+                        })
                         .attr("height", scale.x.bandwidth())
                         .transition().duration(duration)
                         .attr("x", 2)
-                        .attr("width", function(d) { return scale.y(d.y); });
+                        .attr("width", function (d) {
+                            return scale.y(d.y);
+                        });
                 } else {
                     _svg.bars
-                        .attr("x", function(d) { return scale.x(d.x); })
+                        .attr("x", function (d) {
+                            return scale.x(d.x);
+                        })
                         .attr("width", scale.x.bandwidth())
                         .transition().duration(duration)
-                        .attr("y", function(d) { return scale.y(d.y); })
-                        .attr("height", function(d) { return _w.attr.height-_w.attr.margins.top-_w.attr.margins.bottom - scale.y(d.y); });
+                        .attr("y", function (d) {
+                            return scale.y(d.y);
+                        })
+                        .attr("height", function (d) {
+                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - scale.y(d.y);
+                        });
                 }
             }
         };

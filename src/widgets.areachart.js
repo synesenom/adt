@@ -220,7 +220,6 @@
                 // Add areas if needed
                 if (_svg.areas === undefined) {
                     _svg.areas = {};
-                    _svg.lines = {}
                     _.forOwn(data[0].y, function (yk, k) {
                         _svg.areas[k] = _svg.g.append("path")
                             .attr("class", "area " + _w.utils.encode(k))
