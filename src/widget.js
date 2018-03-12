@@ -53,7 +53,6 @@
 // TODO make plot data modifiable
 // TODO add graph widget
 // TODO add 2d slider
-// TODO set d3 color20 as default colors
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -65,6 +64,35 @@
     }
 } (this, function (d3, _) {
     "use strict";
+
+    /**
+     * Values in the default color scheme, which is a combination of the qualitative color schemes Set 1 and
+     * Set 3 from Color Brewer.
+     *
+     * @var {Array} _DEFAULT_COLORS
+     * @memberOf du.widget
+     * @private
+     */
+    var _DEFAULT_COLORS = [
+        "#e41a1c",
+        "#377eb8",
+        "#4daf4a",
+        "#984ea3",
+        "#ff7f00",
+        "#ffff33",
+        "#a65628",
+        "#f781bf",
+        "#999999",
+        "#8dd3c7",
+        "#ffffb3",
+        "#bebada",
+        "#fb8072",
+        "#80b1d3",
+        "#fdb462",
+        "#b3de69",
+        "#fccde5",
+        "#d9d9d9"
+    ];
 
     /**
      * The base widget class, all widgets inherit this parent class.
@@ -445,7 +473,7 @@
 
         /**
          * Sets a callback when the various elements of the widget are clicked.
-         * TThe behavior of this callback is specific to the widget type: for chart widgets, it is bound to the plot
+         * The behavior of this callback is specific to the widget type: for chart widgets, it is bound to the plot
          * elements and the plot's name is passed to the specified callback as argument. This can be used as a selector
          * for e.g, highlighting elements in the widget.
          * For the map it is bound to countries and the name of the country is passed as parameter.
@@ -461,15 +489,18 @@
 
         /**
          * Sets the color(s) of the widget plot elements.
-         * Default is #888.
+         * By default, a combination of the Color Brewer schemes Set 1 and Set 3 is used.
+         * If single color is defined, a sequential color scheme is generated with the number of categories equal to the
+         * keys in data.
+         * If a full color mapping is specified, it is used directly without change.
          *
          * @method colors
          * @memberOf du.widget.Widget
-         * @param {(string|object)} color Single color to set all plot elements or an object specifying the color of
+         * @param {(string|object)} colors Single color to set all plot elements or an object specifying the color of
          * each plot.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        _attr.add(this, "colors", "#888");
+        _attr.add(this, "colors", null);
 
         /**
          * Enables tooltip for the chart widget.
@@ -494,7 +525,7 @@
              * Encodes a plot key by replacing spaces with double underscore.
              *
              * @method encode
-             * @memberOf du.widget.Widget.utils
+             * @memberOf du.widget.Widget._utils
              * @param {string} key Key to encode.
              * @returns {(number|string)} Encoded key if key is valid, empty string otherwise.
              * @private
@@ -600,7 +631,7 @@
              * Calculates axis scales from a boundary.
              *
              * @method scale
-             * @memberOf du.widget.Widget.utils
+             * @memberOf du.widget.Widget._utils
              * @param {{x: Array, y: Array}} boundary Object describing the boundary.
              * @param {number} width Width of the plotting area.
              * @param {number} height Height of the plotting area.
@@ -645,7 +676,7 @@
              * Highlights an element in the widget.
              *
              * @method highlight
-             * @memberOf du.widget.Widget.utils
+             * @memberOf du.widget.Widget._utils
              * @param {du.widget.Widget} widget The current widget that called the method.
              * @param {object} svg The inner SVG of the widget.
              * @param {string} selector Selector of the widget elements.
@@ -673,12 +704,64 @@
                 return widget;
             }
 
+            /**
+             * Builds color mapping for an array of keys based on the {colors} attribute.
+             * If no color is specified, the default color scheme is used (color brewer).
+             * If single color is defined, a sequential color scheme is generated for 10 categories.
+             * If a full color mapping is specified, it is used directly without change.
+             *
+             * @method _colors
+             * @memberOf du.widget.Widget._utils
+             * @param {Array=} keys Array of keys to build color mapping for.
+             * @returns {object} Object containing the keys as property names and the associated colors as values.
+             * @private
+             */
+            function _colors(keys) {
+                // Return empty color scheme if keys are invalid
+                if (keys === null || keys === undefined) {
+                    return {};
+                }
+
+                // Otherwise, build color scheme based on the colors attribute
+                if (keys.length > 0) {
+                    // Colors are not specified: using default color brewer
+                    if (_attr.colors === null || _attr.colors === undefined) {
+                        return keys.sort(function(a, b) {
+                            return a.localeCompare(b);
+                        }).reduce(function(map, d, i) {
+                            map[d] = _DEFAULT_COLORS[i % 18];
+                            return map;
+                        }, {});
+                    }
+
+                    // Single color is specified: using sequential colors
+                    // by interpolating between the specified color and #ccc
+                    if (typeof _attr.colors === "string") {
+                        // Build scale
+                        var scale = d3.scaleLinear()
+                            .domain([0, keys.length])
+                            .range([_attr.colors, "#fff"])
+                            .interpolate(d3.interpolateRgb);
+
+                        // Generate color mapping
+                        return keys.reduce(function(map, d, i) {
+                            map[d] = scale(i);
+                            return map;
+                        }, {});
+                    }
+
+                    // Color map is specified
+                    return _attr.colors;
+                }
+            }
+
             // Exposed methods
             return {
                 encode: _encode,
                 boundary: _boundary,
                 scale: _scale,
-                highlight: _highlight
+                highlight: _highlight,
+                colors: _colors
             };
         })();
 

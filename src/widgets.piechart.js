@@ -23,20 +23,21 @@
  * @module piechart
  * @memberOf du.widgets
  * @requires d3@v4
+ * @requires lodash@4.17.4
  * @requires du.Widget
  */
 // TODO simplify class
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widget'), exports);
+        module.exports = factory(require('d3'), require('lodash'), require('./widget'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'src/widget', 'exports'], factory);
+        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.PieChart = factory(global.d3, global.du.Widget);
+        global.du.widgets.PieChart = factory(global.d3, global._, global.du.Widget);
     }
-} (this, function (d3, Widget) {
+} (this, function (d3, _, Widget) {
     "use strict";
 
     /**
@@ -85,14 +86,12 @@
 
         // Widget elements.
         var _svg = null;
-        var _data = [{
-            name: "data",
-            value: 1
-        }];
+        var _data = [];
 
         /**
          * Binds new data to pie chart.
-         * Expected data format: array of objects with properties {name} and {value}.
+         * Expected data format: object with property names as the categories and properties as the values.
+         * Data is sorted by the category values in descending order.
          *
          * @method data
          * @memberOf du.widgets.piechart.PieChart
@@ -100,7 +99,16 @@
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.data = function (data) {
-            _data = data;
+            // Transform data to array
+            _data = [];
+            _.forOwn(data, function(v, k) {
+                _data.push({name: k, value: v});
+            });
+
+            // Sort by category name
+            _data.sort(function(a, b) {
+                return b.value - a.value;
+            });
             return this;
         };
 
@@ -149,9 +157,6 @@
             _svg.paths = _svg.arcs.append("path")
                 .attr("class", function (d) {
                     return _w.utils.encode(d.data.name);
-                })
-                .attr("fill", function (d) {
-                    return _w.attr.colors[d.data.name];
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("pointer-events", "all")
@@ -204,6 +209,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
+
             // Calculate radii
             var outerRadius = _w.attr.outerRadius - _w.attr.margins.left;
             _w.attr.width = 2*_w.attr.outerRadius;
@@ -221,7 +229,11 @@
             // Plot
             _svg.arc.outerRadius(outerRadius)
                 .innerRadius(_w.attr.innerRadius);
-            _svg.paths.attr("d", _svg.arc);
+            _svg.paths
+                .attr("d", _svg.arc)
+                .attr("fill", function (d) {
+                    return _w.attr.colors[d.data.name];
+                });
 
             // Ticks
             if (_w.attr.ticks) {

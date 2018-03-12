@@ -242,6 +242,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors([0]);
+
             // Inner dimensions
             var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
@@ -286,9 +289,10 @@
                 .text(_w.attr.yLabel);
 
             // Plot
+            console.log(_w.attr.colors);
             if (_svg.bars !== undefined) {
                 _svg.bars
-                    .style("fill", _w.attr.colors)
+                    .style("fill", _w.attr.colors[0])
                     .on("mouseover", function (d, i) {
                         _w.attr.mouseover && _w.attr.mouseover("bin-" + i);
                     })

@@ -174,7 +174,7 @@
                         .style("shape-rendering", "geometricPrecision");
                     if (_w.attr.vertical) {
                         _svg.bars
-                            .attr("x", 2)
+                            .attr("x", 1)
                             .attr("width", 0);
                     } else {
                         _svg.bars
@@ -192,7 +192,7 @@
                         })
                         .attr("height", scale.x.bandwidth())
                         .transition().duration(duration)
-                        .attr("x", 2)
+                        .attr("x", 1)
                         .attr("width", function (d) {
                             return scale.y(d.y);
                         });
@@ -215,6 +215,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.x; }) : null);
+
             // Inner dimensions
             var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;

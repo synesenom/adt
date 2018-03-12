@@ -2,7 +2,10 @@
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>legend | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A legend is a list of labels together with colored squares.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.legend.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.legend.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// prepare colors
+});</script><title>legend | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A legend is a list of labels together with colored squares.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.legend.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.legend.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// prepare labels and colors
+var labels = [
+    "mango", "orange", "a fruit with a long name", "kiwi", "pear"
+];
 var colors = {
     mango: "tomato",
     orange: "orange",
@@ -17,6 +20,7 @@ var legend = new du.widgets.Legend("mylegend", "#widget")
     .y(height / 3)
     .width(300)
     .height(150)
+    .labels(labels)
     .colors(colors)
     .fontSize(20)
     .twoColumns(true)

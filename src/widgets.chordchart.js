@@ -342,6 +342,9 @@
 
         // Data updater
         _w.render.update = function(duration) {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_indexByName ? _indexByName.keys() : null);
+
             // Calculate radii
             var innerRadius = _w.attr.radius - _w.attr.thickness - _w.attr.margins.left,
                 outerRadius = _w.attr.radius - _w.attr.margins.left;
@@ -358,11 +361,6 @@
 
             // Update chord data
             _svg.chord = _svg.chordFn(_data);
-
-            // Set up color
-            if (_w.attr.colors === null) {
-                _w.attr.colors = _makeColors(_svg.chord.groups);
-            }
 
             // Entering groups
             _svg.arc
@@ -496,6 +494,7 @@
 
         // Style updater
         _w.render.style = function() {
+            // Adjust size
             _w.attr.width = 2*_w.attr.radius;
             _w.attr.height = 2*_w.attr.radius;
 

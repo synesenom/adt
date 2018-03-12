@@ -5,7 +5,10 @@
 - var description = "A legend is a list of labels together with colored squares."
 include pug/example
 script.doc.
-    // prepare colors
+    // prepare labels and colors
+    var labels = [
+        "mango", "orange", "a fruit with a long name", "kiwi", "pear"
+    ];
     var colors = {
         mango: "tomato",
         orange: "orange",
@@ -22,6 +25,7 @@ script.doc.
         .y(height / 3)
         .width(300)
         .height(150)
+        .labels(labels)
         .colors(colors)
         .fontSize(20)
         .twoColumns(true)

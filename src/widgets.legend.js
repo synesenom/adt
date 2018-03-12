@@ -43,6 +43,7 @@
 
     /**
      * The legend widget class.
+     * Legend text is set by the color object passed to the method {colors}.
      *
      * @class Legend
      * @memberOf du.widgets.legend
@@ -54,15 +55,14 @@
         var _w = Widget.call(this, name, "legend", "div", parent);
 
         /**
-         * Sets legend color.
-         * Default is white.
+         * Sets the labels for the legend entries.
          *
-         * @method color
+         * @method labels
          * @memberOf du.widgets.legend.Legend
-         * @param {string} color Color to use.
+         * @param {Array} keys Array of label keys to use as legend text.
          * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
-        _w.attr.add(this, "color", "white");
+        _w.attr.add(this, "labels", []);
 
         /**
          * Makes legend two-column wide.
@@ -98,7 +98,7 @@
                 .style("position", "relative");
 
             _svg.legends = {};
-            _.forOwn(_w.attr.colors, function(color, label) {
+            _w.attr.labels.forEach(function(label) {
                 var g = _svg.g.append("div")
                     .attr("class", "legend-entry " + _w.utils.encode(label))
                     .style("display", "inline-block")
@@ -117,7 +117,6 @@
                     .style("float", "right")
                     .text(label);
                 _svg.legends[label] = {
-                    color: color,
                     g: g,
                     square: square,
                     text: text
@@ -127,6 +126,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_w.attr.labels);
+
             _svg.g
                 .style("width", _w.attr.width + 'px')
                 .style("height", _w.attr.height + 'px')
@@ -140,7 +142,7 @@
                     .style("width", 0.7 * _w.attr.fontSize + "px")
                     .style("height", 0.7 * _w.attr.fontSize + "px")
                     .style("margin", 0.15 * _w.attr.fontSize + "px " + 0.15 * _w.attr.fontSize + "px")
-                    .style("background-color", legend.color);
+                    .style("background-color", _w.attr.colors[label]);
                 if (_w.attr.mouseover) {
                     legend.square
                         .style("cursor", "pointer")

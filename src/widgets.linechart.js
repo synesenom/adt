@@ -446,6 +446,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
+
             // Inner dimensions
             var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;

@@ -73,7 +73,7 @@
          * @param {number} value The opacity value to set.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
-        _w.attr.add(this, "opacity", 0.3);
+        _w.attr.add(this, "opacity", 0.4);
 
         // Widget elements.
         var _svg = {};
@@ -141,7 +141,7 @@
                 .style("margin-bottom", "10px")
                 .style("border-bottom", "solid 1px " + _w.attr.fontColor)
                 .text(_w.attr.xLabel + ": " + point.x);
-            _.forOwn(point.y, function(y, yi) {
+            _.forOwn(point.y, function(yk, k) {
                 var entry = content.append("div")
                     .style("position", "relative")
                     .style("max-width", "150px")
@@ -153,14 +153,14 @@
                     .style("width", "10px")
                     .style("height", "10px")
                     .style("float", "left")
-                    .style("background-color", _w.attr.colors[yi]);
+                    .style("background-color", _w.attr.colors[k]);
                 entry.append("div")
                     .style("position", "relative")
                     .style("width", "calc(100% - 20px)")
                     .style("height", "10px")
                     .style("float", "right")
                     .style("line-height", "11px")
-                    .text(y.toPrecision(6));
+                    .text(yk.toPrecision(6));
             });
             return content.node().innerHTML;
         };
@@ -244,6 +244,9 @@
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
+
             // Inner dimensions
             var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                 innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
@@ -283,7 +286,7 @@
             _.forOwn(_svg.areas, function(ak, k) {
                 _svg.areas[k]
                     .style("fill-opacity", _w.attr.opacity)
-                    .style("fill", typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[k])
+                    .style("fill", _w.attr.colors[k])
                     .on("mouseover", function() {
                         _w.attr.mouseover && _w.attr.mouseover(k);
                     })
