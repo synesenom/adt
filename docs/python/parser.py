@@ -24,6 +24,7 @@ modules = [
     "widgets.piechart",
     "widgets.slider",
     "widgets.status",
+    "widgets.trackpad",
 ]
 for m in modules:
     print("    " + m)

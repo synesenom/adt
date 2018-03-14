@@ -85,6 +85,7 @@
 
         /**
          * Sets callback attached to the slider. Must accept one parameter describing the value of the slider.
+         * By default no callback is set.
          *
          * @method callback
          * @memberOf du.widgets.slider.Slider
@@ -138,19 +139,20 @@
                 .attr("stroke-width", "9px")
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            _svg.border = _svg.track
+            _svg.inset = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
                 .style("stroke", "white")
                 .style("opacity", 0.9)
                 .style("stroke-width", "8px");
-            _svg.line = _svg.border
+            _svg.overlay = _svg.inset
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
-                .style("cursor", "pointer")
+                .attr("class", "track-overlay")
                 .style("pointer-events", "stroke")
+                .style("cursor", "pointer")
                 .style("stroke", "transparent")
                 .style("stroke-width", "50px")
                 .call(d3.drag()
@@ -165,36 +167,33 @@
                             value = _scale.invert(d3.event.x);
                         }
                         _svg.handle.attr("cx", _scale(value));
-                        if (_w.attr.callback) {
-                            _w.attr.callback(value);
-                        }
+                        _w.attr.callback &&  _w.attr.callback(value);
                     }));
 
-            _svg.overlay = _svg.g.insert("g", ".track-overlay")
+            _svg.axis = _svg.g.insert("g", ".track-overlay")
                 .style("font-size", "10px")
                 .attr("font-family", "inherit")
                 .attr("transform", "translate(0," + 18 + ")");
-            _svg.ticks = _svg.overlay
+            _svg.ticks = _svg.axis
                 .selectAll("text")
                 .data(_ordinalScale ? _domain : _scale.ticks(5))
                 .enter().append("text")
                 .attr("x", _scale)
                 .attr("text-anchor", "middle")
                 .attr("font-family", "inherit")
-                .attr("fill", _w.attr.fontColor)
                 .text(function (d) {
                     return d;
                 });
 
             _svg.handle = _svg.g.insert("circle", ".track-overlay")
                 .style("fill", "white")
-                .style("stroke", _w.attr.fontColor)
                 .style("stroke-width", "0.5px")
                 .attr("r", 8);
         };
 
         // Style updater
         _w.render.style = function () {
+            // Widget
             _w.widget.style("width", _w.attr.width + "px");
             _w.widget.style("height", 50 + "px");
 
@@ -203,14 +202,18 @@
             _svg.track
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            _svg.border
+            _svg.inset
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            _svg.line
+            _svg.overlay
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
             _svg.ticks
-                .attr("x", _scale);
+                .attr("x", _scale)
+                .attr("font-size", _w.attr.fontSize + "px")
+                .attr("fill", _w.attr.fontColor);
+            _svg.handle
+                .style("stroke", _w.attr.fontColor)
         };
     }
 

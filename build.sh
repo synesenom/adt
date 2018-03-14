@@ -3,7 +3,7 @@
 SRC_DIR="src"
 DST_DIR="build"
 DL_DIR="docs/dl"
-AVAILABLE_MODULES=(
+AVAILABLE_MODULES0=(
     "data"
     "rest"
     "signals"
@@ -26,6 +26,7 @@ AVAILABLE_MODULES=(
     "widgets.piechart"
     "widgets.slider"
     "widgets.status"
+    "widgets.trackpad"
 )
 
 echo ""

@@ -178,6 +178,7 @@ new du.widgets.Legend("widgets.legend", "#legend")
     .y(50)
     .width(200)
     .height(150)
+    .labels(["plum", "banana", "mango", "orange", "melon", "kiwi", "pear"])
     .colors(colors)
     .fontSize(20)
     .twoColumns(true)
@@ -235,12 +236,12 @@ new du.widgets.PieChart("piechart", "#piechart")
     .fontColor("white")
     .fontSize(14)
     .ticks(true)
-    .data([
-        {name: "orange", value: 3},
-        {name: "mango", value: 4},
-        {name: "banana", value: 4},
-        {name: "plum", value: 2}
-    ])
+    .data({
+        orange: 3,
+        mango: 4,
+        banana: 4,
+        plum: 2
+    })
     .colors({
         plum: "darkmagenta",
         banana: "gold",
@@ -298,3 +299,15 @@ setInterval(function () {
     st.value(new Date().toLocaleTimeString())
         .render();
 }, 900);
+
+// Trackpad
+new du.widgets.TrackPad("trackpad", "#trackpad")
+    .x(50)
+    .y(30)
+    .width(160)
+    .height(160)
+    .margins(30)
+    .fontSize(9)
+    .xRange([0, 255])
+    .yRange([0, 255])
+    .render();

@@ -44,15 +44,17 @@
  * @requires d3@v4
  * @requires lodash@4.17.4
  */
-// TODO add boxplot
-// TODO add bubblechart
-// TODO add violin plot
+// TODO add 2d slider
 // TODO add scatter plot
+// TODO add bubble chart
 // TODO add heat map
 // TODO add calendar plot
+// TODO add box plot
+// TODO add violin plot
 // TODO make plot data modifiable
 // TODO add graph widget
-// TODO add 2d slider
+// TODO add progress bar widget
+// TODO re-implement resize by using viewBox instead of manual rescaling
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
