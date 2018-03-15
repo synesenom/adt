@@ -3,7 +3,7 @@
 SRC_DIR="src"
 DST_DIR="build"
 DL_DIR="docs/dl"
-AVAILABLE_MODULES=("widgets.trackpad")
+AVAILABLE_MODULES=("widget" "widgets.trackpad")
 AVAILABLE_MODULES0=(
     "data"
     "rest"

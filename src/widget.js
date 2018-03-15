@@ -1039,8 +1039,9 @@
                             .html(content);
 
                         // Remove after a while
-                        setTimeout(function () {
+                        /*setTimeout(function () {
                             if (_description !== null) {
+                                _description.transition();
                                 _description
                                     .transition().duration(2000)
                                     .style("opacity", 0)
@@ -1049,7 +1050,7 @@
                                         _description = null;
                                     });
                             }
-                        }, 15000);
+                        }, 15000);*/
                     }
                 })
                 .on("mouseleave", function () {
