@@ -67,6 +67,17 @@
          */
         _w.attr.add(this, "callback", null);
 
+        /**
+         * Enables the horizontal and vertical lines that help see the value of the trackpad.
+         * Default is false.
+         *
+         * @method guide
+         * @memberOf du.widgets.trackpad.TrackPad
+         * @param {boolean} on Whether guiding lines are enabled.
+         * @returns {du.widgets.trackpad.TrackPad} Reference to the current TrackPad.
+         */
+        _w.attr.add(this, "guide", false);
+
         // Widget elements
         var _svg = null;
         var _scale = null;
@@ -110,6 +121,25 @@
                 .attr("y", _scale.y.range()[0] + 0.5)
                 .attr("width", (_w.attr.width - _w.attr.margins.left - _w.attr.margins.right - 1) + "px")
                 .attr("height", (_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1) + "px");
+            if (_w.attr.guide) {
+                _svg.guide = {
+                    h: _svg.g.append("line")
+                        .attr("x1", _scale.x.range()[0])
+                        .attr("y1", _scale.y.range()[0])
+                        .attr("x2", _scale.x.range()[1])
+                        .attr("y2", _scale.y.range()[0])
+                        .attr("stroke-dasharray", "3, 6")
+                        .style("stroke", _w.attr.fontColor)
+                        .style("stroke-width", "1px"),
+                    v: _svg.g.append("line")
+                        .attr("x1", _scale.x.range()[0])
+                        .attr("y1", _scale.y.range()[0])
+                        .attr("x2", _scale.x.range()[0])
+                        .attr("y2", _scale.y.range()[1])
+                        .attr("stroke-dasharray", "3, 6")
+                        .style("stroke-width", "1px")
+                };
+            }
             _svg.overlay = _svg.inset
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
@@ -125,6 +155,18 @@
                         _svg.handle
                             .attr("cx", _scale.x(x))
                             .attr("cy", _scale.y(y));
+                        if (_svg.guide) {
+                            _svg.guide.h
+                                .attr("x1", _scale.x.range()[0])
+                                .attr("y1", _scale.y(y))
+                                .attr("x2", _scale.x.range()[1])
+                                .attr("y2", _scale.y(y));
+                            _svg.guide.v
+                                .attr("x1", _scale.x(x))
+                                .attr("y1", _scale.y.range()[0])
+                                .attr("x2", _scale.x(x))
+                                .attr("y2", _scale.y.range()[1]);
+                        }
                         _w.attr.callback && _w.attr.callback(x, y);
                     }));
             _svg.axis = {
@@ -163,6 +205,10 @@
                 .attr("y", _scale.y.range()[0] + 0.5)
                 .attr("width", (_w.attr.width - _w.attr.margins.left - _w.attr.margins.right - 1) + "px")
                 .attr("height", (_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1) + "px");
+            if(_w.attr.guide) {
+                _svg.guide.h.style("stroke", _w.attr.fontColor);
+                _svg.guide.v.style("stroke", _w.attr.fontColor);
+            }
             _svg.overlay
                 .attr("x", _scale.x.range()[0] - _w.attr.margins.left + 10)
                 .attr("y", _scale.y.range()[0] - _w.attr.margins.top + 10)
