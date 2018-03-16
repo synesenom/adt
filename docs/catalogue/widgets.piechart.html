@@ -7,10 +7,10 @@ var data = {
     orange: 3,
     mango: 4,
     banana: 4,
-    plum: 2
+    kiwi: 2
 };
 var colors = {
-    plum: "darkmagenta",
+    kiwi: "limegreen",
     banana: "gold",
     mango: "tomato",
     orange: "orange"
@@ -24,8 +24,8 @@ var piechart = new du.widgets.PieChart("mychart", "#widget")
     .outerRadius(height / 2 - 10)
     .label("fruits")
     .margins(30)
-    .fontColor("white")
     .fontSize(14)
+    .tickFormat(function(x) { return x.toFixed(1) + "%"; })
     .colors(colors)
     .ticks(true)
     .render();</script><script class="doc">// add interactions

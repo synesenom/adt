@@ -7,10 +7,6 @@
 <div class='card'><pre><code>du.widget.Widget.relative(on)</code></pre>
 <br>Whether to position widget relative to parent instead of absolute. Default is false. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>True if relative position should be turned on.</td></tr></table>
-<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.resize'>resize</h2>
-<div class='card'><pre><code>du.widget.Widget.resize(scale)</code></pre>
-<br>Rescales widget and all of its dimension attributes by the specified factor. Default is 1. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>scale</i></td><td><code>boolean</code></td><td>Factor to resize widget with.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.x'>x</h2>
 <div class='card'><pre><code>du.widget.Widget.x(x, dim)</code></pre>
 <br>Sets the horizontal position of the widget. Default is 0px. 
@@ -94,11 +90,7 @@
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.id'>id</h2>
 <div class='card'><pre><code>du.widget.Widget.id()</code></pre>
 <br>Returns the widget ID. 
-<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>string</code></i></td><td>Identifier of the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.render'>render</h2>
-<div class='card'><pre><code>du.widget.Widget.render([duration])</code></pre>
-<br>Renders the widget. Note that without calling this method, the widget is not rendered at all. After any changes in style or bound data, this method should be called. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>duration</i></td><td><code>number</code></td><td>Duration of the rendering transition. If not specified, 500 ms is applied. <code>optional</code></td></tr></table>
-<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.describe'>describe</h2>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>string</code></i></td><td>Identifier of the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.describe'>describe</h2>
 <div class='card'><pre><code>du.widget.Widget.describe(content)</code></pre>
 <br>Adds a description for the widget. A description is a tooltip that is shown if the user right-clicks on the widget. After 15 second or if the user leaves the widget, the description disappears. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>content</i></td><td><code>string</code></td><td>Content of the description. Can be HTML formatted.</td></tr></table>
@@ -106,6 +98,10 @@
 <div class='card'><pre><code>du.widget.Widget.placeholder(content)</code></pre>
 <br>Replaces the widget with a placeholder. Useful for showing missing data. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>content</i></td><td><code>string</code></td><td>Content to show in place of the widget. Can be HTML formatted. If nothing is passed, the widget is shown again.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.render'>render</h2>
+<div class='card'><pre><code>du.widget.Widget.render([duration])</code></pre>
+<br>Renders the widget. Note that without calling this method, the widget is not rendered at all. After any changes in style or bound data, this method should be called. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>duration</i></td><td><code>number</code></td><td>Duration of the rendering transition. If not specified, 500 ms is applied. <code>optional</code></td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.remove'>remove</h2>
 <div class='card'><pre><code>du.widget.Widget.remove()</code></pre>
 <br>Removes widget from DOM. 

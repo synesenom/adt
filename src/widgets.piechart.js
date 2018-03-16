@@ -194,7 +194,9 @@
                 _svg.ticks.data(_svg.pie(_data));
                 _svg.ticks
                     .text(function (d) {
-                        return _w.attr.tickFormat(d.data.value);
+                        return _w.attr.tickFormat(100 * d.data.value / d3.sum(_data, function(dd) {
+                            return dd.value;
+                        }));
                     })
                     .transition().duration(duration)
                     .attrTween("transform", function (d) {

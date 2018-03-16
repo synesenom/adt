@@ -54,7 +54,7 @@
 // TODO make plot data modifiable
 // TODO add graph widget
 // TODO add progress bar widget
-// TODO re-implement resize by using viewBox instead of manual rescaling
+// TODO implement resize
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -225,16 +225,7 @@
          */
         _attr.add(this, "relative", false);
 
-        /**
-         * Rescales widget and all of its dimension attributes by the specified factor.
-         * Default is 1.
-         *
-         * @method resize
-         * @memberOf du.widget.Widget
-         * @param {boolean} scale Factor to resize widget with.
-         * @returns {du.widget.Widget} Reference to the current widget.
-         */
-        _attr.add(this, "resize", 1);
+        //_attr.add(this, "resize", 1);
 
         /**
          * Sets the horizontal position of the widget.
@@ -347,7 +338,7 @@
          * @param {number} size Font size in pixels.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        _attr.add(this, "fontSize", 10);
+        _attr.add(this, "fontSize", 10, "dim");
 
         /**
          * Sets font weight of the text elements in the widget.
@@ -775,20 +766,22 @@
          * @param {string?} content HTML content of the tooltip. If not specified, tooltip is removed.
          * @private
          */
-        function _showTooltip(content) {
+        function _showTooltip() {
             var tooltipId = "du-widgets-plot-tooltip";
+            var m = d3.mouse(_widget.node());
             var mx = d3.event.pageX;
             var my = d3.event.pageY;
             var container = _widget.node().getBoundingClientRect();
 
             // If content is null or we are outside the charting area
             // just remove tooltip
-            if (typeof content !== "string" || content === ""
-                || mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
+            if (/*typeof content !== "string" || content === ""
+                ||*/ mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
                 || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
                 d3.select("#" + tooltipId)
                     .style("opacity", 0)
                     .html("");
+                _utils.tooltip();
                 return;
             }
 
@@ -813,7 +806,7 @@
             }
 
             // Add content
-            tooltip.html(content);
+            tooltip.html(_utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]));
 
             // Calculate position
             var elem = tooltip.node().getBoundingClientRect();
@@ -822,7 +815,7 @@
             var tx = mx + 20;
             var ty = my + 20;
 
-            // Correct
+            // Correct for edges
             if (tx < container.left + _attr.margins.left + 10) {
                 tx += _attr.margins.left + 10;
             } else if (tx + tw > container.right - _attr.margins.right) {
@@ -853,157 +846,6 @@
          */
         this.id = function() {
             return _id;
-        };
-
-        /**
-         * The rendering methods of the widget.
-         *
-         * @namespace _render
-         * @memberOf du.widget.Widget
-         * @private
-         */
-        var _render = {
-            /**
-             * Builds widget if it is not yet created.
-             * May be overridden.
-             *
-             * @method build
-             * @memberOf du.widget.Widget._render
-             */
-            build: null,
-
-            /**
-             * Updates the widget data.
-             * May be overridden.
-             *
-             * @method update
-             * @memberOf du.widget.Widget._render
-             */
-            update: null,
-
-            /**
-             * Updates widget style.
-             * May be overridden.
-             *
-             * @method style
-             * @memberOf du.widget.Widget._render
-             */
-            style: null
-        };
-
-        /**
-         * Renders the widget. Note that without calling this method, the widget is not rendered at all.
-         * After any changes in style or bound data, this method should be called.
-         *
-         * @method render
-         * @memberOf du.widget.Widget
-         * @param {number=} duration Duration of the rendering transition. If not specified, 500 ms is applied.
-         * @returns {du.widget.Widget} Reference to the current widget.
-         */
-        this.render = function (duration) {
-            // Calculate final duration to use
-            var dur = typeof duration === "number" ? duration : 500;
-
-            // Resize dimension attributes
-            if (typeof _attr.resize === "number") {
-                _attr._categories.dim.forEach(function (a) {
-                    if (a === 'resize' || !_attr.hasOwnProperty(a))
-                        return;
-
-                    // Number attribute
-                    switch (typeof _attr[a]) {
-                        case "number":
-                            if ((a !== "x" || _attr.xDim !== "%") && (a !== "y" || _attr.yDim !== "%"))
-                                _attr[a] *= _attr.resize;
-                            break;
-                        case "object":
-                            _.forOwn(_attr[a], function (attr, i) {
-                                if (typeof attr === "number") {
-                                    _attr[a][i] *= _attr.resize;
-                                }
-                            });
-                            break;
-                        default:
-                            break;
-                    }
-                });
-                _attr.resize = null;
-            }
-
-            // Build widget if first time render
-            if (!this._isBuilt) {
-                _render.build && _render.build(dur);
-                this._isBuilt = true;
-            }
-
-            // Update data
-            _render.update && _render.update(dur);
-
-            // Widget position
-            if (_attr.relative) {
-                _widget.style("position", "relative")
-                    .style("top", null)
-                    .style("bottom", null)
-                    .style("left", null)
-                    .style("right", null);
-            } else {
-                _widget.style("position", "absolute")
-                    .style(_attr.x >= 0 ? "left" : "right", Math.abs(_attr.x) + _attr.xDim)
-                    .style(_attr.y >= 0 ? "top" : "bottom", Math.abs(_attr.y) + _attr.yDim)
-            }
-
-            // Widget size
-            _widget.style("width", _attr.width + "px")
-                .style("height", _attr.height + "px");
-
-            // Tooltip
-            if (_utils.tooltip !== undefined) {
-                _widget
-                    .style("pointer-events", _attr.tooltip ? "all" : null)
-                    .on("mouseenter", function () {
-                        var m = d3.mouse(_widget.node());
-                        _attr.tooltip && _showTooltip(_utils.tooltip([
-                            m[0] - _attr.margins.left,
-                            m[1] - _attr.margins.top
-                        ]));
-                    })
-                    .on("mousemove", function () {
-                        var m = d3.mouse(_widget.node());
-                        _attr.tooltip && _showTooltip(_utils.tooltip([
-                            m[0] - _attr.margins.left,
-                            m[1] - _attr.margins.top
-                        ]));
-                    })
-                    .on("mouseleave", function () {
-                        _attr.tooltip && _showTooltip();
-                    });
-            }
-
-            // Axis and font styles
-            _widget.selectAll(".axis path")
-                .style("fill", "none")
-                .style("stroke", _attr.fontColor)
-                .style("stroke-width", "1px")
-                .style("shape-rendering", "crispEdges");
-            _widget.selectAll(".tick > line")
-                .style("stroke", _attr.fontColor)
-                .style("stroke-width", "1px")
-                .style("shape-rendering", "crispEdges");
-            _widget.selectAll(".tick > text")
-                .attr("stroke-width", 0)
-                .attr("font-family", "inherit")
-                .style("font-size", _attr.fontSize + "px")
-                .style("fill", _attr.fontColor);
-            _widget
-                .style("font-family", "inherit");
-            _widget.selectAll("g")
-                .attr("font-family", "inherit");
-
-            // Additional styling
-            _render.style && _render.style();
-
-            _widget.style("display", "block");
-            return this;
         };
 
         /**
@@ -1117,6 +959,141 @@
                     ph.remove();
                 }
             }
+            return this;
+        };
+
+        /**
+         * The rendering methods of the widget.
+         *
+         * @namespace _render
+         * @memberOf du.widget.Widget
+         * @private
+         */
+        var _render = {
+            /**
+             * Builds widget if it is not yet created.
+             * May be overridden.
+             *
+             * @method build
+             * @memberOf du.widget.Widget._render
+             */
+            build: null,
+
+            /**
+             * Updates the widget data.
+             * May be overridden.
+             *
+             * @method update
+             * @memberOf du.widget.Widget._render
+             */
+            update: null,
+
+            /**
+             * Updates widget style.
+             * May be overridden.
+             *
+             * @method style
+             * @memberOf du.widget.Widget._render
+             */
+            style: null
+        };
+
+        /**
+         * Renders the widget. Note that without calling this method, the widget is not rendered at all.
+         * After any changes in style or bound data, this method should be called.
+         *
+         * @method render
+         * @memberOf du.widget.Widget
+         * @param {number=} duration Duration of the rendering transition. If not specified, 500 ms is applied.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        this.render = function (duration) {
+            // Calculate final duration to use
+            var dur = typeof duration === "number" ? duration : 500;
+
+            // Resize dimension attributes
+            /*if (typeof _attr.resize === "number") {
+                _attr._categories.dim.forEach(function (a) {
+                    if (a === 'resize' || !_attr.hasOwnProperty(a))
+                        return;
+
+                    // Number attribute
+                    switch (typeof _attr[a]) {
+                        case "number":
+                            if ((a !== "x" || _attr.xDim !== "%") && (a !== "y" || _attr.yDim !== "%"))
+                                _attr[a] *= _attr.resize;
+                            break;
+                        case "object":
+                            _.forOwn(_attr[a], function (attr, i) {
+                                if (typeof attr === "number") {
+                                    _attr[a][i] *= _attr.resize;
+                                }
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                _attr.resize = null;
+            }*/
+
+            // Build widget if first time render
+            if (!this._isBuilt) {
+                _render.build && _render.build(dur);
+                this._isBuilt = true;
+            }
+
+            // Update data
+            _render.update && _render.update(dur);
+
+            // Widget position
+            if (_attr.relative) {
+                _widget.style("position", "relative")
+                    .style("top", null)
+                    .style("bottom", null)
+                    .style("left", null)
+                    .style("right", null);
+            } else {
+                _widget.style("position", "absolute")
+                    .style(_attr.x >= 0 ? "left" : "right", Math.abs(_attr.x) + _attr.xDim)
+                    .style(_attr.y >= 0 ? "top" : "bottom", Math.abs(_attr.y) + _attr.yDim)
+            }
+
+            // Widget size
+            _widget.style("width", _attr.width + "px")
+                .style("height", _attr.height + "px");
+
+            // Tooltip
+            _widget
+                .style("pointer-events", _attr.tooltip && _utils.tooltip ? "all" : null)
+                .on("mousemove", function () {
+                    _attr.tooltip && _utils.tooltip && _showTooltip();
+                });
+
+            // Axis and font styles
+            _widget.selectAll(".axis path")
+                .style("fill", "none")
+                .style("stroke", _attr.fontColor)
+                .style("stroke-width", "1px")
+                .style("shape-rendering", "crispEdges");
+            _widget.selectAll(".tick > line")
+                .style("stroke", _attr.fontColor)
+                .style("stroke-width", "1px")
+                .style("shape-rendering", "crispEdges");
+            _widget.selectAll(".tick > text")
+                .attr("stroke-width", 0)
+                .attr("font-family", "inherit")
+                .style("font-size", _attr.fontSize + "px")
+                .style("fill", _attr.fontColor);
+            _widget
+                .style("font-family", "inherit");
+            _widget.selectAll("g")
+                .attr("font-family", "inherit");
+
+            // Additional styling
+            _render.style && _render.style();
+
+            _widget.style("display", "block");
             return this;
         };
 

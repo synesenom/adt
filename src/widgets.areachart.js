@@ -124,7 +124,19 @@
             var bisect = d3.bisector(function (d) {
                 return _svg.scale.x(d.x);
             }).left;
-            var i = bisect(_data, mouse[0]);
+            var i = mouse ? bisect(_data, mouse[0]) : null;
+
+            // If no mouse is given, just remove tooltip elements
+            if (!i || i < 0 || i >= _data.length) {
+                _.forOwn(this.tt, function(tt) {
+                    tt.remove();
+                });
+                this.tt = null;
+                return;
+            } else {
+                this.tt = this.tt || {};
+                var tt = this.tt;
+            }
 
             // Get data entry
             var left = _data[i - 1] ? _data[i - 1] : _data[i];
@@ -161,7 +173,16 @@
                     .style("float", "right")
                     .style("line-height", "11px")
                     .text(yk.toPrecision(6));
+
+                // Update markers
+                tt[k] = tt[k] || _svg.g.append("circle");
+                tt[k]
+                    .attr("r", 4)
+                    .attr("cx", _svg.scale.x(_data[i].x)+1)
+                    .attr("cy", _svg.scale.y(_data[i].y[k])+1)
+                    .style("fill", _w.attr.colors[k]);
             });
+
             return content.node().innerHTML;
         };
 
