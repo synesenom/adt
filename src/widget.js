@@ -793,7 +793,7 @@
                 tooltip = d3.select("body").append("div")
                     .attr("id", tooltipId)
                     .style("position", "absolute")
-                    .style("background-color", "rgba(255, 255, 255, 0.9)")
+                    .style("background-color", "rgba(255, 255, 255, 0.95)")
                     .style("border-radius", "2px")
                     .style("border", "solid 1px " + color)
                     .style("padding", "5px")

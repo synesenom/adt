@@ -34,22 +34,6 @@ script.doc.
         .fontSize(14)
         .render();
 script.doc.
-    // add interactions
-    linechart
-        .mouseover(function (k) {
-            // Highlight hovered plot
-            linechart.highlight(k, 300);
-        })
-        .mouseleave(function () {
-            // Remove highlights by passing null
-            linechart.highlight(null, 300);
-        })
-        .click(function (k) {
-            // Show an alert on click
-            alert("Plot clicked: '" + k + "'");
-        })
-        .render();
-script.doc.
     // add marker
     linechart.addMarker("mymarker", "mango", 34, 87, "trend");
 +resize()

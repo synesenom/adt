@@ -27,20 +27,6 @@ var linechart = new du.widgets.LineChart("mychart", "#widget")
     .tooltip(true)
     .margins(40)
     .fontSize(14)
-    .render();</script><script class="doc">// add interactions
-linechart
-    .mouseover(function (k) {
-        // Highlight hovered plot
-        linechart.highlight(k, 300);
-    })
-    .mouseleave(function () {
-        // Remove highlights by passing null
-        linechart.highlight(null, 300);
-    })
-    .click(function (k) {
-        // Show an alert on click
-        alert("Plot clicked: '" + k + "'");
-    })
     .render();</script><script class="doc">// add marker
 linechart.addMarker("mymarker", "mango", 34, 87, "trend");</script><script>window.onresize = function () {
     linechart
