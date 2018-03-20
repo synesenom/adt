@@ -103,6 +103,58 @@
             return _w.utils.highlight(this, _svg, ".bar", key, duration);
         };
 
+        // Tooltip builder
+        _w.utils.tooltip = function(mouse) {
+            // Get bisection
+            var dir = _w.attr.vertical ? 1 : 0
+            var bisect = d3.bisector(function (d) {
+                return _svg.scale.x(d.x);
+            }).right;
+            var i = mouse ? bisect(_data, mouse[dir]) : null;
+
+            // If no mouse is given, just remove tooltip elements
+            if (i === null) {
+                return;
+            }
+
+            // Get data entry
+            var left = _data[i - 1] ? _data[i - 1] : _data[i];
+            var right = _data[i] ? _data[i] : _data[i - 1];
+            var point = mouse[dir] - left.x > right.x - mouse[dir] ? right : left;
+
+            // Build tooltip content
+            var content = d3.select(document.createElement("div"));
+            content.append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .style("border-bottom", "solid 1px " + _w.attr.fontColor)
+                .text(_w.attr.xLabel + ": " + point.x);
+            var entry = content.append("div")
+                .style("position", "relative")
+                .style("max-width", "150px")
+                .style("height", "10px")
+                .style("margin", "5px")
+                .style("padding-right", "10px");
+            entry.append("div")
+                .style("position", "relative")
+                .style("width", "10px")
+                .style("height", "10px")
+                .style("float", "left")
+                .style("background-color", _w.attr.colors[point.x]);
+            entry.append("div")
+                .style("position", "relative")
+                .style("width", "calc(100% - 20px)")
+                .style("height", "10px")
+                .style("float", "right")
+                .style("line-height", "11px")
+                .text(point.y.toPrecision(6));
+
+            return content.node().innerHTML;
+        };
+
         // Builder
         _w.render.build = function() {
             // Add chart itself
@@ -138,14 +190,13 @@
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
-            var scale;
             if (_w.attr.vertical) {
-                scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
+                _svg.scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
                     _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
                     _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                     {x: {type: "string"}, y: {reverse: true}});
             } else {
-                scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
+                _svg.scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
                     _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
                     _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
                     {x: {type: "string"}});
@@ -154,10 +205,10 @@
             // Axes
             _svg.axes.x
                 .transition().duration(duration)
-                .call(_svg.axisFn.x.scale(_w.attr.vertical ? scale.y : scale.x));
+                .call(_svg.axisFn.x.scale(_w.attr.vertical ? _svg.scale.y : _svg.scale.x));
             _svg.axes.y
                 .transition().duration(duration)
-                .call(_svg.axisFn.y.scale(_w.attr.vertical ? scale.x : scale.y));
+                .call(_svg.axisFn.y.scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
 
             // Plot
             if (_data.length > 0) {
@@ -188,26 +239,26 @@
                 if (_w.attr.vertical) {
                     _svg.bars
                         .attr("y", function (d) {
-                            return scale.x(d.x);
+                            return _svg.scale.x(d.x);
                         })
-                        .attr("height", scale.x.bandwidth())
+                        .attr("height", _svg.scale.x.bandwidth())
                         .transition().duration(duration)
                         .attr("x", 1)
                         .attr("width", function (d) {
-                            return scale.y(d.y);
+                            return _svg.scale.y(d.y);
                         });
                 } else {
                     _svg.bars
                         .attr("x", function (d) {
-                            return scale.x(d.x);
+                            return _svg.scale.x(d.x);
                         })
-                        .attr("width", scale.x.bandwidth())
+                        .attr("width", _svg.scale.x.bandwidth())
                         .transition().duration(duration)
                         .attr("y", function (d) {
-                            return scale.y(d.y);
+                            return _svg.scale.y(d.y);
                         })
                         .attr("height", function (d) {
-                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - scale.y(d.y);
+                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.y);
                         });
                 }
             }

@@ -268,8 +268,8 @@
             }).left;
             var i = mouse ? bisect(_data, mouse[0]) : null;
 
-            // If no mouse is given, just remove tooltip elements
-            if (!i || i < 0 || i >= _data.length) {
+            // If no data point is found, just remove tooltip elements
+            if (i === null) {
                 _.forOwn(this.tt, function(tt) {
                     tt.remove();
                 });
