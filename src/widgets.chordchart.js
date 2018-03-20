@@ -106,6 +106,7 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _current = null;
         var _indexByName = d3.map();
         var _nameByIndex = d3.map();
         var _aura = 10;
@@ -163,24 +164,6 @@
 
             return this;
         };
-
-        /**
-         * Creates a default color scheme based on the groups.
-         *
-         * @method _makeColors
-         * @memberOf du.widgets.chordchart.ChordChart
-         * @param {Array} groups Array containing the chord groups.
-         * @returns {object} The color schemes.
-         * @private
-         */
-        function _makeColors(groups) {
-            var colors = {};
-            var scheme = d3.scaleOrdinal(d3.schemeCategory10);
-            groups.forEach(function(g) {
-                colors[_nameByIndex.get(g.index)] = scheme(g.index);
-            });
-            return colors;
-        }
 
         /**
          * Creates an identifier for a ribbon.
@@ -319,6 +302,25 @@
             return _w.utils.highlight(this, _svg, ".ribbon", key, duration);
         };
 
+        // Tooltip builder
+        _w.utils.tooltip = function () {
+            if (!_current) {
+                return null;
+            }
+
+            var row = _data[_indexByName.get(_current.name)];
+            return _current ? {
+                title: _current.name,
+                plots: row.map(function(d, i) {
+                    return {color: _w.attr.colors[_nameByIndex.get(i)], value: 100 * d / d3.sum(row)};
+                }).sort(function(a, b) {
+                    return b.value - a.value;
+                }).map(function(d) {
+                    return {id: "", color: d.color, value: d.value.toFixed(1) + "%"};
+                })
+            } : null;
+        };
+
         // Builder
         _w.render.build = function() {
             // Add widget
@@ -380,10 +382,14 @@
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
+                    _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
                     _w.attr.click && _w.attr.click(d.name);
+                })
+                .on("mousemove", function(d) {
+                    _current = d;
                 });
             _svg.newGroups.append("path")
                 .attr("id", function (d) {

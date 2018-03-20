@@ -3,7 +3,7 @@
 SRC_DIR="src"
 DST_DIR="build"
 DL_DIR="docs/dl"
-AVAILABLE_MODULES=("widget" "widgets.piechart")
+AVAILABLE_MODULES=("widget" "widgets.chordchart")
 AVAILABLE_MODULES0=(
     "data"
     "rest"
