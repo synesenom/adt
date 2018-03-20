@@ -106,7 +106,7 @@
         // Tooltip builder
         _w.utils.tooltip = function(mouse) {
             // Get bisection
-            var dir = _w.attr.vertical ? 1 : 0
+            var dir = _w.attr.vertical ? 1 : 0;
             var bisect = d3.bisector(function (d) {
                 return _svg.scale.x(d.x);
             }).right;

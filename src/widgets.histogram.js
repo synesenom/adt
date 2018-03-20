@@ -79,6 +79,7 @@
         // Widget elements
         var _svg = {};
         var _data = [];
+        var _bins = [];
 
         /**
          * Binds data to the histogram.
@@ -108,6 +109,57 @@
          */
         this.highlight = function(key, duration) {
             return _w.utils.highlight(this, _svg, ".bar", key, duration);
+        };
+
+        // Tooltip builder
+        _w.utils.tooltip = function(mouse) {
+            // Get bisection
+            var bisect = d3.bisector(function (d) {
+                return _svg.scale.x(d.x0);
+            }).right;
+            var i = mouse ? bisect(_bins, mouse[0]) : null;
+
+            // If no mouse is given, just remove tooltip elements
+            if (i === null) {
+                return;
+            }
+
+            // Get data entry
+            var left = _bins[i - 1] ? _bins[i - 1] : _bins[i];
+            var right = _bins[i] ? _bins[i] : _bins[i - 1];
+            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+
+            // Build tooltip content
+            var content = d3.select(document.createElement("div"));
+            content.append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .style("border-bottom", "solid 1px " + _w.attr.fontColor)
+                .text(_w.attr.xLabel + ": [" + point.x0.toPrecision(3) + ", " + point.x1.toPrecision(3) + "]");
+            var entry = content.append("div")
+                .style("position", "relative")
+                .style("max-width", "150px")
+                .style("height", "10px")
+                .style("margin", "5px")
+                .style("padding-right", "10px");
+            entry.append("div")
+                .style("position", "relative")
+                .style("width", "10px")
+                .style("height", "10px")
+                .style("float", "left")
+                .style("background-color", _w.attr.colors[0]);
+            entry.append("div")
+                .style("position", "relative")
+                .style("width", "calc(100% - 20px)")
+                .style("height", "10px")
+                .style("float", "right")
+                .style("line-height", "11px")
+                .text(point.length.toPrecision(6));
+
+            return content.node().innerHTML;
         };
 
         // Builder
@@ -174,17 +226,17 @@
             }
             var norm = _w.attr.normalize ? _data.length : 1;
 
-            // Calculate bin counts
-            var bins = d3.histogram()
+            // Create bins
+            _bins = d3.histogram()
                 .domain([realMin, realMin+n*realBin])
                 .thresholds(thresholds)
                 (_data);
 
             // Calculate scale
-            var yMax = d3.max(bins, function (d) {
+            var yMax = d3.max(_bins, function (d) {
                 return d.length / norm;
             });
-            var scale = _w.utils.scale({
+            _svg.scale = _w.utils.scale({
                     x: {min: realMin, max: realMin+n*realBin, domain: [realMin, realMax]},
                     y: {
                         min: 0,
@@ -198,17 +250,17 @@
             // Axes
             _svg.axes.x
                 .transition().duration(duration)
-                .call(_svg.axisFn.x.scale(scale.x));
+                .call(_svg.axisFn.x.scale(_svg.scale.x));
             _svg.axes.y
                 .transition().duration(duration)
-                .call(_svg.axisFn.y.scale(scale.y));
+                .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Plot
             if (_data.length > 0) {
                 // Add bars if needed
                 if (_svg.bars === undefined) {
                     _svg.bars = _svg.g.selectAll(".bar")
-                        .data(bins)
+                        .data(_bins)
                         .enter().append("rect")
                         .attr("class", function (d, i) {
                             return "bar bin-" + i;
@@ -222,20 +274,20 @@
                 }
 
                 // Update data
-                _svg.bars.data(bins);
+                _svg.bars.data(_bins);
                 _svg.bars
                     .attr("x", function (d) {
-                        return scale.x(d.x0) + 2;
+                        return _svg.scale.x(d.x0) + 2;
                     })
                     .attr("width", function(d) {
-                        return Math.abs(scale.x(d.x1 - d.x0) - 2);
+                        return Math.abs(_svg.scale.x(d.x1 - d.x0) - 2);
                     })
                     .transition().duration(duration)
                     .attr("y", function (d) {
-                        return _w.attr.margins.top - _w.attr.margins.top + scale.y(d.length / norm);
+                        return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.length / norm);
                     })
                     .attr("height", function (d) {
-                        return _w.attr.height -_w.attr.margins.top - _w.attr.margins.bottom - scale.y(d.length / norm);
+                        return _w.attr.height -_w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.length / norm);
                     });
             }
         };
@@ -289,7 +341,6 @@
                 .text(_w.attr.yLabel);
 
             // Plot
-            console.log(_w.attr.colors);
             if (_svg.bars !== undefined) {
                 _svg.bars
                     .style("fill", _w.attr.colors[0])
