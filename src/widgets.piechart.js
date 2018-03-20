@@ -88,6 +88,7 @@
         // Widget elements.
         var _svg = null;
         var _data = [];
+        var _current = null;
 
         /**
          * Binds new data to pie chart.
@@ -126,6 +127,17 @@
             _w.utils.highlight(this, _svg, "path", key, duration);
             _w.utils.highlight(this, _svg, "text", key, duration);
             return this;
+        };
+
+        // Tooltip builder
+        _w.utils.tooltip = function() {
+            return _current ? {
+                title: _current.name,
+                plots: [{id: "", color: _w.attr.colors[_current.name],
+                    value: (100 * _current.value / d3.sum(_data, function(d) {
+                    return d.value;
+                })).toFixed(1) + "%&nbsp;(" + _current.value + ")"}]
+            } : null;
         };
 
         // Builder
@@ -213,12 +225,14 @@
         // Style updater
         _w.render.style = function() {
             // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
 
             // Calculate radii
             var outerRadius = _w.attr.outerRadius - _w.attr.margins.left;
-            _w.attr.width = 2*_w.attr.outerRadius;
-            _w.attr.height = 2*_w.attr.outerRadius;
+            _w.attr.width = 2 * _w.attr.outerRadius;
+            _w.attr.height = 2 * _w.attr.outerRadius;
 
             // Widget
             _w.widget
@@ -240,8 +254,8 @@
 
             // Ticks
             if (_w.attr.ticks) {
-                _svg.labelArc.outerRadius(0.5*(_w.attr.innerRadius+outerRadius))
-                    .innerRadius(0.5*(_w.attr.innerRadius+outerRadius));
+                _svg.labelArc.outerRadius(0.5 * (_w.attr.innerRadius + outerRadius))
+                    .innerRadius(0.5 * (_w.attr.innerRadius + outerRadius));
                 _svg.ticks
                     .attr("d", _svg.labelArc)
                     .attr("fill", _w.attr.fontColor);
@@ -251,7 +265,7 @@
             _svg.label
                 .attr("transform", "translate(0," + _w.attr.outerRadius + ")")
                 .style("width", (10 + 2 * _w.attr.outerRadius) + "px")
-                .style("font-size", Math.min(16, _w.attr.outerRadius*0.4) + "px")
+                .style("font-size", Math.min(16, _w.attr.outerRadius * 0.4) + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.label);
 
@@ -259,14 +273,15 @@
             _svg.paths
                 .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.data.name);
-                });
-            _svg.paths
+                })
                 .on("mouseleave", function (d) {
                     _w.attr.mouseleave && _w.attr.mouseleave(d.data.name);
-                });
-            _svg.paths
+                })
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.data.name);
+                })
+                .on("mousemove", function (d) {
+                    _current = d.data;
                 });
         };
     }

@@ -764,7 +764,6 @@
          *
          * @method _showTooltip
          * @memberOf du.widget.Widget
-         * @param {string?} content HTML content of the tooltip. If not specified, tooltip is removed.
          * @private
          */
         function _showTooltip() {
@@ -776,8 +775,7 @@
 
             // If content is null or we are outside the charting area
             // just remove tooltip
-            if (/*typeof content !== "string" || content === ""
-                ||*/ mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
+            if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
                 || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
                 d3.select("#" + tooltipId)
                     .style("opacity", 0)
@@ -798,7 +796,7 @@
                     .style("border-radius", "2px")
                     .style("border", "solid 1px " + color)
                     .style("padding", "5px")
-                    .style("font-family", "Courier")
+                    .style("font-family", "'Courier', monospace")
                     .style("font-size", "0.7em")
                     .style("color", _attr.fontColor)
                     .style("pointer-events", "none")
@@ -806,14 +804,19 @@
                     .style("top", (container.top + container.bottom) / 2 + 'px');
             }
 
-            // Add content
-            //tooltip.html(_utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]));
-            // Get title
+            // Get content
+            // If content is invalid, remove tooltip
             var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
-            tooltip.html("");
+            if (!content) {
+                d3.select("#" + tooltipId)
+                    .style("opacity", 0)
+                    .html("");
+                _utils.tooltip();
+                return;
+            }
 
-            // Add title
-            tooltip.append("div")
+            // Erase tooltip content and add title
+            tooltip.html("").append("div")
                 .style('position', "relative")
                 .style("width", "calc(100% - 10px)")
                 .style("line-height", "11px")
@@ -822,7 +825,7 @@
                 .style("border-bottom", "solid 1px " + _attr.fontColor)
                 .text(content.title);
 
-            // Add plots
+            // Add plots sorted by their keys
             content.plots.sort(function(a, b) {
                 return a.id.localeCompare(b.id);
             }).forEach(function(plot) {
@@ -838,13 +841,13 @@
                     .style("height", "10px")
                     .style("float", "left")
                     .style("background-color", plot.color);
-                entry.append("div")
+                entry.append("span")
                     .style("position", "relative")
                     .style("width", "calc(100% - 20px)")
                     .style("height", "10px")
                     .style("float", "right")
                     .style("line-height", "11px")
-                    .text(plot.value);
+                    .html(plot.value);
             });
 
             // Calculate position
