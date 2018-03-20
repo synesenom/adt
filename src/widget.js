@@ -55,6 +55,7 @@
 // TODO add graph widget
 // TODO add progress bar widget
 // TODO implement resize
+// TODO implement tooltip box in Widget class
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -806,7 +807,45 @@
             }
 
             // Add content
-            tooltip.html(_utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]));
+            //tooltip.html(_utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]));
+            // Get title
+            var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
+            tooltip.html("");
+
+            // Add title
+            tooltip.append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .style("border-bottom", "solid 1px " + _attr.fontColor)
+                .text(content.title);
+
+            // Add plots
+            content.plots.sort(function(a, b) {
+                return a.id.localeCompare(b.id);
+            }).forEach(function(plot) {
+                var entry = tooltip.append("div")
+                    .style("position", "relative")
+                    .style("max-width", "150px")
+                    .style("height", "10px")
+                    .style("margin", "5px")
+                    .style("padding-right", "10px");
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "10px")
+                    .style("height", "10px")
+                    .style("float", "left")
+                    .style("background-color", plot.color);
+                entry.append("div")
+                    .style("position", "relative")
+                    .style("width", "calc(100% - 20px)")
+                    .style("height", "10px")
+                    .style("float", "right")
+                    .style("line-height", "11px")
+                    .text(plot.value);
+            });
 
             // Calculate position
             var elem = tooltip.node().getBoundingClientRect();
@@ -819,12 +858,12 @@
             if (tx < container.left + _attr.margins.left + 10) {
                 tx += _attr.margins.left + 10;
             } else if (tx + tw > container.right - _attr.margins.right) {
-                tx -= _attr.margins.right + tw - 10;
+                tx -= tw + 30;
             }
             if (ty < container.top + _attr.margins.top + 10) {
                 ty += _attr.margins.top + 10;
             } else if (ty + th > container.bottom - _attr.margins.bottom) {
-                ty -= _attr.margins.bottom + th - 10;
+                ty -= th + 30;
             }
 
             // Set position

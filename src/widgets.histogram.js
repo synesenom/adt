@@ -130,36 +130,10 @@
             var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
 
             // Build tooltip content
-            var content = d3.select(document.createElement("div"));
-            content.append("div")
-                .style('position', "relative")
-                .style("width", "calc(100% - 10px)")
-                .style("line-height", "11px")
-                .style("margin", "5px")
-                .style("margin-bottom", "10px")
-                .style("border-bottom", "solid 1px " + _w.attr.fontColor)
-                .text(_w.attr.xLabel + ": [" + point.x0.toPrecision(3) + ", " + point.x1.toPrecision(3) + "]");
-            var entry = content.append("div")
-                .style("position", "relative")
-                .style("max-width", "150px")
-                .style("height", "10px")
-                .style("margin", "5px")
-                .style("padding-right", "10px");
-            entry.append("div")
-                .style("position", "relative")
-                .style("width", "10px")
-                .style("height", "10px")
-                .style("float", "left")
-                .style("background-color", _w.attr.colors[0]);
-            entry.append("div")
-                .style("position", "relative")
-                .style("width", "calc(100% - 20px)")
-                .style("height", "10px")
-                .style("float", "right")
-                .style("line-height", "11px")
-                .text(point.length.toPrecision(6));
-
-            return content.node().innerHTML;
+            return {
+                title: _w.attr.xLabel + ": [" + point.x0.toPrecision(3) + ", " + point.x1.toPrecision(3) + "]",
+                plots: [{id: "", color: _w.attr.colors[0], value: point.length.toPrecision(6)}]
+            };
         };
 
         // Builder

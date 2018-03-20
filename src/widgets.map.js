@@ -47,6 +47,7 @@
  * @requires du.Widget
  */
 // TODO separate paths content from module
+// TODO add map tooltip
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));

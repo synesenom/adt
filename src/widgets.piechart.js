@@ -27,6 +27,7 @@
  * @requires du.Widget
  */
 // TODO simplify class
+// TODO add piechart tooltip
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('./widget'), exports);
