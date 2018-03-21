@@ -14,7 +14,7 @@ module.exports = {
         Grid: require("./src/widgets.grid"),
         Hint: require("./src/widgets.hint"),
         Histogram: require("./src/widgets.histogram"),
-        Info: require("./src/widgets.info"),
+        InfoBox: require("./src/widgets.infobox"),
         Label: require("./src/widgets.label"),
         Legend: require("./src/widgets.legend"),
         LineChart: require("./src/widgets.linechart"),
@@ -22,6 +22,7 @@ module.exports = {
         Picture: require("./src/widgets.picture"),
         PieChart: require("./src/widgets.piechart"),
         Slider: require("./src/widgets.slider"),
-        Status: require("./src/widgets.status")
+        Status: require("./src/widgets.status"),
+        TrackPad: require("./src/widgets.trackpad")
     }
 };

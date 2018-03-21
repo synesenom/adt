@@ -15,7 +15,7 @@ modules = [
     "widgets.grid",
     "widgets.hint",
     "widgets.histogram",
-    "widgets.info",
+    "widgets.infobox",
     "widgets.label",
     "widgets.legend",
     "widgets.linechart",

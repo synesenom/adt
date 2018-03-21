@@ -1343,7 +1343,6 @@
                     .style("width", _w.attr.width + "px")
                     .style("height", _w.attr.height + "px")
                     .on("click", function () {
-                        console.log("clicked!");
                         // Zoom out
                         _zoom.reset();
 

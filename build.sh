@@ -3,7 +3,7 @@
 SRC_DIR="src"
 DST_DIR="build"
 DL_DIR="docs/dl"
-AVAILABLE_MODULES=("widget" "widgets.map")
+AVAILABLE_MODULES=("widget" "widgets.infobox")
 AVAILABLE_MODULES0=(
     "data"
     "rest"
@@ -18,7 +18,7 @@ AVAILABLE_MODULES0=(
     "widgets.grid"
     "widgets.hint"
     "widgets.histogram"
-    "widgets.info"
+    "widgets.infobox"
     "widgets.label"
     "widgets.legend"
     "widgets.linechart"
