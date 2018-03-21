@@ -163,6 +163,20 @@ new du.widgets.Histogram("histogram", "#histogram")
     .colors("dodgerblue")
     .render();
 
+// Info box
+d3.select("#infobox").append("div")
+    .style("margin-top", "50px")
+    .style("margin-left", "30px")
+    .style("width", "auto")
+    .style("max-width", "200px")
+    .style("padding", "20px")
+    .style("box-shadow", "1px 1px 4px grey")
+    .style("border-radius", "3px")
+    .style("color", "black")
+    .style("font-size", "1em")
+    .style("line-height", "1.35em")
+    .text("This is an example showing the info box widget.");
+
 // Label
 new du.widgets.Label("label", "#label")
     .width(width)
