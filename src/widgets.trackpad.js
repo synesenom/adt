@@ -79,15 +79,11 @@
         _w.attr.add(this, "guide", false);
 
         // Widget elements
-        var _svg = null;
+        var _svg = {};
         var _scale = null;
 
         // Builder
         _w.render.build = function() {
-            if (_svg !== null)
-                return;
-            _svg = {};
-
             // Create scales
             _scale = {
                 x: d3.scaleLinear()

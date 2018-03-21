@@ -26,8 +26,6 @@
  * @requires lodash@4.17.4
  * @requires du.Widget
  */
-// TODO simplify class
-// TODO add piechart tooltip
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('./widget'), exports);
@@ -86,7 +84,7 @@
         _w.attr.add(this, "ticks", false);
 
         // Widget elements.
-        var _svg = null;
+        var _svg = {};
         var _data = [];
         var _current = null;
 
@@ -142,10 +140,6 @@
 
         // Builder
         _w.render.build = function() {
-            if (_svg !== null)
-                return;
-            _svg = {};
-
             // Add chart itself
             _svg.g = _w.widget.append("g");
 
@@ -156,12 +150,12 @@
                 .style("fill", "white");
 
             // Add slices
+            _svg.arc = d3.arc();
             _svg.pie = d3.pie()
                 .value(function (d) {
                     return d.value;
                 })
                 .sort(null);
-            _svg.arc = d3.arc();
 
             _svg.arcs = _svg.g.selectAll(".arc")
                 .data(_svg.pie(_data))
@@ -193,8 +187,7 @@
         // Data updater
         _w.render.update = function (duration) {
             _svg.arcs.datum(_data);
-            _svg.paths.data(_svg.pie(_data));
-            _svg.paths
+            _svg.paths.data(_svg.pie(_data))
                 .transition().duration(duration)
                 .attrTween("d", function (a) {
                     var i = d3.interpolate(this._current, a);
@@ -204,8 +197,7 @@
                     };
                 });
             if (_w.attr.ticks) {
-                _svg.ticks.data(_svg.pie(_data));
-                _svg.ticks
+                _svg.ticks.data(_svg.pie(_data))
                     .text(function (d) {
                         return _w.attr.tickFormat(100 * d.data.value / d3.sum(_data, function(dd) {
                             return dd.value;

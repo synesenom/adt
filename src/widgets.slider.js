@@ -95,7 +95,7 @@
         _w.attr.add(this, "callback", null);
 
         // Widget elements
-        var _svg = null;
+        var _svg = {};
         var _margins = {right: 20, left: 20};
         var _ordinalScale = false;
         var _domain = [];
@@ -103,10 +103,6 @@
 
         // Builder
         _w.render.build = function () {
-            if (_svg !== null)
-                return;
-            _svg = {};
-
             // Create continuous slider as default
             _domain = [_w.attr.min, _w.attr.max];
             _scale = d3.scaleLinear()
