@@ -268,7 +268,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", innerWidth + "px")
-                .attr("y", (innerHeight + 35) + "px")
+                .attr("y", (innerHeight + 2.2*_w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

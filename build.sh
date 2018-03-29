@@ -3,32 +3,6 @@
 SRC_DIR="src"
 DST_DIR="build"
 DL_DIR="docs/dl"
-AVAILABLE_MODULES=("widget" "widgets.infobox")
-AVAILABLE_MODULES0=(
-    "data"
-    "rest"
-    "signals"
-    "system.log"
-    "system.version"
-    "user"
-    "widget"
-    "widgets.areachart"
-    "widgets.barchart"
-    "widgets.chordchart"
-    "widgets.grid"
-    "widgets.hint"
-    "widgets.histogram"
-    "widgets.infobox"
-    "widgets.label"
-    "widgets.legend"
-    "widgets.linechart"
-    "widgets.map"
-    "widgets.picture"
-    "widgets.piechart"
-    "widgets.slider"
-    "widgets.status"
-    "widgets.trackpad"
-)
 
 echo ""
 echo "Building dashboard-utils"
@@ -41,14 +15,14 @@ python docs/python/parser.py
 # Build modules
 echo "  compiling modules:"
 module_list=""
-for module in "${AVAILABLE_MODULES[@]}"; do
+for module in $(ls src); do
     echo "    $module"
-    module_list=${module_list}" "${SRC_DIR}/${module}.js
+    module_list=${module_list}" "${SRC_DIR}/${module}
     uglifyjs \
-        ${SRC_DIR}/${module}.js \
+        ${SRC_DIR}/${module} \
         --mangle \
-        --output ${DST_DIR}/${module}.min.js
-    cp ${DST_DIR}/${module}.min.js ${DL_DIR}/
+        --output ${DST_DIR}/${module/.js/.min.js}
+    cp ${DST_DIR}/${module/.js/.min.js} ${DL_DIR}/
 done
 
 # Build full library

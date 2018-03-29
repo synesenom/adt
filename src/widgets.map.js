@@ -44,21 +44,22 @@
  * @requires d3@v4
  * @requires lodash@4.17.4
  * @requires topojson@v1
+ * @requires leaflet@1.3.1
  * @requires du.Widget
  */
 // TODO add map tooltip
 // TODO make map available on gist and only set the type
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('./widget'));
+        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('leaflet'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'src/widget', 'exports'], factory);
+        define(['d3', '_', 'topojson', 'leaflet', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.du.Widget);
+        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.L, global.du.Widget);
     }
-} (this, function (d3, _, topojson, Widget) {
+} (this, function (d3, _, topojson, L, Widget) {
     "use strict";
 
     /**
@@ -466,6 +467,18 @@
         _w.attr.add(this, "outClick", null);
 
         /**
+         * Adds transparent tiles on top of the map from the specified provider.
+         * Supported provider codes: {cartodb-positron}.
+         * Only works while connected to the network.
+         * Default is null.
+         *
+         * @method tiles
+         * @memberOf du.widgets.map.Map
+         * @param {string} provider One of the supported provider code.
+         */
+        _w.attr.add(this, "tiles", null);
+
+        /**
          * Disables zooming functionality.
          * Default is false.
          *
@@ -521,7 +534,15 @@
              */
             var _ids = d3.map();
 
-            function _build() {
+            /**
+             * Builds the countries array.
+             *
+             * @method _build
+             * @memberOf du.widgets.map.Map.countries
+             * @param {function} onReady Callback to trigger when countries are parsed in.
+             * @private
+             */
+            function _build(onReady) {
                 // Read map data
                 d3.json(_w.attr.resource, function(error, mapData) {
                     // Build paths
@@ -550,11 +571,8 @@
                         _ids.set(path.name, i);
                     });
 
-                    // Build map
-                    _mapLayer._build();
-
-                    // On ready
-                    _w.attr.ready && _w.attr.ready();
+                    // Callback
+                    onReady && onReady();
                 });
             }
 
@@ -979,6 +997,9 @@
                         .attr("transform", d3.event.transform);
                 }*/
 
+                // Zoom tiles
+                _tilesLayer._zoom(d3.event.transform);
+
                 // Zoom static layer
                 _staticLayer._zoom(d3.event.transform);
 
@@ -1149,6 +1170,19 @@
              */
             function _project(latLon) {
                 return _projection([latLon[1], latLon[0]]);
+            }
+
+            /**
+             * Inverts an (x, y) position on the map into a (latitude, longitude) geo coordinate.
+             *
+             * @method _invert
+             * @memberOf du.widgets.map.Map._mapLayer
+             * @param {Array} position Array containing the x and y coordinates.
+             * @returns {Array} Array containing the mapped (latitude, longitude) geo coordinates.
+             * @private
+             */
+            function _invert(position) {
+                return _projection.invert(position).reverse();
             }
 
             /**
@@ -1522,6 +1556,7 @@
             return {
                 _select: _select,
                 _project: _project,
+                _invert: _invert,
                 _build: _build,
                 _update: _update,
                 _style: _style,
@@ -2051,6 +2086,140 @@
             highlight: _staticLayer.highlight,
             draw: _staticLayer.draw
         };
+
+        /**
+         * The optional tiles namespace for detailed map.
+         *
+         * @namespace _tilesLayer
+         * @memberOf du.widgets.map.Map
+         * @private
+         */
+        var _tilesLayer = (function() {
+            /**
+             * Container of the tiles layer.
+             *
+             * @var {object} _container
+             * @memberOf du.widgets.map.Map._tilesLayer
+             * @private
+             */
+            var _container = _w.widget.append("div")
+                .attr("id", _id + "-tiles-layer")
+                .style("position", "absolute")
+                .style("pointer-events", "none")
+                .style("z-index", 99)
+                .style("opacity", 0.5)
+                .style("width", _w.attr.width + "px")
+                .style("height", _w.attr.height + "px");
+
+            /**
+             * The leaflet map.
+             *
+             * @var {object} _map
+             * @memberOf du.widgets.map.Map._tilesLayer
+             * @private
+             */
+            var _map = null;
+
+            /**
+             * Transforms map position to latitude longitude pair.
+             *
+             * @method _getLatLon
+             * @memberOf du.widgets.map.Map._tilesLayer
+             * @param {Array} position Array containing the x and y coordinates on the map.
+             * @returns {Array} Array containing the corresponding latitude and longitude.
+             * @private
+             */
+            function _getLatLon(position) {
+                return _mapLayer._invert([
+                    position[0] - 0.5 * _w.attr.width,
+                    position[1] + 0.5 * _w.attr.height
+                ]);
+            }
+
+            /**
+             * Transforms the map's linear zoom level to leaflet's exponential zoom level.
+             *
+             * @method _getZoom
+             * @memberOf du.widgets.map.Map._tilesLayer
+             * @param {number} z Linear zoom level.
+             * @returns {number} Exponential zoom level.
+             * @private
+             */
+            function _getZoom(z) {
+                return Math.log(0.00391382924 * z * _w.attr.width) / Math.log(2);
+            }
+
+            /**
+             * Builder method for the tiles layer.
+             *
+             * @method _build
+             * @memberOf du.widgets.map.Map._tilesLayer
+             */
+            function _build() {
+                if (_w.attr.tiles === null) {
+                    return;
+                }
+
+                // Set initial map view
+                _map = L.map(_id + "-tiles-layer", {
+                    attributionControl: false,
+                    zoomSnap: 0,
+                    zoomControl: false
+                }).setView(_getLatLon([0, 0]), _getZoom(_zoom.level()));
+
+                // Add tiles layer
+                var url = null,
+                    subdomains = null;
+                switch (_w.attr.tiles) {
+                    case "cartodb-positron":
+                        url = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png";
+                        subdomains = "abcd";
+                        break;
+                }
+                if (url && subdomains) {
+                    L.tileLayer(url, {
+                        subdomains: subdomains
+                    }).addTo(_map);
+                }
+            }
+
+            /**
+             * Style updater method for the tiles layer.
+             *
+             * @method _style
+             * @memberOf du.widgets.map.Map._tilesLayer
+             */
+            function _style() {
+                if (_map === null) {
+                    return;
+                }
+
+                _container
+                    .style("width", _w.attr.width + "px")
+                    .style("height", _w.attr.height + "px");
+                _map.invalidateSize();
+            }
+
+            function _zoomLayer(transform) {
+                if (_map === null) {
+                    return;
+                }
+
+                _map.setView(_getLatLon([
+                    -transform.x/transform.k - 0.5 * (transform.k-1) * _w.attr.width / transform.k,
+                    -transform.y/transform.k - 0.5 * (transform.k-1) * _w.attr.height / transform.k
+                ]), _getZoom(transform.k), true);
+            }
+
+            // Public methods
+            return {
+                _build: _build,
+                _style: _style,
+                _getLatLon: _getLatLon,
+                _getZoom: _getZoom,
+                _zoom: _zoomLayer
+            };
+        })();
 
         /**
          * The dynamic layers namespace.
@@ -2590,7 +2759,14 @@
 
         // Builder method
         _w.render.build = function() {
-            _countries._build();
+            _countries._build(function() {
+                // Build rest of the layers
+                _mapLayer._build();
+                _tilesLayer._build();
+
+                // On ready
+                _w.attr.ready && _w.attr.ready();
+            });
         };
 
         // Data updater
@@ -2611,6 +2787,7 @@
             _mapLayer._style();
             _staticLayer._style();
             _dynamicLayer._style();
+            _tilesLayer._style();
             _touchLayer._style();
 
             // Mark clusters

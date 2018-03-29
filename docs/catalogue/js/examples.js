@@ -224,6 +224,7 @@ new du.widgets.LineChart("linechart", "#linechart")
 
 // Map
 new du.widgets.Map("map", "#map")
+    .resource("data/maps/world.json")
     .x(0)
     .y(0)
     .width(width)

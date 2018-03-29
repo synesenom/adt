@@ -17,6 +17,9 @@ html(lang='en')
         link(rel='stylesheet', type='text/css', href='../dependencies/wp.min.css')
         link(rel='stylesheet', type='text/css', href='../style/examples.css')
         link(rel='stylesheet', type='text/css', href='../dependencies/highlight.min.css')
+        if styles
+            each css in styles
+                link(rel='stylesheet', type='text/css', href='../dependencies/' + css + '.css')
         each lib in libs
             script(src='../dependencies/' + lib + '.min.js')
         each module in modules

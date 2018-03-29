@@ -44,7 +44,6 @@
  * @requires d3@v4
  * @requires lodash@4.17.4
  */
-// TODO add 2d slider
 // TODO add scatter plot
 // TODO add bubble chart
 // TODO add heat map
