@@ -9,7 +9,7 @@
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('./widget'));
+        module.exports = factory(require('d3'), require('../widget'));
     } else if (typeof define === 'function' && define.amd) {
         define(['d3', 'src/widget', 'exports'], factory);
     } else {
