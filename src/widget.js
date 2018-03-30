@@ -561,14 +561,6 @@
                     }), d3.max(data, function (d) {
                         return d.x;
                     })];
-                    var values = {};
-                    var xRange = [];
-                    data.forEach(function (d) {
-                        if (!values.hasOwnProperty(d.x)) {
-                            values[d.x] = 1;
-                            xRange.push(d.x);
-                        }
-                    });
                 } else {
                     // Multiple values
                     var xMin = [],
@@ -583,14 +575,18 @@
                     });
                     x = [d3.min(xMin), d3.max(xMax)];
                 }
-                /*var x = [
-                    d3.min(data, function (d) {
-                        return d.x;
-                    }),
-                    d3.max(data, function (d) {
-                        return d.x;
-                    })
-                ];*/
+                // TODO make range for all types of data
+                if (typeof data[0].x === "number"
+                    || typeof data[0].x === "string") {
+                    var values = {};
+                    var xRange = [];
+                    data.forEach(function (d) {
+                        if (!values.hasOwnProperty(d.x)) {
+                            values[d.x] = 1;
+                            xRange.push(d.x);
+                        }
+                    });
+                }
 
                 // Y axis
                 var y = [];

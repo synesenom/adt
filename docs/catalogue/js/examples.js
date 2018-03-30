@@ -290,6 +290,29 @@ new du.widgets.LineChart("placeholder", "#placeholder")
     .render()
     .placeholder("This chart is empty and you see a placeholder instead");
 
+// Scatter plot
+new du.widgets.ScatterPlot("scatterplot", "#scatterplot")
+    .width(width)
+    .height(height)
+    .xLabel("x")
+    .yLabel("y")
+    .margins(40)
+    .fontSize(14)
+    .tooltip(true)
+    .data(Array.from(new Array(100).keys()).map(function (i) {
+        return {
+            x: {
+                mango: i + Math.random() - 0.5,
+                kiwi: i + Math.random()*8 - 4
+            },
+            y: {
+                mango: 10 * Math.pow(i / 40, 2) + Math.random()*10 - 5,
+                kiwi: 80 * (1-Math.exp(-i/30)) + Math.random()*10 - 5
+            }
+        }
+    }))
+    .render();
+
 // Slider
 new du.widgets.Slider("widgets.slider", "#slider")
     .x(10)
