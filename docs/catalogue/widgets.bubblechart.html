@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.bubblechart.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+    .callback(function() {
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+});</script><title>bubblechart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A bubble chart is useful when <span class='good'>three or four dimensions</span> need to be plotted for a <span class='good'>small number</span> data points. Note that if only simple correlations are to shown for a <span class='bad'>large data set</span>, a scatter plot is a better choice.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.bubblechart.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.bubblechart.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
+var data = [
+    {name: "peach", x: 100, y: 68, size: 0.8},
+    {name: "seeded grape", x: 85, y: 13, size: 0.3},
+    {name: "strawberry", x: 75, y: 75, size: 0.4},
+    {name: "seedless grape", x: 72, y: 100, size: 0.3},
+    {name: "pineapple", x: 68, y: -100, size: 2.4},
+    {name: "blueberry", x: 58, y: 87, size: 0.2},
+    {name: "cherry", x: 38, y: 42, size: 0.3},
+    {name: "pear", x: 37, y: 66, size: 1},
+    {name: "green apple", x: 22, y: 79, size: 1},
+    {name: "plum", x: 17, y: 59, size: 0.6},
+    {name: "watermelon", x: 15, y: -20, size: 3.5},
+    {name: "red apple", x: -12, y: 79, size: 1},
+    {name: "banana", x: -18, y: 16, size: 2.8},
+    {name: "pomegranate", x: -20, y: -85, size: 1.3},
+    {name: "orange", x: -46, y: -49, size: 1},
+    {name: "tomato", x: -74, y: 26, size: 0.8},
+    {name: "grapefruit", x: -86, y: -75, size: 1.5},
+    {name: "lemon", x: -100, y: -15, size: 0.9}
+];
+var colors = {
+    peach: "#FFE5B4",
+    "seeded grape": "#89b128",
+    strawberry: "#d20e07",
+    "seedless grape": "#89b128",
+    pineapple: "#ffec88",
+    blueberry: "#312581",
+    cherry: "#C40000",
+    pear: "#d5d949",
+    "green apple": "#5BC236",
+    plum: "#8E4585",
+    watermelon: "#4A7023",
+    "red apple": "#FF0800",
+    banana: "#FFE135",
+    pomegranate: "#A80027",
+    orange: "#FF7F00",
+    tomato: "#FF6347",
+    grapefruit: "#ffe88a",
+    lemon: "#FDFF00"
+};</script><script class="doc">// create chart
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var bubblechart = new du.widgets.BubbleChart("mychart", "#widget")
+    .data(data)
+    .width(width)
+    .height(height)
+    .xLabel("accessibility")
+    .yLabel("tastiness")
+    .margins(40)
+    .fontSize(14)
+    .scale(8)
+    .colors(colors)
+    .tooltip(true)
+    .render();</script><script>window.onresize = function () {
+    bubblechart
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

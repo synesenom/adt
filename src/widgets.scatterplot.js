@@ -81,7 +81,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.scatterplot.ScatterPlot
-         * @param {string} key Key of the area to highlight.
+         * @param {string} key Key of the scatter to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
@@ -275,6 +275,7 @@
             // Plot
             _.forOwn(_svg.dots, function(dk, k) {
                 _svg.dots[k]
+                    .style("fill-opacity", _w.attr.opacity)
                     .style("fill", _w.attr.colors[k])
                     .style("stroke", _w.attr.stroke)
                     .on("mouseover", function() {

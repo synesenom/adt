@@ -51,6 +51,31 @@ new du.widgets.BarChart("barchart", "#barchart")
     .colors(colors)
     .render();
 
+// Bubble chart
+new du.widgets.BubbleChart("bubblechart", "#bubblechart")
+    .width(width)
+    .height(height)
+    .xLabel("x")
+    .yLabel("y")
+    .margins(40)
+    .fontSize(14)
+    .scale(15)
+    .colors({
+        blueberry: "#312581",
+        cherry: "#C40000",
+        pear: "#d5d949",
+        "green apple": "#5BC236",
+        plum: "#8E4585"
+    })
+    .data([
+        {name: "blueberry", x: 58, y: 87, size: 0.2},
+        {name: "cherry", x: 38, y: 42, size: 0.3},
+        {name: "pear", x: 37, y: 66, size: 1},
+        {name: "green apple", x: 22, y: 79, size: 1},
+        {name: "plum", x: 17, y: 59, size: 0.6}
+    ])
+    .render();
+
 // Chord chart
 new du.widgets.ChordChart("chordchart", "#chordchart")
     .x(width / 2 - height / 2)

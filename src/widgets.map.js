@@ -1195,7 +1195,6 @@
             function _calculateCenters() {
                 _countries._paths().forEach(function (country) {
                     country.svg.center = _pathFn.centroid(country);
-                    //country.svg.realCenter = _getRealCenter(country);
                 });
             }
 
@@ -1276,47 +1275,6 @@
                 });
             }
 
-            /**
-             * Returns the coordinates of the largest paths for a country.
-             *
-             * @method _getRealCenter
-             * @memberOf du.widgets.map.Map._mapLayer
-             * @param {object} country Country to calculate real center for.
-             * @returns {Array} Array containing the x and y coordinates of the real center.
-             * @private
-             */
-            function _getRealCenter(country) {
-                // This is extremely slow, just don't use it
-                if (country.geometry.coordinates.length === 1) {
-                    return _pathFn.centroid(country);
-                }
-                else {
-                    var region = {
-                        type: "Feature",
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: country.geometry.coordinates[0]
-                        }
-                    };
-                    for (var i = 1; i < country.geometry.coordinates.length; i++) {
-                        var r = {
-                            type: "Feature",
-                            geometry: {
-                                type: "Polygon",
-                                coordinates: country.geometry.coordinates[i]
-                            }
-                        };
-                        if (_pathFn.area(r) > _pathFn.area(region)) {
-                            region = r;
-                        }
-                    }
-                    var center = _pathFn.centroid(region);
-                    if (isNaN(center[0]) || isNaN(center[1]))
-                        return _pathFn.centroid(country);
-                    else
-                        return center;
-                }
-            }
 
             function _build() {
                 // Build paths
@@ -1456,41 +1414,6 @@
                         // Additional actions
                         _w.attr.click && _w.attr.click(d.name);
                     });
-
-                // Add path names
-                // FIXME fix this
-                /*if (_w.attr.labels && _pathLabels === null) {
-                    _pathLabels = _land.selectAll("text")
-                        .data(_countries._paths)
-                        .enter().append("text")
-                        .style("fill", "black")
-                        .attr("font-size", "10pt")
-                        .attr("font-family", "inherit")
-                        .attr("font-weight", "bold")
-                        .attr("text-anchor", "middle")
-                        .attr("dy", "5pt")
-                        .style("cursor", "pointer")
-                        .style("opacity", 0)
-                        .text(function(d) { return d.name; })
-                        .attr("x", function (d) {
-                            return d.svg.realCenter[0] + (_CENTER_CORRECTIONS[d.name] ? _CENTER_CORRECTIONS[d.name][0] : 0);
-                        })
-                        .attr("y", function (d) {
-                            return d.svg.realCenter[1] + (_CENTER_CORRECTIONS[d.name] ? _CENTER_CORRECTIONS[d.name][1] : 0);
-                        })
-                        .on("click", function(d) {
-                            // Check if country is already in focus
-                            var c = d3.select(this);
-                            var focused = c.classed("focus");
-
-                            // Zoom in/out
-                            if (focused)
-                                _zoom.reset();
-                            else {
-                                _zoom.click(_pathFn.bounds(d));
-                            }
-                        });
-                }*/
 
                 // Set map layer for zoom
                 _zoom.setLayer('map', {svg: _svg, paths: _paths, labels: _pathLabels});
@@ -2158,6 +2081,16 @@
             function _build() {
                 if (_w.attr.tiles === null) {
                     return;
+                }
+
+                // Add link to leaflet's CSS to header
+                if (!this.headerAdded) {
+                    d3.select("head").append("link")
+                        .attr("rel", "stylesheet")
+                        .attr("href", "https://unpkg.com/leaflet@1.3.1/dist/leaflet.css")
+                        .attr("integrity", "sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==")
+                        .attr("crossorigin", "");
+                    this.headerAdded = true;
                 }
 
                 // Set initial map view
