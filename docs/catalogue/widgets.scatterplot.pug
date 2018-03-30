@@ -8,10 +8,13 @@ script.doc.
     // generate some data
     var data = Array.from(new Array(100).keys()).map(function (i) {
         return {
-            x: {mango: i, kiwi: i},
+            x: {
+                mango: i + Math.random() - 0.5,
+                kiwi: i + Math.random()*8 - 4
+            },
             y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+                mango: 10 * Math.pow(i / 40, 2) + Math.random()*10 - 5,
+                kiwi: 80 * (1-Math.exp(-i/30)) + Math.random()*10 - 5
             }
         }
     });
@@ -23,9 +26,10 @@ script.doc.
         .data(data)
         .width(width)
         .height(height)
-        .xLabel("y")
-        .yLabel("x")
+        .xLabel("x")
+        .yLabel("y")
         .margins(40)
         .fontSize(14)
+        .tooltip(true)
         .render();
 +resize()

@@ -552,22 +552,45 @@
                 }
 
                 // X axis
-                var x = [
+                var x = [];
+                xRange = [];
+                if (typeof data[0].x === "number") {
+                    // Single data
+                    x = [d3.min(data, function (d) {
+                        return d.x;
+                    }), d3.max(data, function (d) {
+                        return d.x;
+                    })];
+                    var values = {};
+                    var xRange = [];
+                    data.forEach(function (d) {
+                        if (!values.hasOwnProperty(d.x)) {
+                            values[d.x] = 1;
+                            xRange.push(d.x);
+                        }
+                    });
+                } else {
+                    // Multiple values
+                    var xMin = [],
+                        xMax = [];
+                    _.forOwn(data[0].y, function (xk, k) {
+                        xMin.push(d3.min(data, function (d) {
+                            return d.x[k];
+                        }));
+                        xMax.push(d3.max(data, function (d) {
+                            return d.x[k];
+                        }));
+                    });
+                    x = [d3.min(xMin), d3.max(xMax)];
+                }
+                /*var x = [
                     d3.min(data, function (d) {
                         return d.x;
                     }),
                     d3.max(data, function (d) {
                         return d.x;
                     })
-                ];
-                var values = {};
-                var xRange = [];
-                data.forEach(function (d) {
-                    if (!values.hasOwnProperty(d.x)) {
-                        values[d.x] = 1;
-                        xRange.push(d.x);
-                    }
-                });
+                ];*/
 
                 // Y axis
                 var y = [];
@@ -579,7 +602,7 @@
                         return d.y;
                     })];
                 } else {
-                    // Multiple Y values
+                    // Multiple values
                     var yMin = [],
                         yMax = [];
                     _.forOwn(data[0].y, function (yk, k) {
