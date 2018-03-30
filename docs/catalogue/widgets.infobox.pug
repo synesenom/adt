@@ -11,18 +11,17 @@ script.doc.
         .style("left", "50%")
         .style("top", "50%")
         .style("width", "200px")
-        .style("padding", "10px 0 6px 0")
+        .style("padding", "7px 0 6px 0")
         .style("margin-left", "-110px")
-        .style("margin-top", "-70px")
         .style("cursor", "pointer")
-        .style("background-color", "#ddd")
-        .style("border", "1px solid #aaa")
+        .style("background-color", "dodgerblue")
+        .style("color", "white")
         .style("text-align", "center")
         .text("SHOW INFO BOX");
 script.doc.
     // add info
     button.on("click", function() {
         new du.widgets.InfoBox()
-            .content("This is an example of an info widget with not so much information :) Click anywhere to dismiss this window.")
+            .content("This is an example of an info widget with not so much information. Click anywhere to dismiss this window.")
             .render();
     });

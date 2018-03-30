@@ -45,9 +45,21 @@
          */
         _w.attr.add(this, "opacity", 0.4);
 
+        /**
+         * Sets the stroke color of the circles.
+         * Default is white.
+         *
+         * @method stroke
+         * @memberOf du.widgets.scatterplot.ScatterPlot
+         * @param {string} color Color to set stroke to.
+         * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
+         */
+        _w.attr.add(this, "stroke", "white");
+
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _diagrams = null;
 
         /**
          * Binds data to the scatter plot.
@@ -74,12 +86,54 @@
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".area", key, duration);
+            return _w.utils.highlight(this, _svg, ".dot", key, duration);
         };
 
         // Tooltip builder
         _w.utils.tooltip = function(mouse) {
-            // Get bisection
+            if (!mouse) {
+                _.forOwn(this.tt, function(tt) {
+                    tt && tt.remove();
+                });
+                this.tt = null;
+                return null;
+            } else {
+                this.tt = this.tt || {};
+                var tt = this.tt;
+            }
+
+            // Find closest sites
+            var plots = [];
+            _.forOwn(_data[0].x, function(xk, k) {
+                // Get site in some radius
+                var site = _diagrams[k].find(mouse[0], mouse[1], 10);
+                if (!site) {
+                    tt[k] && tt[k].remove();
+                    tt[k] = null;
+                    return;
+                }
+
+                // Update markers
+                tt[k] = tt[k] || _svg.g.append("circle");
+                tt[k]
+                    .attr("r", 6)
+                    .attr("cx", site.data[0])
+                    .attr("cy", site.data[1])
+                    .style("pointer-events", "none")
+                    .style("stroke", _w.attr.stroke)
+                    .style("fill", _w.attr.colors[k]);
+
+                // Add plot
+                plots.push({id: k, color: _w.attr.colors[k],
+                    value: _svg.scale.x.invert(site.data[0]).toPrecision(3)
+                    + ":&nbsp;" + _svg.scale.y.invert(site.data[1]).toPrecision(3)});
+            });
+
+            // Tooltip
+            return plots.length > 0 ? {
+                title: _w.attr.xLabel,
+                plots: plots
+            } : null;
         };
 
         // Builder
@@ -142,15 +196,15 @@
                             }))
                             .enter().append("circle")
                             .attr("class", "dot " + _w.utils.encode(k))
-                            .style("stroke-width", "0.5px")
-                            .style("stroke", "white")
-                            .style("shape-rendering", "geometricPrecision")
+                            .attr("r", 3)
                             .attr("cx", function(d) {
                                 return _svg.scale.x(d.x);
                             })
                             .attr("cy", function(d) {
                                 return _svg.scale.y(d.y);
-                            });
+                            })
+                            .style("stroke-width", "0.5px")
+                            .style("shape-rendering", "geometricPrecision");
                     });
                 }
 
@@ -158,13 +212,22 @@
                 _.forOwn(_data[0].x, function (xk, k) {
                     _svg.dots[k]
                         .transition().duration(duration)
-                        .attr("r", 3)
                         .attr("cx", function(d) {
                             return _svg.scale.x(d.x);
                         })
                         .attr("cy", function(d) {
                             return _svg.scale.y(d.y);
                         });
+                });
+
+                // Voronoi tessellation
+                var voronoi = d3.voronoi()
+                    .extent([[-1, -1], [_w.attr.width + 1, _w.attr.height + 1]]);
+                _diagrams = {};
+                _.forOwn(_data[0].x, function(xk, k) {
+                    _diagrams[k] = voronoi(_data.map(function (d) {
+                        return [_svg.scale.x(d.x[k]), _svg.scale.y(d.y[k])];
+                    }));
                 });
             }
         };
@@ -213,6 +276,7 @@
             _.forOwn(_svg.dots, function(dk, k) {
                 _svg.dots[k]
                     .style("fill", _w.attr.colors[k])
+                    .style("stroke", _w.attr.stroke)
                     .on("mouseover", function() {
                         _w.attr.mouseover && _w.attr.mouseover(k);
                     })
