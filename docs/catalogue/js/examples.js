@@ -27,7 +27,6 @@ new du.widgets.AreaChart("areachart", "#areachart")
             }
         }
     }))
-    .colors(colors)
     .render();
 
 // Bar chart

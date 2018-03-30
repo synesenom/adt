@@ -22,9 +22,17 @@ main {
     margin: calc(50% - 152px);
     box-shadow: 1px 1px 1px #ddd;
     border-radius: 3px;
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
+    transition: .3s box-shadow, .3s border, .3s filter;
+    -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
+}
+.example:hover {
+    box-shadow: 2px 2px 5px grey;
+    border: 1px solid #aaa;
+    filter: grayscale(0);
+    -webkit-filter: grayscale(0);
     transition: .3s box-shadow, .3s border, .3s filter;
     -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
 }
@@ -69,14 +77,6 @@ main {
 }
 .example a {
     color: black;
-}
-.example:hover {
-    box-shadow: 1px 1px 5px black;
-    border: 1px solid #ccc;
-    filter: grayscale(0);
-    -webkit-filter: grayscale(0);
-    transition: .3s box-shadow, .3s border, .3s filter;
-    -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
 }
 .widget {
     position: relative;
