@@ -310,13 +310,16 @@
             var row = _data[_indexByName.get(_current.name)];
             return _current ? {
                 title: _current.name,
-                plots: row.map(function(d, i) {
-                    return {color: _w.attr.colors[_nameByIndex.get(i)], value: 100 * d / d3.sum(row)};
-                }).sort(function(a, b) {
-                    return b.value - a.value;
-                }).map(function(d) {
-                    return {id: "", color: d.color, value: d.value.toFixed(1) + "%"};
-                })
+                content: {
+                    type: "metrics",
+                    data: row.map(function(d, i) {
+                        return {name: _nameByIndex.get(i), value: 100 * d / d3.sum(row)};
+                    }).sort(function(a, b) {
+                        return b.value - a.value;
+                    }).map(function(d) {
+                        return {label: d.name, value: d.value.toFixed(1) + "%"};
+                    })
+                }
             } : null;
         };
 

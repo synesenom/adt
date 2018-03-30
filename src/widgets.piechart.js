@@ -131,10 +131,15 @@
         _w.utils.tooltip = function() {
             return _current ? {
                 title: _current.name,
-                plots: [{id: "", color: _w.attr.colors[_current.name],
-                    value: (100 * _current.value / d3.sum(_data, function(d) {
-                    return d.value;
-                })).toFixed(1) + "%&nbsp;(" + _current.value + ")"}]
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: "value:", value: _current.value},
+                        {label: "fraction:", value: (100 * _current.value / d3.sum(_data, function(d) {
+                            return d.value;
+                        })).toFixed(2) + "%"}
+                    ]
+                }
             } : null;
         };
 
@@ -250,7 +255,8 @@
                     .innerRadius(0.5 * (_w.attr.innerRadius + outerRadius));
                 _svg.ticks
                     .attr("d", _svg.labelArc)
-                    .attr("fill", _w.attr.fontColor);
+                    .attr("fill", _w.attr.fontColor)
+                    .style("pointer-events", "none");
             }
 
             // Label

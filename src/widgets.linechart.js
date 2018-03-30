@@ -301,7 +301,10 @@
             });
             return {
                 title: _w.attr.xLabel + ": " + point.x,
-                plots: plots
+                content: {
+                    type: "plots",
+                    data: plots
+                }
             };
         };
 

@@ -45,6 +45,17 @@
          */
         _w.attr.add(this, "scale", 1);
 
+        /**
+         * Sets the label for the bubble sizes.
+         * Default is 'size'.
+         *
+         * @method sizeLabel
+         * @memberOf du.widgets.bubblechart.BubbleChart
+         * @param {string} label Label to set to bubble size.
+         * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
+         */
+        _w.attr.add(this, "sizeLabel", "size");
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -81,8 +92,14 @@
         _w.utils.tooltip = function() {
             return _current ? {
                 title: _current.name,
-                plots: [{id: "", color: _w.attr.colors[_current.name],
-                    value: "(" + _current.x.toPrecision(3) + ",&nbsp;" + _current.y.toPrecision(3) + ")"}]
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: _w.attr.xLabel + ":", value: _current.x.toPrecision(4)},
+                        {label: _w.attr.yLabel + ":", value: _current.y.toPrecision(4)},
+                        {label: _w.attr.sizeLabel + ":", value: _current.size.toFixed(1)}
+                    ]
+                }
             } : null;
         };
 

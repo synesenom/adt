@@ -44,8 +44,6 @@
  * @requires d3@v4
  * @requires lodash@4.17.4
  */
-// TODO add scatter plot
-// TODO add bubble chart
 // TODO add heat map
 // TODO add calendar plot
 // TODO add box plot
@@ -843,30 +841,55 @@
                 .style("border-bottom", "solid 1px " + _attr.fontColor)
                 .text(content.title);
 
-            // Add plots sorted by their keys
-            content.plots.sort(function(a, b) {
-                return a.id.localeCompare(b.id);
-            }).forEach(function(plot) {
-                var entry = tooltip.append("div")
-                    .style("position", "relative")
-                    .style("max-width", "150px")
-                    .style("height", "10px")
-                    .style("margin", "5px")
-                    .style("padding-right", "10px");
-                entry.append("div")
-                    .style("position", "relative")
-                    .style("width", "10px")
-                    .style("height", "10px")
-                    .style("float", "left")
-                    .style("background-color", plot.color);
-                entry.append("span")
-                    .style("position", "relative")
-                    .style("width", "calc(100% - 20px)")
-                    .style("height", "10px")
-                    .style("float", "right")
-                    .style("line-height", "11px")
-                    .html(plot.value);
-            });
+            // Add content
+            switch (content.content.type) {
+                case "metrics":
+                    // List of metrics
+                    content.content.data.forEach(function(row) {
+                        var entry = tooltip.append("div")
+                            .style("position", "relative")
+                            .style("display", "block")
+                            .style("width", "auto")
+                            .style("height", "10px")
+                            .style("margin", "5px");
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("float", "left")
+                            .html(row.label);
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("float", "right")
+                            .style("margin-left", "10px")
+                            .html(row.value);
+                    });
+                    break;
+                case "plots":
+                    // List of plots
+                    content.content.data.sort(function(a, b) {
+                        return a.id.localeCompare(b.id);
+                    }).forEach(function(plot) {
+                        var entry = tooltip.append("div")
+                            .style("position", "relative")
+                            .style("max-width", "150px")
+                            .style("height", "10px")
+                            .style("margin", "5px")
+                            .style("padding-right", "10px");
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("width", "9px")
+                            .style("height", "9px")
+                            .style("float", "left")
+                            .style("background-color", plot.color);
+                        entry.append("span")
+                            .style("position", "relative")
+                            .style("width", "calc(100% - 20px)")
+                            .style("height", "10px")
+                            .style("float", "right")
+                            .style("line-height", "11px")
+                            .html(plot.value);
+                    });
+                    break;
+            }
 
             // Calculate position
             var elem = tooltip.node().getBoundingClientRect();

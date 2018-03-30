@@ -131,8 +131,18 @@
 
             // Build tooltip content
             return {
-                title: _w.attr.xLabel + ": [" + point.x0.toPrecision(3) + ", " + point.x1.toPrecision(3) + "]",
-                plots: [{id: "", color: _w.attr.colors[0], value: point.length.toPrecision(6)}]
+                title: "bin #" + i,
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: "min:", value: point.x0.toPrecision(3)},
+                        {label: "max:", value: point.x1.toPrecision(3)},
+                        {label: "count:", value: point.length},
+                        {label: "fraction:", value: (100 * point.length / d3.sum(_bins, function(d) {
+                            return d.length;
+                        })).toFixed(2) + "%"}
+                    ]
+                }
             };
         };
 

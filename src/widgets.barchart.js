@@ -124,8 +124,13 @@
 
             // Build tooltip content
             return {
-                title: _w.attr.xLabel + ": " + point.x,
-                plots: [{id: point.x, color: _w.attr.colors[point.x], value: point.y.toPrecision(6)}]
+                title: point.x,
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: _w.attr.yLabel + ":", value: point.y.toPrecision(6)}
+                    ]
+                }
             };
         };
 

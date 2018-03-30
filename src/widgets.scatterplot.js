@@ -59,7 +59,7 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
-        var _diagrams = null;
+        var _diagram = null;
 
         /**
          * Binds data to the scatter plot.
@@ -92,48 +92,39 @@
         // Tooltip builder
         _w.utils.tooltip = function(mouse) {
             if (!mouse) {
-                _.forOwn(this.tt, function(tt) {
-                    tt && tt.remove();
-                });
+                this.tt && this.tt.remove();
                 this.tt = null;
                 return null;
-            } else {
-                this.tt = this.tt || {};
-                var tt = this.tt;
             }
 
             // Find closest sites
-            var plots = [];
-            _.forOwn(_data[0].x, function(xk, k) {
-                // Get site in some radius
-                var site = _diagrams[k].find(mouse[0], mouse[1], 10);
-                if (!site) {
-                    tt[k] && tt[k].remove();
-                    tt[k] = null;
-                    return;
-                }
+            var site = _diagram.find(mouse[0], mouse[1], 10);
+            if (!site) {
+                this.tt && this.tt.remove();
+                this.tt = null;
+                return;
+            }
 
-                // Update markers
-                tt[k] = tt[k] || _svg.g.append("circle");
-                tt[k]
-                    .attr("r", 6)
-                    .attr("cx", site.data[0])
-                    .attr("cy", site.data[1])
-                    .style("pointer-events", "none")
-                    .style("stroke", _w.attr.stroke)
-                    .style("fill", _w.attr.colors[k]);
-
-                // Add plot
-                plots.push({id: k, color: _w.attr.colors[k],
-                    value: _svg.scale.x.invert(site.data[0]).toPrecision(3)
-                    + ":&nbsp;" + _svg.scale.y.invert(site.data[1]).toPrecision(3)});
-            });
+            // Marker
+            this.tt = this.tt || _svg.g.append("circle");
+            this.tt.attr("r", 6)
+                .attr("cx", site.data[0])
+                .attr("cy", site.data[1])
+                .style("pointer-events", "none")
+                .style("stroke", _w.attr.stroke)
+                .style("fill", _w.attr.colors[site.data.name]);
 
             // Tooltip
-            return plots.length > 0 ? {
-                title: _w.attr.xLabel,
-                plots: plots
-            } : null;
+            return {
+                title: site.data.name,
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: _w.attr.xLabel + ":", value: site.data[0].toPrecision(4)},
+                        {label: _w.attr.yLabel + ":", value: site.data[1].toPrecision(4)}
+                    ]
+                }
+            };
         };
 
         // Builder
@@ -223,12 +214,15 @@
                 // Voronoi tessellation
                 var voronoi = d3.voronoi()
                     .extent([[-1, -1], [_w.attr.width + 1, _w.attr.height + 1]]);
-                _diagrams = {};
-                _.forOwn(_data[0].x, function(xk, k) {
-                    _diagrams[k] = voronoi(_data.map(function (d) {
-                        return [_svg.scale.x(d.x[k]), _svg.scale.y(d.y[k])];
-                    }));
+                var sites = [];
+                _data.forEach(function(d) {
+                    _.forOwn(d.x, function(xk, k) {
+                        var site = [_svg.scale.x(xk), _svg.scale.y(d.y[k])];
+                        site.name = k;
+                        sites.push(site);
+                    });
                 });
+                _diagram = voronoi(sites);
             }
         };
 
