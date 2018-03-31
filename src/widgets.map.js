@@ -45,334 +45,25 @@
  * @requires lodash@4.17.4
  * @requires topojson@v1
  * @requires leaflet@1.3.1
+ * @requires du.math.la
  * @requires du.Widget
  */
 // TODO add map tooltip
 // TODO make map available on gist and only set the type
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('leaflet'), require('./widget'));
+        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('leaflet'),
+            require('./math.la'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'leaflet', 'src/widget', 'exports'], factory);
+        define(['d3', '_', 'topojson', 'leaflet', 'src/math.la', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.L, global.du.Widget);
+        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.L, global.du.math.la,
+            global.du.Widget);
     }
-} (this, function (d3, _, topojson, L, Widget) {
+} (this, function (d3, _, topojson, L, la, Widget) {
     "use strict";
-
-    /**
-     * Class representing a 2D vector.
-     *
-     * @class Vector2d
-     * @memberOf du.widgets.map
-     * @param {Array} coords Vector coordinates.
-     * @constructor
-     * @private
-     */
-    var Vector2d = function (coords) {
-        var _v = coords || [1, 0];
-
-        /**
-         * Returnx the X component.
-         *
-         * @method x
-         * @methodOf du.widgets.map.Vector2d
-         * @returns {number} The X component of the vector.
-         */
-        this.x = function () {
-            return _v[0];
-        };
-
-        /**
-         * Returnx the Y component.
-         *
-         * @method y
-         * @methodOf du.widgets.map.Vector2d
-         * @returns {number} The Y component of the vector.
-         */
-        this.y = function () {
-            return _v[1];
-        };
-
-        /**
-         * Sets or returns the length of the vector.
-         *
-         * @method length
-         * @methodOf du.widgets.map.Vector2d
-         * @param {number} len Length to set. If not specified, current length is returned.
-         * @returns {(number|du.widgets.map.Vector2d)} Reference to current vector if length is set, current length
-         * otherwise.
-         */
-        this.length = function (len) {
-            var r = Math.sqrt(_v[0] * _v[0] + _v[1] * _v[1]);
-            if (typeof len === "number") {
-                var l = len / r;
-                return new Vector2d(_v.map(function (x) {
-                    return x * l;
-                }));
-            }
-            return r;
-        };
-
-        /**
-         * Sets or returns the angle of the vector.
-         *
-         * @method angle
-         * @methodOf du.widgets.map.Vector2d
-         * @param {number} ang Angle to set. If not specified, current angle is returned.
-         * @returns {(number|du.widgets.map.Vector2d)} Reference to current vector if angle is set, current angle
-         * otherwise.
-         */
-        this.angle = function (ang) {
-            var a = Math.atan2(_v[1], _v[0]);
-            if (typeof ang === "number") {
-                var len = Math.sqrt(_v[0] * _v[0] + _v[1] * _v[1]);
-                return new Vector2d([len * Math.cos(ang), len * Math.sin(ang)]);
-            }
-            return a;
-        };
-
-        /**
-         * Returns the array representation of the vector.
-         *
-         * @method toArray
-         * @methodOf du.widgets.map.Vector2d
-         * @returns {Array} Array containing the X and coordinates.
-         */
-        this.toArray = function () {
-            return [_v[0], _v[1]];
-        };
-
-        /**
-         * Maps the vector using the specified function.
-         *
-         * @method map
-         * @methodOf du.widgets.map.Vector2d
-         * @param {function} func Function to call on the vector. Must accept an array of 2 elements.
-         * @returns {du.widgets.map.Vector2d} Reference to the current vector.
-         */
-        this.map = function (func) {
-            return new Vector2d(func(_v));
-        };
-
-        /**
-         * Adds another vector to this vector and returns the result vector.
-         * This vector remains unchanged.
-         *
-         * @method add
-         * @methodOf du.widgets.map.Vector2d
-         * @param {du.widgets.map.Vector2d} v Vector to add to current one.
-         * @returns {du.widgets.map.Vector2d} The result vector.
-         */
-        this.add = function (v) {
-            return new Vector2d([_v[0] + v.x(), _v[1] + v.y()]);
-        };
-
-        /**
-         * Subtracts another vector from this vector and returns the result vector.
-         * This vector remains unchanged.
-         *
-         * @method sub
-         * @methodOf du.widgets.map.Vector2d
-         * @param {du.widgets.map.Vector2d} v Vector to subtract from current one.
-         * @returns {du.widgets.map.Vector2d} The result vector.
-         */
-        this.sub = function (v) {
-            return new Vector2d([_v[0] - v.x(), _v[1] - v.y()]);
-        };
-
-        /**
-         * Multiplies this vector with a scalar and returns the result vector.
-         * This vector remains unchanged.
-         *
-         * @method mult
-         * @methodOf du.widgets.map.Vector2d
-         * @param {number} s Scalar to multiply current vector with.
-         * @returns {du.widgets.map.Vector2d} The result vector.
-         */
-        this.mult = function (s) {
-            return new Vector2d(_v.map(function (x) {
-                return x * s;
-            }));
-        };
-    };
-
-    /**
-     * Class representing a 3D vector.
-     *
-     * @class Vector3d
-     * @memberOf du.widgets.map
-     * @param {Array} coords Vector coordinates.
-     * @constructor
-     * @private
-     */
-    var Vector3d = function (coords) {
-        var _v = coords || [1, 0, 0];
-
-        /**
-         * Returns the X component.
-         *
-         * @method x
-         * @methodOf du.widgets.map.Vector3d
-         * @returns {number} The X component of the vector.
-         */
-        this.x = function () {
-            return _v[0];
-        };
-
-        /**
-         * Returns the Y component.
-         *
-         * @method y
-         * @methodOf du.widgets.map.Vector3d
-         * @returns {number} The Y component of the vector.
-         */
-        this.y = function () {
-            return _v[1];
-        };
-
-        /**
-         * Returns the Z component.
-         *
-         * @method z
-         * @methodOf du.widgets.map.Vector3d
-         * @returns {number} The Z component of the vector.
-         */
-        this.z = function () {
-            return _v[2];
-        };
-
-        /**
-         * Sets or returns the length of the vector.
-         *
-         * @method length
-         * @methodOf du.widgets.map.Vector2d
-         * @param {number} len Length to set. If not specified, current length is returned.
-         * @returns {(number|du.widgets.map.Vector3d)} Reference to current vector if length is set, current length
-         * otherwise.
-         */
-        this.length = function (len) {
-            var r = Math.sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]);
-            if (typeof len === "number") {
-                return new Vector3d(_v.map(function (x) {
-                    return x * len / r;
-                }));
-            }
-            return r;
-        };
-
-        /**
-         * Returns the latitude/longitude representation of the vector.
-         *
-         * @method toLatLon
-         * @methodOf du.widgets.map.Vector3d
-         * @returns {du.widgets.map.LatLon} The corresponding LatLon object.
-         */
-        this.toLatLon = function () {
-            var r = Math.sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]);
-            return new LatLon([Math.asin(_v[2] / r), Math.atan2(_v[1], _v[0])].map(function (x) {
-                return x * 180 / Math.PI;
-            }));
-        };
-
-        /**
-         * Adds another vector to this vector and returns the result vector.
-         * This vector remains unchanged.
-         *
-         * @method add
-         * @methodOf du.widgets.map.Vector3d
-         * @param {du.widgets.map.Vector3d} v Vector to add to current one.
-         * @returns {du.widgets.map.Vector3d} The result vector.
-         */
-        this.add = function (v) {
-            return new Vector3d([_v[0] + v.x(), _v[1] + v.y(), _v[2] + v.z()]);
-        };
-
-        /**
-         * Multiplies this vector with a scalar and returns the result vector.
-         * This vector remains unchanged.
-         *
-         * @method mult
-         * @methodOf du.widgets.map.Vector3d
-         * @param {number} s Scalar to multiply current vector with.
-         * @returns {du.widgets.map.Vector3d} The result vector.
-         */
-        this.mult = function (s) {
-            return new Vector3d(_v.map(function (x) {
-                return x * s;
-            }));
-        };
-
-        /**
-         * Returns the dot product with another vector.
-         * The vector remains unchanged.
-         *
-         * @method dot
-         * @methodOf du.widgets.map.Vector3d
-         * @param {du.widgets.map.Vector3d} v Vector to multiply this vector with.
-         * @returns {number} The dot product of the two vectors.
-         */
-        this.dot = function (v) {
-            return _v[0] * v.x() + _v[1] * v.y() + _v[2] * v.z();
-        };
-
-        /**
-         * Returns the cross product with another vector.
-         * The vector remains unchanged.
-         *
-         * @method cross
-         * @methodOf du.widgets.map.Vector3d
-         * @param {du.widgets.map.Vector3d} v Vector to multiply this vector with.
-         * @returns {du.widgets.map.Vector3d} The result vector.
-         */
-        this.cross = function (v) {
-            return new Vector3d([
-                _v[1] * v.z() - _v[2] * v.y(),
-                _v[2] * v.x() - _v[0] * v.z(),
-                _v[0] * v.y() - _v[1] * v.x()
-            ]);
-        };
-    };
-
-    /**
-     * Class representing a latitude/longitude pair.
-     *
-     * @class LatLon
-     * @memberOf du.widgets.map
-     * @param {Array} latLon Array containing latitude and longitude.
-     * @constructor
-     * @private
-     */
-    var LatLon = function (latLon) {
-        var _ll = latLon || [0, 0];
-
-        /**
-         * Returns the array representation of the geolocation.
-         *
-         * @method toArray
-         * @memberOf du.widgets.map.LatLon
-         * @returns {Array} Latitude/longitude in an array.
-         */
-        this.toArray = function () {
-            return [_ll[0], _ll[1]];
-        };
-
-        /**
-         * Returns the Cartesian Vector3d representation of the geolocation with unit radius.
-         *
-         * @method toVec
-         * @memberOf du.widgets.map.LatLon
-         * @returns {du.widgets.map.Vector3d} Vector3d representation of the geolocation with unit radius.
-         */
-        this.toVec = function () {
-            var la = _ll[0] * Math.PI / 180,
-                lo = _ll[1] * Math.PI / 180;
-            var c = Math.cos(la);
-            return new Vector3d([c * Math.cos(lo), c * Math.sin(lo), Math.sin(la)]);
-        };
-    };
 
     /**
      * The map widget class.
@@ -390,7 +81,9 @@
 
         /**
          * Sets the map data file to the specified path.
-         * At the moment only {world.json} is supported.
+         * At the moment only valid paths to the
+         * [world.json]{@link https://gist.github.com/synesenom/9aced722b680f7613419bfde50889f76#file-world-json} is
+         * supported.
          * Default is null.
          *
          * @method resource
@@ -1594,7 +1287,7 @@
                                         break;
                                     case "arrow":
                                         for (var i=0; i<d.params.segments.length; i++) {
-                                            d.params.segments[i] = new Vector2d(
+                                            d.params.segments[i] = new la.Vector2(
                                                 _scaleCoords(d.params.segments[i].toArray(), a, b)
                                             );
                                         }
@@ -1932,8 +1625,8 @@
                     var safeId = _w.utils.encode(id);
                     if (_layers.hasOwnProperty(safeId)) {
                         // Calculate geodesic vectors
-                        var u = new LatLon(startLatLon).toVec(),
-                            v = new LatLon(endLatLon).toVec(),
+                        var u = new la.LatLon(startLatLon).toVec(),
+                            v = new la.LatLon(endLatLon).toVec(),
                             w = u.cross(v).cross(u).length(1),
                             angle = Math.acos(u.dot(v));
 
@@ -1941,15 +1634,15 @@
                         var t = 1,
                             length = 100,
                             headHeight = width * 5,
-                            mappedStart = new Vector2d(_mapLayer._project(startLatLon)),
-                            mappedEnd = new Vector2d(_mapLayer._project(endLatLon)),
+                            mappedStart = new la.Vector2(_mapLayer._project(startLatLon)),
+                            mappedEnd = new la.Vector2(_mapLayer._project(endLatLon)),
                             r1 = mappedStart,
                             segments = [r1];
                         do {
-                            var r2 = new Vector2d(
+                            var r2 = new la.Vector2(
                                 _mapLayer._project(
-                                    u.mult(Math.cos((t + 1) * angle / length))
-                                        .add(w.mult(Math.sin((t + 1) * angle / length)))
+                                    u.multiply(Math.cos((t + 1) * angle / length))
+                                        .add(w.multiply(Math.sin((t + 1) * angle / length)))
                                         .toLatLon().toArray()
                                 )
                             );
@@ -2425,8 +2118,8 @@
                         var length = 100;
                         var body = null;
                         var head = null;
-                        var mappedStart = new Vector2d(_mapLayer._project(startLatLon));
-                        var mappedEnd = new Vector2d(_mapLayer._project(endLatLon));
+                        var mappedStart = new la.Vector2(_mapLayer._project(startLatLon));
+                        var mappedEnd = new la.Vector2(_mapLayer._project(endLatLon));
                         var scaledWidth = width / _zoom.level();
                         var headWidth = scaledWidth * 2;
                         var headHeight = scaledWidth * 5;
@@ -2440,8 +2133,8 @@
                             .style("stroke", "none");
 
                         // Compute geodesic vectors
-                        var u = new LatLon(startLatLon).toVec();
-                        var v = new LatLon(endLatLon).toVec();
+                        var u = new la.LatLon(startLatLon).toVec();
+                        var v = new la.LatLon(endLatLon).toVec();
                         var w = u.cross(v).cross(u).length(1);
                         var angle = Math.acos(u.dot(v));
 
@@ -2451,10 +2144,10 @@
                         var dur = (typeof duration === "number" ? duration : 700) / length;
                         var animation = setInterval(function () {
                             // Body
-                            var r2 = new Vector2d(
+                            var r2 = new la.Vector2(
                                 _mapLayer._project(
-                                    u.mult(Math.cos((t + 1) * angle / length))
-                                        .add(w.mult(Math.sin((t + 1) * angle / length)))
+                                    u.multiply(Math.cos((t + 1) * angle / length))
+                                        .add(w.multiply(Math.sin((t + 1) * angle / length)))
                                         .toLatLon().toArray()
                                 )
                             );
@@ -2466,10 +2159,10 @@
                             // Head
                             if (r2.sub(r1).length() < 0.5 * _w.attr.width) {
                                 var v = r2.sub(r1).length(1);
-                                var n = v.angle(v.angle() + Math.PI / 2).mult(headWidth);
+                                var n = v.angle(v.angle() + Math.PI / 2).multiply(headWidth);
                                 var a1 = r2.sub(n);
                                 var a2 = r2.add(n);
-                                var c = r2.add(v.mult(headHeight));
+                                var c = r2.add(v.multiply(headHeight));
                                 head.attr("d", "M" + a1.x() + "," + a1.y()
                                     + "L" + a2.x() + "," + a2.y()
                                     + "L" + c.x() + "," + c.y()
@@ -2486,9 +2179,9 @@
 
                                 // Update head position
                                 v = mappedEnd.sub(r2).length(1);
-                                n = v.angle(v.angle() + Math.PI / 2).mult(headWidth);
-                                a1 = mappedEnd.sub(v.mult(headHeight)).sub(n);
-                                a2 = mappedEnd.sub(v.mult(headHeight)).add(n);
+                                n = v.angle(v.angle() + Math.PI / 2).multiply(headWidth);
+                                a1 = mappedEnd.sub(v.multiply(headHeight)).sub(n);
+                                a2 = mappedEnd.sub(v.multiply(headHeight)).add(n);
                                 head.transition().duration(dur)
                                     .attr("d", "M" + a1.x() + "," + a1.y()
                                         + "L" + a2.x() + "," + a2.y()

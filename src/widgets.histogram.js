@@ -189,17 +189,7 @@
             var realMax = typeof _w.attr.max === "number" ? _w.attr.max : _data[_data.length - 1];
             var realBin = _w.attr.bin;
             if (realBin === null) {
-                var q1Id = (_data.length + 1) / 4,
-                    q1a = Math.floor(q1Id),
-                    q1b = Math.ceil(q1Id),
-                    q1w = q1Id - q1a,
-                    q1 = q1w * _data[q1a] + (1 - q1w) * _data[q1b];
-                var q3Id = 3 * (_data.length + 1) / 4,
-                    q3a = Math.floor(q3Id),
-                    q3b = Math.ceil(q3Id),
-                    q3w = q3Id - q3a,
-                    q3 = q3w * _data[q3a] + (1 - q3w) * _data[q3b];
-                realBin = 2 * (q3 - q1) / Math.pow(_data.length, 1 / 3);
+                realBin = 2 * (d3.quantile(_data, 0.75) - d3.quantile(_data, 0.25)) / Math.pow(_data.length, 1 / 3);
             }
 
             // Compute bin thresholds
@@ -266,7 +256,6 @@
                     .attr("width", function(d) {
                         return Math.abs(_svg.scale.x(d.x1 - d.x0) - 2);
                     })
-                    .transition().duration(duration)
                     .attr("y", function (d) {
                         return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.length / norm);
                     })

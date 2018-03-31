@@ -1,0 +1,29 @@
+- var name = "boxplot"
+- var links = {source: "widgets.boxplot", docs: "widgets.boxplot"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.boxplot"]
+- var description = "Box plots are useful to <span class='good'>compare data sets</span> by simple <span class='good'>summary statistics</span> such as median and extremal values. Box plots are based on simple metrics and <span class='bad'>hides details</span> of the underlying distributions. If details are needed, use a violin plot instead."
+include pug/example
+script.doc.
+    // generate some data
+    var data = {
+        mango: new Array(1234).fill(0).map(function () {
+            return -10 * Math.log(Math.random()) / 10;
+        }),
+        kiwi: new Array(1234).fill(0).map(function () {
+            return Math.random() * 20 - 10;
+        })
+    };
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var boxplot = new du.widgets.BoxPlot("mychart", "#widget")
+        .data(data)
+        .width(width)
+        .height(height)
+        .xLabel("fruit")
+        .yLabel("price")
+        .margins(60)
+        .fontSize(14)
+        .render();

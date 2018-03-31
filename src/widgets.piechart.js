@@ -95,7 +95,7 @@
          *
          * @method data
          * @memberOf du.widgets.piechart.PieChart
-         * @param {Array} data Data to plot.
+         * @param {object} data Data to plot.
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.data = function (data) {

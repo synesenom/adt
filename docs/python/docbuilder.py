@@ -184,6 +184,9 @@ class DocBuilder:
         def _codify(text):
             return re.sub(r'\{(.*?)\}', r'<code>\1</code>', text)
 
+        def _linkify(text):
+            return re.sub(r'\[(.*)\]\{@link (.*)\}', r'<a href="\2" target="_blank">\1</a>', text)
+
         def _tagify(text, tag, attr={}):
             ltag = "<" + tag
             for k, v in attr.items():
@@ -287,7 +290,7 @@ class DocBuilder:
             content += _tagify(_tagify(b.path() + "(" + code + ")", "code"), "pre") + "\n"
 
             # Add description
-            content += "<br>" + _codify(b['desc']) + "\n"
+            content += "<br>" + _codify(_linkify(b['desc'])) + "\n"
 
             # Add override
             if b['override']:

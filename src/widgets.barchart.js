@@ -73,7 +73,7 @@
          *
          * @method data
          * @memberOf du.widgets.barchart.BarChart
-         * @param {Array} data Data to plot.
+         * @param {object} data Data to plot.
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         this.data = function(data) {
