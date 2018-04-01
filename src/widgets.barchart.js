@@ -80,12 +80,12 @@
             // Transform data to array
             _data = [];
             _.forOwn(data, function(v, k) {
-                _data.push({x: k, y: v});
+                _data.push({name: k, value: v});
             });
 
             // Sort by category name
             _data.sort(function(a, b) {
-                return a.x.localeCompare(b.x);
+                return a.name.localeCompare(b.name);
             });
             return this;
         };
@@ -108,7 +108,7 @@
             // Get bisection
             var dir = _w.attr.vertical ? 1 : 0;
             var bisect = d3.bisector(function (d) {
-                return _svg.scale.x(d.x);
+                return _svg.scale.x(d.name);
             }).right;
             var i = mouse ? bisect(_data, mouse[dir]) : null;
 
@@ -120,7 +120,7 @@
             // Get data entry
             var left = _data[i - 1] ? _data[i - 1] : _data[i];
             var right = _data[i] ? _data[i] : _data[i - 1];
-            var point = mouse[dir] - left.x > right.x - mouse[dir] ? right : left;
+            var point = mouse[dir] - left.name > right.name - mouse[dir] ? right : left;
 
             // Build tooltip content
             return {
@@ -128,7 +128,7 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: _w.attr.yLabel + ":", value: point.y.toPrecision(6)}
+                        {label: _w.attr.yLabel + ":", value: point.value.toPrecision(6)}
                     ]
                 }
             };
@@ -169,17 +169,16 @@
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
-            if (_w.attr.vertical) {
-                _svg.scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
-                    _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
-                    _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                    {x: {type: "string"}, y: {reverse: true}});
-            } else {
-                _svg.scale = _w.utils.scale(_w.utils.boundary(_data, {y: [0, null]}),
-                    _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                    _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
-                    {x: {type: "string"}});
-            }
+            _svg.scale = {
+                x: _w.utils.scale(_data.map(function(d) {
+                    return d.name;
+                }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "string"),
+                y: _w.utils.scale(_data.map(function (d) {
+                    return [0, d.value];
+                }).reduce(function (a, d) {
+                    return a.concat(d);
+                }, []), _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
+            };
 
             // Axes
             _svg.axes.x
@@ -197,7 +196,7 @@
                         .data(_data)
                         .enter().append("rect")
                         .attr("class", function (d) {
-                            return "bar " + _w.utils.encode(d.x);
+                            return "bar " + _w.utils.encode(d.name);
                         })
                         .style("pointer-events", "all")
                         .style("stroke", "none")
@@ -218,26 +217,26 @@
                 if (_w.attr.vertical) {
                     _svg.bars
                         .attr("y", function (d) {
-                            return _svg.scale.x(d.x);
+                            return _svg.scale.x(d.name);
                         })
                         .attr("height", _svg.scale.x.bandwidth())
                         .transition().duration(duration)
                         .attr("x", 1)
                         .attr("width", function (d) {
-                            return _svg.scale.y(d.y);
+                            return _svg.scale.y(d.value);
                         });
                 } else {
                     _svg.bars
                         .attr("x", function (d) {
-                            return _svg.scale.x(d.x);
+                            return _svg.scale.x(d.name);
                         })
                         .attr("width", _svg.scale.x.bandwidth())
                         .transition().duration(duration)
                         .attr("y", function (d) {
-                            return _svg.scale.y(d.y);
+                            return _svg.scale.y(d.value);
                         })
                         .attr("height", function (d) {
-                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.y);
+                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
                         });
                 }
             }
@@ -246,7 +245,7 @@
         // Style updater
         _w.render.style = function() {
             // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.x; }) : null);
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
 
             // Inner dimensions
             var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
@@ -303,38 +302,38 @@
             if (_svg.bars !== undefined) {
                 _svg.bars
                     .style("fill", function (d) {
-                        return typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[d.x];
+                        return typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[d.name];
                     });
 
                 // Interactions (for ticks as well)
                 if (_w.attr.mouseover) {
                     _svg.bars
                         .on("mouseover", function (d) {
-                            _w.attr.mouseover && _w.attr.mouseover(d.x);
+                            _w.attr.mouseover && _w.attr.mouseover(d.name);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("mouseover", function (d, i) {
-                            _w.attr.mouseover && _w.attr.mouseover(_data[i].x);
+                            _w.attr.mouseover && _w.attr.mouseover(_data[i].name);
                         });
                 }
                 if (_w.attr.mouseleave) {
                     _svg.bars
                         .on("mouseleave", function (d) {
-                            _w.attr.mouseleave && _w.attr.mouseleave(d.x);
+                            _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("mouseleave", function (d, i) {
-                            _w.attr.mouseleave&& _w.attr.mouseleave(_data[i].x);
+                            _w.attr.mouseleave&& _w.attr.mouseleave(_data[i].name);
                         });
                 }
                 if (_w.attr.click) {
                     _svg.bars
                         .on("click", function (d) {
-                            _w.attr.click && _w.attr.click(d.x);
+                            _w.attr.click && _w.attr.click(d.name);
                         });
                     _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
                         .on("click", function (d, i) {
-                            _w.attr.click && _w.attr.click(_data[i].x);
+                            _w.attr.click && _w.attr.click(_data[i].name);
                         });
                 }
             }

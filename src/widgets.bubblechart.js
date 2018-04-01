@@ -137,21 +137,19 @@
 
         // Data updater
         _w.render.update = function(duration) {
-            // Boundaries
-            var sizeMax = d3.max(_data, function(d) {
-                return _w.attr.scale*d.size;
-            });
-            var boundary = _w.utils.boundary(_data);
-            boundary.x.min -= sizeMax;
-            boundary.x.max += sizeMax;
-            boundary.y.min -= sizeMax;
-            boundary.y.max += sizeMax;
-
             // Calculate scale
-            _svg.scale = _w.utils.scale(boundary,
-                _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
-                {x: {type: _w.attr.xType}});
+            _svg.scale = {
+                x: _w.utils.scale(_data.map(function (d) {
+                    return [d.x-1.1*_w.attr.scale*d.size, d.x+1.1*_w.attr.scale*d.size];
+                }).reduce(function (a, d) {
+                    return a.concat(d);
+                }, []), [0, _w.attr.innerWidth]),
+                y: _w.utils.scale(_data.map(function (d) {
+                    return [d.y-1.1*_w.attr.scale*d.size, d.y+1.1*_w.attr.scale*d.size];
+                }).reduce(function (a, d) {
+                    return a.concat(d);
+                }, []), [_w.attr.innerHeight, 0])
+            };
 
             // Update axes
             _svg.axes.x

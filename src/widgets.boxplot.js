@@ -40,7 +40,8 @@
 
         /**
          * Binds data to the box plot.
-         * Expected data format: object containing arrays of values for each box.
+         * Expected data format: array containing objects with a {name} property with the box name and a {data}
+         * property that contains the array of values for each box.
          *
          * @method data
          * @memberOf du.widgets.boxplot.BoxPlot
@@ -49,9 +50,9 @@
          */
         this.data = function(data) {
             // Calculate box statistics
-            _data = {};
-            _.forOwn(data, function(d, name) {
-                var sd = d.sort(d3.ascending);
+            _data = [];
+            data.forEach(function(d) {
+                var sd = d.data.sort(d3.ascending);
                 var min = d3.min(sd),
                     max = d3.max(sd),
                     q1 = d3.quantile(sd, 0.25),
@@ -59,7 +60,7 @@
                     iqr = q3 - q1;
                 var mildOutliers = [],
                     extremeOutliers = [];
-                d.filter(function(x) {
+                d.data.filter(function(x) {
                     return x < q1 - 1.5*iqr || x > q3 + 1.5*iqr;
                 }).forEach(function(x) {
                     if (x < q1 - 3*iqr || x > q3 + 3*iqr) {
@@ -68,18 +69,22 @@
                         mildOutliers.push(x);
                     }
                 });
-                _data[name] = {
+                _data.push({
+                    name: d.name,
+                    min: min,
+                    max: max,
                     median: d3.median(sd),
                     q1: q1,
                     q3: q3,
                     lowerWhisker: Math.max(min, q1 - 1.5*iqr),
-                    upperWhisker:Math.min(max, q3 + 1.5*iqr),
+                    upperWhisker: Math.min(max, q3 + 1.5*iqr),
                     outliers: {
                         mild: mildOutliers,
                         extreme: extremeOutliers
                     }
-                };
+                });
             });
+            console.log(_data);
             return this;
         };
 
@@ -134,7 +139,18 @@
 
         // Data updater
         _w.render.update = function(duration) {
-
+            var scale = {
+                x: _w.utils.scale2(_data.map(function (d) {
+                    return d.name;
+                })),
+                y: _w.utils.scale2(
+                    _data.map(function (d) {
+                        return [d.min, d.max];
+                    }).reduce(function (array, d) {
+                        return array.concat(d);
+                    }, [])
+                )
+            };
         };
 
         // Style updater

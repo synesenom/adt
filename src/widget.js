@@ -160,6 +160,8 @@
             xDim: "px",
             yDim: "px",
             fontWeight: "normal",
+            innerWidth: 200,
+            innerHeight: 150,
 
             /**
              * Attribute categories.
@@ -265,7 +267,10 @@
          * @param {number} w Width in pixels.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        _attr.add(this, "width", 200, "dim");
+        _attr.add(this, "width", 200, "dim", function(width) {
+            _attr.width = width;
+            _attr.innerWidth = _attr.width - _attr.margins.left - _attr.margins.right;
+        });
 
         /**
          * Sets widget height in pixels. Default is 150.
@@ -275,7 +280,10 @@
          * @param {number} h Height in pixels.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        _attr.add(this, "height", 150, "dim");
+        _attr.add(this, "height", 150, "dim", function(height) {
+            _attr.height = height;
+            _attr.innerHeight = _attr.height - _attr.margins.top - _attr.margins.bottom;
+        });
 
         /**
          * Sets widget margins. Default is 0 for all sides.
@@ -295,6 +303,8 @@
                     _attr.margins[side] = margins[side];
                 });
             }
+            _attr.innerWidth = _attr.width - _attr.margins.left - _attr.margins.right;
+            _attr.innerHeight = _attr.height - _attr.margins.top - _attr.margins.bottom;
         });
 
         /**
@@ -515,7 +525,7 @@
             /**
              * Encodes a plot key by replacing spaces with double underscore.
              *
-             * @method encode
+             * @method _encode
              * @memberOf du.widget.Widget._utils
              * @param {string} key Key to encode.
              * @returns {(number|string)} Encoded key if key is valid, empty string otherwise.
@@ -528,164 +538,45 @@
             }
 
             /**
-             * Calculates boundary for a data set.
-             * If data is invalid, it returns (0, 1) for all axes.
-             * Also calculates the sorted range of values for the X axis.
+             * Creates a scale from an array of values.
              *
-             * @method boundary
-             * @memberOf du.widget.Widget._utils
-             * @param {Array} data Array of {x: number, y: object} pairs where y is an object containing various Y
-             * values for different keys.
-             * @param {{x: Array, y: Array}=} constraints Object containing additional constraints on the boundary.
-             * @returns {object} Calculated boundary for each axis.
+             * @method _scale
+             * @memberOf du.widgets.Widget._utils
+             * @param {Array} data Array of values to build scale for.
+             * @param {Array} range Array of the range.
+             * @param {string=} type Type of the values. Can be {number}, {string}.
              * @private
              */
-            function _boundary(data, constraints) {
-                // If no data, return (0, 1), (0, 1)
-                if (data === null || data === undefined || data.length < 1) {
-                    return {
-                        x: {min: 0, max: 1, domain: [0.5]},
-                        y: {min: 0, max: 1, domain: []}
-                    };
+            function _scale(data, range, type) {
+                // If no data, return default
+                if (!data || data.length < 1) {
+                    return d3.scaleLinear()
+                        .domain([0, 1])
+                        .range(range);
                 }
 
-                // X axis
-                var x = [];
-                xRange = [];
-                if (typeof data[0].x === "number") {
-                    // Single data
-                    x = [d3.min(data, function (d) {
-                        return d.x;
-                    }), d3.max(data, function (d) {
-                        return d.x;
-                    })];
-                } else {
-                    // Multiple values
-                    var xMin = [],
-                        xMax = [];
-                    _.forOwn(data[0].y, function (xk, k) {
-                        xMin.push(d3.min(data, function (d) {
-                            return d.x[k];
-                        }));
-                        xMax.push(d3.max(data, function (d) {
-                            return d.x[k];
-                        }));
-                    });
-                    x = [d3.min(xMin), d3.max(xMax)];
-                }
-                // TODO make range for all types of data
-                if (typeof data[0].x === "number"
-                    || typeof data[0].x === "string") {
-                    var values = {};
-                    var xRange = [];
-                    data.forEach(function (d) {
-                        if (!values.hasOwnProperty(d.x)) {
-                            values[d.x] = 1;
-                            xRange.push(d.x);
-                        }
-                    });
+                // Otherwise set domain
+                var scale;
+                switch (type) {
+                    case undefined:
+                    case "number":
+                        scale = d3.scaleLinear()
+                            .domain([d3.min(data), d3.max(data)]);
+                        break;
+                    case "string":
+                        scale = d3.scaleBand()
+                            .domain(data)
+                            .padding(0.1);
+                        break;
                 }
 
-                // Y axis
-                var y = [];
-                if (typeof data[0].y === "number") {
-                    // Single data
-                    y = [d3.min(data, function (d) {
-                        return d.y;
-                    }), d3.max(data, function (d) {
-                        return d.y;
-                    })];
-                } else {
-                    // Multiple values
-                    var yMin = [],
-                        yMax = [];
-                    _.forOwn(data[0].y, function (yk, k) {
-                        yMin.push(d3.min(data, function (d) {
-                            return d.y[k];
-                        }));
-                        yMax.push(d3.max(data, function (d) {
-                            return d.y[k];
-                        }));
-                    });
-                    y = [d3.min(yMin), d3.max(yMax)];
-                }
-
-                // Read constraints
-                var c = {x: [null, null], y: [null, null]};
-                if (constraints) {
-                    _.forOwn(c, function (ak, k) {
-                        [0, 1].forEach(function (i) {
-                            ak[i] = (constraints.hasOwnProperty(k) && constraints[k][i] !== null) ? constraints[k][i] : ak[i];
-                        })
-                    });
-                }
-
-                // Return boundary
-                return {
-                    x: {
-                        min: c.x[0] !== null ? c.x[0] : x[0],
-                        max: c.x[1] !== null ? c.x[1] : x[1],
-                        domain: xRange.filter(function (d) {
-                            return (!c.x[0] || d >= c.x[0]) && (!c.x[1] || d <= c.x[1])
-                        })
-                    },
-                    y: {
-                        min: c.y[0] !== null ? c.y[0] : y[0],
-                        max: c.y[1] !== null ? c.y[1] : y[1],
-                        domain: []
-                    }
-                };
-            }
-
-            /**
-             * Calculates axis scales from a boundary.
-             *
-             * @method scale
-             * @memberOf du.widget.Widget._utils
-             * @param {{x: Array, y: Array}} boundary Object describing the boundary.
-             * @param {number} width Width of the plotting area.
-             * @param {number} height Height of the plotting area.
-             * @param {{object=} axes Object containing axis types and reversals.
-             * @returns {{x: function, y: function}} Object containing the scales for the axes.
-             * @private
-             */
-            function _scale(boundary, width, height, axes) {
-                function _setScale(type, b) {
-                    var sc = null;
-                    if (typeof type) {
-                        switch (type) {
-                            case "number":
-                            default:
-                                sc = d3.scaleLinear()
-                                    .domain([b.min, b.max]);
-                                break;
-                            case "time":
-                                sc = d3.scaleTime()
-                                    .domain([b.min, b.max]);
-                                break;
-                            case "string":
-                                sc = d3.scaleBand()
-                                    .domain(b.domain)
-                                    .padding(0.1);
-                                break;
-                        }
-                    }
-                    return sc;
-                }
-
-                // Make scales
-                return {
-                    x: _setScale(axes && axes.x ? axes.x.type : "number", boundary.x)
-                        .range(axes && axes.x && axes.x.reverse ? [width, 0] : [0, width]),
-                    y: _setScale(axes && axes.y ? axes.y.type : "number", boundary.y)
-                        .range(axes && axes.y && axes.y.reverse ? [0, height] : [height, 0])
-                };
+                return scale.range(range);
             }
 
             /**
              * Highlights an element in the widget.
              *
-             * @method highlight
+             * @method _highlight
              * @memberOf du.widget.Widget._utils
              * @param {du.widget.Widget} widget The current widget that called the method.
              * @param {object} svg The inner SVG of the widget.
@@ -768,7 +659,6 @@
             // Exposed methods
             return {
                 encode: _encode,
-                boundary: _boundary,
                 scale: _scale,
                 highlight: _highlight,
                 colors: _colors

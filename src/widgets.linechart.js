@@ -377,11 +377,16 @@
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
-            var boundary = _w.utils.boundary(_data, {y: [_w.attr.yMin, null]});
-            _svg.scale = _w.utils.scale(boundary,
-                _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
-                {x: {type: _w.attr.xType}});
+            _svg.scale = {
+                x: _w.utils.scale(_data.map(function(d) {
+                    return d.x;
+                }), [0, _w.attr.innerWidth]),
+                y: _w.utils.scale(_data.map(function (d) {
+                    return d3.values(d.y);
+                }).reduce(function (a, d) {
+                    return a.concat(d);
+                }, []), [_w.attr.innerHeight, 0])
+            };
 
             // Update axes
             _svg.axes.x
@@ -423,9 +428,9 @@
                             .x(function (d) {
                                 return _svg.scale.x(d.x) + 2;
                             }).y0(function (d) {
-                                return _svg.scale.y(Math.max(d.y[k] - d.dy[k], boundary.y.min));
+                                return _svg.scale.y(Math.max(d.y[k] - d.dy[k], 0));
                             }).y1(function (d) {
-                                return _svg.scale.y(Math.min(d.y[k] + d.dy[k], boundary.y.max));
+                                return _svg.scale.y(Math.min(d.y[k] + d.dy[k], _svg.scale.y.domain()[1]));
                             });
                         _svg.errors[k]
                             .transition().duration(duration)

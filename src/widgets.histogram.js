@@ -93,7 +93,7 @@
          */
         this.data = function(data) {
             _data = data.sort(function(a, b) {
-                return +a - b;
+                return a - b;
             });
             return this;
         };
@@ -207,19 +207,12 @@
                 (_data);
 
             // Calculate scale
-            var yMax = d3.max(_bins, function (d) {
-                return d.length / norm;
-            });
-            _svg.scale = _w.utils.scale({
-                    x: {min: realMin, max: realMin+n*realBin, domain: [realMin, realMax]},
-                    y: {
-                        min: 0,
-                        max: yMax,
-                        domain: [0, yMax]
-                    }
-                },
-                _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom);
+            _svg.scale = {
+                x: _w.utils.scale([realMin, realMin+n*realBin], [0, _w.attr.innerWidth]),
+                y: _w.utils.scale([0, d3.max(_bins, function (d) {
+                    return d.length / norm;
+                })], [_w.attr.innerHeight, 0])
+            };
 
             // Axes
             _svg.axes.x
@@ -251,10 +244,10 @@
                 _svg.bars.data(_bins);
                 _svg.bars
                     .attr("x", function (d) {
-                        return _svg.scale.x(d.x0) + 2;
+                        return _svg.scale.x(d.x0) + 1;
                     })
                     .attr("width", function(d) {
-                        return Math.abs(_svg.scale.x(d.x1 - d.x0) - 2);
+                        return Math.abs(_svg.scale.x(d.x1) - _svg.scale.x(d.x0)) - 2;
                     })
                     .attr("y", function (d) {
                         return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.length / norm);

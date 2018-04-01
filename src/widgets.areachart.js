@@ -200,10 +200,16 @@
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
-            _svg.scale = _w.utils.scale(_w.utils.boundary(_data),
-                _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
-                {x: {type: _w.attr.xType}});
+            _svg.scale = {
+                x: _w.utils.scale(_data.map(function(d) {
+                    return d.x;
+                }), [0, _w.attr.innerWidth]),
+                y: _w.utils.scale(_data.map(function (d) {
+                    return d3.values(d.y).concat([0]);
+                }).reduce(function (a, d) {
+                    return a.concat(d);
+                }, []), [_w.attr.innerHeight, 0])
+            };
 
             // Update axes
             _svg.axes.x

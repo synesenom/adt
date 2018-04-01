@@ -3,14 +3,14 @@
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
 });</script><title>boxplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Box plots are useful to <span class='good'>compare data sets</span> by simple <span class='good'>summary statistics</span> such as median and extremal values. Box plots are based on simple metrics and <span class='bad'>hides details</span> of the underlying distributions. If details are needed, use a violin plot instead.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.boxplot.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.boxplot.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = {
-    mango: new Array(1234).fill(0).map(function () {
+var data = [
+    {name: "mango", data: new Array(1234).fill(0).map(function () {
         return -10 * Math.log(Math.random()) / 10;
-    }),
-    kiwi: new Array(1234).fill(0).map(function () {
+    })},
+    {name: "kiwi", data: new Array(1234).fill(0).map(function () {
         return Math.random() * 20 - 10;
-    })
-};</script><script class="doc">// create chart
+    })}
+];</script><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var boxplot = new du.widgets.BoxPlot("mychart", "#widget")

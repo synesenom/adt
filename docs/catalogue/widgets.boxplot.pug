@@ -6,14 +6,14 @@
 include pug/example
 script.doc.
     // generate some data
-    var data = {
-        mango: new Array(1234).fill(0).map(function () {
+    var data = [
+        {name: "mango", data: new Array(1234).fill(0).map(function () {
             return -10 * Math.log(Math.random()) / 10;
-        }),
-        kiwi: new Array(1234).fill(0).map(function () {
+        })},
+        {name: "kiwi", data: new Array(1234).fill(0).map(function () {
             return Math.random() * 20 - 10;
-        })
-    };
+        })}
+    ];
 script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));

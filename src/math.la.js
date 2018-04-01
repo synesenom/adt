@@ -2,8 +2,8 @@
  * Module containing various linear algebra structures and methods.
  *
  * @author Enys Mones
- * @module la
- * @memberOf du.math
+ * @module math.la
+ * @memberOf du
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -25,7 +25,6 @@
      * @memberOf du.math.la
      * @param {Array} coords Vector coordinates.
      * @constructor
-     * @private
      */
     var Vector2 = function (coords) {
         var _v = coords || [1, 0];
@@ -118,7 +117,7 @@
          * This vector remains unchanged.
          *
          * @method add
-         * @methodOf {du.math.la.Vector2}
+         * @methodOf du.math.la.Vector2
          * @param {du.math.la.Vector2} v Vector to add to current one.
          * @returns {du.math.la.Vector2} The result vector.
          */
@@ -162,7 +161,6 @@
      * @memberOf du.math.la
      * @param {Array} coords Vector coordinates.
      * @constructor
-     * @private
      */
     var Vector3 = function (coords) {
         var _v = coords || [1, 0, 0];
@@ -299,7 +297,6 @@
      * @memberOf du.math.la
      * @param {Array} latLon Array containing latitude and longitude.
      * @constructor
-     * @private
      */
     var LatLon = function (latLon) {
         var _ll = latLon || [0, 0];

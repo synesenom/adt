@@ -1,5 +1,85 @@
-<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700' rel='stylesheet'><link rel='stylesheet' type='text/css' href='https://cdn.rawgit.com/synesenom/whiteprint/master/wp.min.css'><style>img#logo{position:fixed;top:20px;right:20px;width:100px;}pre code{width: 100%;}</style><title></title></head><body><input type='checkbox' id='menu'><label for='menu' id='open'>☰</label><aside><div class='logo'></div><nav><div></div></nav></aside><main><h2 id='api-{du.math.la.Vector2}.add'>add</h2>
-<div class='card'><pre><code>{du.math.la.Vector2}.add(v)</code></pre>
+<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700' rel='stylesheet'><link rel='stylesheet' type='text/css' href='https://cdn.rawgit.com/synesenom/whiteprint/master/wp.min.css'><style>img#logo{position:fixed;top:20px;right:20px;width:100px;}pre code{width: 100%;}</style><title>du.math.la</title></head><body><input type='checkbox' id='menu'><label for='menu' id='open'>☰</label><aside><div class='logo'>du.math.la</div><nav><div><input type='checkbox' id='s2-du.math.la'></input><label for='s2-du.math.la'>math.la</label><div class='s2'><input type='checkbox' id='s3-du.math.la.Vector2'></input><label for='s3-du.math.la.Vector2'>Vector2</label><div class='s3'><a href='#api-du.math.la.Vector2.x'>x</a><a href='#api-du.math.la.Vector2.y'>y</a><a href='#api-du.math.la.Vector2.length'>length</a><a href='#api-du.math.la.Vector2.angle'>angle</a><a href='#api-du.math.la.Vector2.toArray'>toArray</a><a href='#api-du.math.la.Vector2.map'>map</a><a href='#api-du.math.la.Vector2.add'>add</a><a href='#api-du.math.la.Vector2.sub'>sub</a><a href='#api-du.math.la.Vector2.multiply'>multiply</a></div><input type='checkbox' id='s3-du.math.la.Vector3'></input><label for='s3-du.math.la.Vector3'>Vector3</label><div class='s3'><a href='#api-du.math.la.Vector3.x'>x</a><a href='#api-du.math.la.Vector3.y'>y</a><a href='#api-du.math.la.Vector3.z'>z</a><a href='#api-du.math.la.Vector3.length'>length</a><a href='#api-du.math.la.Vector3.toLatLon'>toLatLon</a><a href='#api-du.math.la.Vector3.add'>add</a><a href='#api-du.math.la.Vector3.multiply'>multiply</a><a href='#api-du.math.la.Vector3.dot'>dot</a><a href='#api-du.math.la.Vector3.cross'>cross</a></div><input type='checkbox' id='s3-du.math.la.LatLon'></input><label for='s3-du.math.la.LatLon'>LatLon</label><div class='s3'><a href='#api-du.math.la.LatLon.toArray'>toArray</a><a href='#api-du.math.la.LatLon.toVec'>toVec</a></div></div></div></nav></aside><main><h2 id='api-du.math.la'>du.math.la</h2>Module containing various linear algebra structures and methods. 
+<br><h2 id='api-du.math.la.Vector2'>Vector2</h2>
+<div class='card'><pre><code>du.math.la.Vector2(coords)</code></pre>
+<br>Class representing an immutable 2D vector. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>coords</i></td><td><code>Array</code></td><td>Vector coordinates.</td></tr></table>
+</div><br><h2 id='api-du.math.la.Vector2.x'>x</h2>
+<div class='card'><pre><code>du.math.la.Vector2.x()</code></pre>
+<br>Returns the X component. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The X component of the vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.y'>y</h2>
+<div class='card'><pre><code>du.math.la.Vector2.y()</code></pre>
+<br>Returns the Y component. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The Y component of the vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.length'>length</h2>
+<div class='card'><pre><code>du.math.la.Vector2.length(len)</code></pre>
+<br>Sets or returns the length of the vector. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>len</i></td><td><code>number</code></td><td>Length to set. If not specified, current length is returned.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code> <code>du.math.la.Vector2</code></i></td><td>A new vector with the specified length if length is set, current length otherwise.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.angle'>angle</h2>
+<div class='card'><pre><code>du.math.la.Vector2.angle(ang)</code></pre>
+<br>Sets or returns the angle of the vector in radians. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>ang</i></td><td><code>number</code></td><td>Angle to set in radians. If not specified, current angle is returned.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code> <code>du.math.la.Vector2</code></i></td><td>A new vector with the specified angle if angle is set, current angle otherwise.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.toArray'>toArray</h2>
+<div class='card'><pre><code>du.math.la.Vector2.toArray()</code></pre>
+<br>Returns the array representation of the vector. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>Array</code></i></td><td>Array containing the X and coordinates.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.map'>map</h2>
+<div class='card'><pre><code>du.math.la.Vector2.map(func)</code></pre>
+<br>Maps the vector using the specified function. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>func</i></td><td><code>function</code></td><td>Function to call on the vector. Must accept an array of 2 elements.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector2</code></i></td><td>The mapped vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.add'>add</h2>
+<div class='card'><pre><code>du.math.la.Vector2.add(v)</code></pre>
 <br>Adds another vector to this vector and returns the result vector. This vector remains unchanged. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>v</i></td><td><code>du.math.la.Vector2</code></td><td>Vector to add to current one.</td></tr></table>
-<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector2</code></i></td><td>The result vector.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector2</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.sub'>sub</h2>
+<div class='card'><pre><code>du.math.la.Vector2.sub(v)</code></pre>
+<br>Subtracts another vector from this vector and returns the result vector. This vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>v</i></td><td><code>du.math.la.Vector2</code></td><td>Vector to subtract from current one.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector2</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector2.multiply'>multiply</h2>
+<div class='card'><pre><code>du.math.la.Vector2.multiply(s)</code></pre>
+<br>Multiplies this vector with a scalar and returns the result vector. This vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>s</i></td><td><code>number</code></td><td>Scalar to multiply current vector with.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector2</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3'>Vector3</h2>
+<div class='card'><pre><code>du.math.la.Vector3(coords)</code></pre>
+<br>Class representing a 3D vector. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>coords</i></td><td><code>Array</code></td><td>Vector coordinates.</td></tr></table>
+</div><br><h2 id='api-du.math.la.Vector3.x'>x</h2>
+<div class='card'><pre><code>du.math.la.Vector3.x()</code></pre>
+<br>Returns the X component. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The X component of the vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.y'>y</h2>
+<div class='card'><pre><code>du.math.la.Vector3.y()</code></pre>
+<br>Returns the Y component. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The Y component of the vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.z'>z</h2>
+<div class='card'><pre><code>du.math.la.Vector3.z()</code></pre>
+<br>Returns the Z component. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The Z component of the vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.length'>length</h2>
+<div class='card'><pre><code>du.math.la.Vector3.length(len)</code></pre>
+<br>Sets or returns the length of the vector. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>len</i></td><td><code>number</code></td><td>Length to set. If not specified, current length is returned.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code> <code>du.math.la.Vector3</code></i></td><td>A new vector with the specified length if length is set, current length otherwise.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.toLatLon'>toLatLon</h2>
+<div class='card'><pre><code>du.math.la.Vector3.toLatLon()</code></pre>
+<br>Returns the latitude/longitude representation of the vector. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.LatLon</code></i></td><td>The corresponding LatLon object.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.add'>add</h2>
+<div class='card'><pre><code>du.math.la.Vector3.add(v)</code></pre>
+<br>Adds another vector to this vector and returns the result vector. This vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>v</i></td><td><code>du.math.la.Vector3</code></td><td>Vector to add to current one.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector3</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.multiply'>multiply</h2>
+<div class='card'><pre><code>du.math.la.Vector3.multiply(s)</code></pre>
+<br>Multiplies this vector with a scalar and returns the result vector. This vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>s</i></td><td><code>number</code></td><td>Scalar to multiply current vector with.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector3</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.dot'>dot</h2>
+<div class='card'><pre><code>du.math.la.Vector3.dot(v)</code></pre>
+<br>Returns the dot product with another vector. The vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>v</i></td><td><code>du.math.la.Vector3</code></td><td>Vector to multiply this vector with.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>number</code></i></td><td>The dot product of the two vectors.</td></tr></table></div><br><h2 id='api-du.math.la.Vector3.cross'>cross</h2>
+<div class='card'><pre><code>du.math.la.Vector3.cross(v)</code></pre>
+<br>Returns the cross product with another vector. The vector remains unchanged. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>v</i></td><td><code>du.math.la.Vector3</code></td><td>Vector to multiply this vector with.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector3</code></i></td><td>The result vector.</td></tr></table></div><br><h2 id='api-du.math.la.LatLon'>LatLon</h2>
+<div class='card'><pre><code>du.math.la.LatLon(latLon)</code></pre>
+<br>Class representing a latitude/longitude pair. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>latLon</i></td><td><code>Array</code></td><td>Array containing latitude and longitude.</td></tr></table>
+</div><br><h2 id='api-du.math.la.LatLon.toArray'>toArray</h2>
+<div class='card'><pre><code>du.math.la.LatLon.toArray()</code></pre>
+<br>Returns the array representation of the geolocation. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>Array</code></i></td><td>Latitude/longitude in an array.</td></tr></table></div><br><h2 id='api-du.math.la.LatLon.toVec'>toVec</h2>
+<div class='card'><pre><code>du.math.la.LatLon.toVec()</code></pre>
+<br>Returns the Cartesian <code>du.math.la.Vector3</code> representation of the geolocation with unit radius. 
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.math.la.Vector3</code></i></td><td>Vector3 representation of the geolocation with unit radius.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>
