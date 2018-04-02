@@ -253,20 +253,16 @@
             // Set colors
             _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
 
-            // Inner dimensions
-            var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
-
             // Chart (using conventional margins)
             _svg.g
-                .attr("width", innerWidth + "px")
-                .attr("height", innerHeight + "px")
+                .attr("width", _w.attr.innerWidth + "px")
+                .attr("height", _w.attr.innerHeight + "px")
                 .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
                 .style("pointer-events", "all");
 
             // Axes
             _svg.axes.x
-                .attr("transform", "translate(0," + innerHeight + ")");
+                .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .attr("transform", "translate(0," + 1 + ")");
@@ -276,8 +272,8 @@
 
             // Labels
             _svg.labels.x
-                .attr("x", innerWidth + "px")
-                .attr("y", (innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("x", _w.attr.innerWidth + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

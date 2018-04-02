@@ -37,6 +37,7 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _current = null;
 
         /**
          * Binds data to the box plot.
@@ -73,18 +74,20 @@
                     name: d.name,
                     min: min,
                     max: max,
+                    mean: d3.mean(sd),
                     median: d3.median(sd),
                     q1: q1,
                     q3: q3,
-                    lowerWhisker: Math.max(min, q1 - 1.5*iqr),
-                    upperWhisker: Math.min(max, q3 + 1.5*iqr),
+                    whiskers: {
+                        lower: Math.max(min, q1 - 1.5*iqr),
+                        upper: Math.min(max, q3 + 1.5*iqr)
+                    },
                     outliers: {
                         mild: mildOutliers,
                         extreme: extremeOutliers
                     }
                 });
             });
-            console.log(_data);
             return this;
         };
 
@@ -102,7 +105,23 @@
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function(mouse) {
+        _w.utils.tooltip = function() {
+            return _current ? {
+                title: _current.name,
+                stripe: _w.attr.colors[_current.name],
+                content: {
+                    type: "metrics",
+                    data: [
+                        {label: "min/max:", value: _current.min.toPrecision(3) + "/" + _current.max.toPrecision(3)},
+                        {label: "mean:", value: _current.mean.toPrecision(3)},
+                        {label: "median:", value: _current.median.toPrecision(3)},
+                        {label: "Q1:", value: _current.q1.toPrecision(3)},
+                        {label: "Q3:", value: _current.q3.toPrecision(3)},
+                        {label: "#mild outliers:", value: _current.outliers.mild.length},
+                        {label: "#extreme outliers:", value: _current.outliers.extreme.length}
+                    ]
+                }
+            } : null;
         };
 
         // Builder
@@ -113,7 +132,7 @@
             // Axes
             _svg.axisFn = {
                 x: d3.axisBottom()
-                    .ticks(7),
+                    .ticks(5),
                 y: d3.axisLeft()
                     .ticks(5)
             };
@@ -139,23 +158,158 @@
 
         // Data updater
         _w.render.update = function(duration) {
-            var scale = {
-                x: _w.utils.scale2(_data.map(function (d) {
+            // Calculate scale
+            _svg.scale = {
+                x: _w.utils.scale(_data.map(function (d) {
                     return d.name;
-                })),
-                y: _w.utils.scale2(
+                }).reverse(), [_w.attr.innerWidth, 0], "point"),
+                y: _w.utils.scale(
                     _data.map(function (d) {
-                        return [d.min, d.max];
+                        return [d.min-0.1*(d.max-d.min), d.max+0.1*(d.max-d.min)];
                     }).reduce(function (array, d) {
                         return array.concat(d);
-                    }, [])
-                )
+                    }, []), [_w.attr.innerHeight, 0])
             };
+
+            // Axes
+            _svg.axes.x
+                .transition().duration(duration)
+                .call(_svg.axisFn.x.scale(_svg.scale.x));
+            _svg.axes.y
+                .transition().duration(duration)
+                .call(_svg.axisFn.y.scale(_svg.scale.y));
+
+            // Update plots
+            if(_data.length > 0) {
+                // Add boxes
+                if (_svg.boxes === undefined) {
+                    _svg.boxes = {};
+                    _data.forEach(function (d) {
+                        var g = _svg.g.selectAll("." + _w.utils.encode(d.name))
+                            .data([d])
+                            .enter().append("g")
+                            .attr("class", "box " + _w.utils.encode(d.name));
+                        _svg.boxes[d.name] = {
+                            g: g,
+                            body: g.append("rect")
+                                .attr("x", _svg.scale.x(d.name) - 10)
+                                .attr("y", _svg.scale.y(d.q3))
+                                .attr("width", 20)
+                                .attr("height", _svg.scale.y(d.q1) - _svg.scale.y(d.q3))
+                                .style("rx", "2px")
+                                .style("ry", "2px")
+                                .style("fill-opacity", 0.3)
+                                .style("stroke-width", "1px"),
+                            median: g.append("line")
+                                .attr("class", "median")
+                                .attr("x1", _svg.scale.x(d.name) - 10)
+                                .attr("x2", _svg.scale.x(d.name) + 10)
+                                .attr("y1", _svg.scale.y(d.median))
+                                .attr("y2", _svg.scale.y(d.median))
+                                .style("stroke-width", "2px")
+                                .style("fill-opacity", 0.8),
+                            whiskers: {
+                                lower: g.append("path")
+                                    .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.lower) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.lower) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.lower)),
+                                upper: g.append("path")
+                                    .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.upper))
+                            },
+                            outliers: {
+                                mild: g.append("g")
+                                    .attr("class", "mild-outlier")
+                                    .selectAll(".mild-outlier")
+                                    .data(d.outliers.mild)
+                                    .enter().append("circle")
+                                    .attr("r", 2.5)
+                                    .attr("cx", _svg.scale.x(d.name))
+                                    .attr("cy", function(dd) {
+                                        return _svg.scale.y(dd);
+                                    })
+                                    .attr("stroke", "none"),
+                                extreme: g.append("g")
+                                    .attr("class", "extreme-outlier")
+                                    .selectAll(".extreme-outlier")
+                                    .data(d.outliers.extreme)
+                                    .enter().append("circle")
+                                    .attr("r", 2)
+                                    .attr("cx", _svg.scale.x(d.name))
+                                    .attr("cy", function(dd) {
+                                        return _svg.scale.y(dd);
+                                    })
+                                    .attr("fill", "none")
+                                    .attr("stroke-width", "0.5px")
+                            }
+                        }
+                    });
+                }
+
+                // Update data
+                _data.forEach(function(d) {
+                    // TODO
+                });
+            }
         };
 
         // Style updater
         _w.render.style = function() {
+            // Set colors
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
 
+            // Chart
+            _svg.g
+                .style("width", _w.attr.innerWidth + "px")
+                .style("height", _w.attr.innerHeight + "px")
+                .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
+                .style("pointer-events", "all");
+
+            // Axes
+            _svg.axes.x
+                .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
+            _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
+            _svg.axes.y
+                .attr("transform", "translate(0," + 1 + ")");
+            _svg.g.selectAll(".tick > line")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke-width", "1px");
+
+            // Labels
+            _svg.labels.x
+                .attr("x", _w.attr.innerWidth + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("fill", _w.attr.fontColor)
+                .style("font-size", _w.attr.fontSize + "px")
+                .text(_w.attr.xLabel);
+            _svg.labels.y
+                .attr("x", 5 + "px")
+                .attr("y", (-5) + "px")
+                .attr("fill", _w.attr.fontColor)
+                .style("font-size", _w.attr.fontSize + "px")
+                .text(_w.attr.yLabel);
+
+            // Plot
+            _.forOwn(_svg.boxes, function(box, name) {
+                box.body.style("fill", _w.attr.colors[name])
+                    .style("stroke", _w.attr.colors[name]);
+                box.whiskers.lower.style("stroke", _w.attr.colors[name]);
+                box.whiskers.upper.style("stroke", _w.attr.colors[name]);
+                box.median
+                    .style("fill", _w.attr.colors[name])
+                    .style("stroke", _w.attr.colors[name]);
+                box.outliers.mild.style("fill", _w.attr.colors[name]);
+                box.outliers.extreme.style("stroke", _w.attr.colors[name]);
+                box.g
+                    .on("mouseover", function(d) {
+                        _current = d;
+                        _w.attr.mouseover && _w.attr.mouseover(name);
+                    })
+                    .on("mouseleave", function() {
+                        _current = null;
+                        _w.attr.mouseleave && _w.attr.mouseleave(name);
+                    })
+                    .on("click", function() {
+                        _w.attr.click && _w.attr.click(name);
+                    });
+            });
         }
     }
 

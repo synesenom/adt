@@ -1,14 +1,5 @@
 var width = 260;
 var height = 200;
-var colors = {
-    plum: "darkmagenta",
-    banana: "gold",
-    mango: "tomato",
-    orange: "orange",
-    melon: "green",
-    kiwi: "limegreen",
-    pear: "khaki"
-};
 
 // Area chart
 new du.widgets.AreaChart("areachart", "#areachart")
@@ -47,7 +38,37 @@ new du.widgets.BarChart("barchart", "#barchart")
         kiwi: 7,
         pear: 3
     })
-    .colors(colors)
+    .render();
+
+// Box plot
+new du.widgets.BoxPlot("boxplot", "#boxplot")
+    .data([
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function() {
+                return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(1000).fill(0).map(function() {
+                var l = Math.exp(-20),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ])
+    .width(width)
+    .height(height)
+    .xLabel("type")
+    .yLabel("dist")
+    .margins(60)
+    .fontSize(12)
     .render();
 
 // Bubble chart
@@ -59,13 +80,6 @@ new du.widgets.BubbleChart("bubblechart", "#bubblechart")
     .margins(40)
     .fontSize(14)
     .scale(15)
-    .colors({
-        blueberry: "#312581",
-        cherry: "#C40000",
-        pear: "#d5d949",
-        "green apple": "#5BC236",
-        plum: "#8E4585"
-    })
     .data([
         {name: "blueberry", x: 58, y: 87, size: 0.2},
         {name: "cherry", x: 38, y: 42, size: 0.3},
@@ -99,7 +113,6 @@ new du.widgets.ChordChart("chordchart", "#chordchart")
         {source: "orange", target: "plum", value: 1},
         {source: "plum", target: "orange", value: 2}
     ])
-    .colors(colors)
     .render();
 
 // Description
@@ -135,8 +148,7 @@ grid.add(new du.widgets.LineChart("subchart1")
                 kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
             }
         }
-    }))
-    .colors(colors), 0, 0, 1, 1);
+    })), 0, 0, 1, 1);
 grid.add(new du.widgets.BarChart("subchart3")
     .margins({left: 50, top: 10, right: 10, bottom: 20})
     .fontSize(10)
@@ -149,8 +161,7 @@ grid.add(new du.widgets.BarChart("subchart3")
         melon: 11,
         kiwi: 7,
         pear: 3
-    })
-    .colors(colors), 0, 1, 2, 1);
+    }), 0, 1, 2, 1);
 grid.add(new du.widgets.AreaChart("subchart2")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
@@ -162,8 +173,7 @@ grid.add(new du.widgets.AreaChart("subchart2")
                 kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
             }
         }
-    }))
-    .colors(colors), 1, 0, 1, 1);
+    })), 1, 0, 1, 1);
 
 // Hint
 new du.widgets.Hint("hint", "#hint")
@@ -184,7 +194,6 @@ new du.widgets.Histogram("histogram", "#histogram")
     .yLabel("count")
     .margins({left: 60, top: 20, right: 20, bottom: 40})
     .fontSize(12)
-    .colors("dodgerblue")
     .render();
 
 // Info box
@@ -217,7 +226,6 @@ new du.widgets.Legend("widgets.legend", "#legend")
     .width(200)
     .height(150)
     .labels(["plum", "banana", "mango", "orange", "melon", "kiwi", "pear"])
-    .colors(colors)
     .fontSize(20)
     .twoColumns(true)
     .render();
@@ -243,7 +251,6 @@ new du.widgets.LineChart("linechart", "#linechart")
             }
         }
     }))
-    .colors(colors)
     .render();
 
 // Map
@@ -281,12 +288,6 @@ new du.widgets.PieChart("piechart", "#piechart")
         banana: 4,
         plum: 2
     })
-    .colors({
-        plum: "darkmagenta",
-        banana: "gold",
-        mango: "tomato",
-        orange: "orange"
-    })
     .render();
 
 // Placeholder
@@ -310,7 +311,6 @@ new du.widgets.LineChart("placeholder", "#placeholder")
             }
         }
     }))
-    .colors(colors)
     .render()
     .placeholder("This chart is empty and you see a placeholder instead");
 

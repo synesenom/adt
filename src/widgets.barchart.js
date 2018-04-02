@@ -124,7 +124,8 @@
 
             // Build tooltip content
             return {
-                title: point.x,
+                title: point.name,
+                stripe: _w.attr.colors[point.name],
                 content: {
                     type: "metrics",
                     data: [
@@ -172,7 +173,7 @@
             _svg.scale = {
                 x: _w.utils.scale(_data.map(function(d) {
                     return d.name;
-                }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "string"),
+                }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
                 y: _w.utils.scale(_data.map(function (d) {
                     return [0, d.value];
                 }).reduce(function (a, d) {
@@ -247,14 +248,10 @@
             // Set colors
             _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
 
-            // Inner dimensions
-            var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
-
             // Chart
             _svg.g
-                .style("width", innerWidth + "px")
-                .style("height", innerHeight + "px")
+                .style("width", _w.attr.innerWidth + "px")
+                .style("height", _w.attr.innerHeight + "px")
                 .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
                 .style("pointer-events", "all");
 
@@ -265,7 +262,7 @@
                 _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             }
             _svg.axes.x
-                .attr("transform", "translate(0," + innerHeight + ")");
+                .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
             _svg.axes.y
                 .attr("transform", "translate(0," + 1 + ")");
             _svg.g.selectAll(".tick > text")
@@ -286,8 +283,8 @@
 
             // Labels
             _svg.labels.x
-                .attr("x", innerWidth + "px")
-                .attr("y", (innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("x", _w.attr.innerWidth + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.vertical ? _w.attr.yLabel : _w.attr.xLabel);

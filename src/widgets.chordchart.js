@@ -310,6 +310,7 @@
             var row = _data[_indexByName.get(_current.name)];
             return _current ? {
                 title: _current.name,
+                stripe: _w.attr.colors[_current.name],
                 content: {
                     type: "metrics",
                     data: row.map(function(d, i) {

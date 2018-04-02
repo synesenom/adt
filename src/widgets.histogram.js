@@ -247,7 +247,7 @@
                         return _svg.scale.x(d.x0) + 1;
                     })
                     .attr("width", function(d) {
-                        return Math.abs(_svg.scale.x(d.x1) - _svg.scale.x(d.x0)) - 2;
+                        return Math.max(0, Math.abs(_svg.scale.x(d.x1) - _svg.scale.x(d.x0)) - 2);
                     })
                     .attr("y", function (d) {
                         return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.length / norm);
@@ -263,21 +263,17 @@
             // Set colors
             _w.attr.colors = _w.utils.colors([0]);
 
-            // Inner dimensions
-            var innerWidth = _w.attr.width - _w.attr.margins.left - _w.attr.margins.right,
-                innerHeight = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
-
             // Chart
             _svg.g
-                .style("width", innerWidth + "px")
-                .style("height", innerHeight + "px")
+                .style("width", _w.attr.innerWidth + "px")
+                .style("height", _w.attr.innerHeight + "px")
                 .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
                 .style("pointer-events", "all");
 
             // Axes
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.x
-                .attr("transform", "translate(0," + innerHeight + ")");
+                .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
             _svg.axes.y
                 .attr("transform", "translate(0," + 1 + ")");
             _svg.g.selectAll(".tick > text")
@@ -294,8 +290,8 @@
 
             // Labels
             _svg.labels.x
-                .attr("x", innerWidth + "px")
-                .attr("y", (innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("x", _w.attr.innerWidth + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.xLabel);

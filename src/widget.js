@@ -559,15 +559,19 @@
                 var scale;
                 switch (type) {
                     case undefined:
-                    case "number":
+                    case "linear":
                         scale = d3.scaleLinear()
                             .domain([d3.min(data), d3.max(data)]);
                         break;
-                    case "string":
+                    case "band":
                         scale = d3.scaleBand()
                             .domain(data)
                             .padding(0.1);
                         break;
+                    case "point":
+                        scale = d3.scalePoint()
+                            .domain(data)
+                            .padding(0.5)
                 }
 
                 return scale.range(range);
@@ -700,7 +704,7 @@
                     .style("position", "absolute")
                     .style("background-color", "rgba(255, 255, 255, 0.95)")
                     .style("border-radius", "2px")
-                    .style("border", "solid 1px " + color)
+                    .style("box-shadow", "0 0 3px " + color)
                     .style("padding", "5px")
                     .style("font-family", "'Courier', monospace")
                     .style("font-size", "0.7em")
@@ -728,8 +732,11 @@
                 .style("line-height", "11px")
                 .style("margin", "5px")
                 .style("margin-bottom", "10px")
-                .style("border-bottom", "solid 1px " + _attr.fontColor)
+                .style("border-bottom", "solid 0.5px " + _attr.fontColor)
                 .text(content.title);
+
+            // Add color
+            tooltip.style("border-left", content.stripe ? "solid 2px " + content.stripe : null);
 
             // Add content
             switch (content.content.type) {
@@ -745,6 +752,7 @@
                         entry.append("div")
                             .style("position", "relative")
                             .style("float", "left")
+                            .style("color", "#888")
                             .html(row.label);
                         entry.append("div")
                             .style("position", "relative")
@@ -789,16 +797,26 @@
             var ty = my + 20;
 
             // Correct for edges
-            if (tx < container.left + _attr.margins.left + 10) {
+            if (tx + tw > container.right - _attr.margins.right - 5) {
+                tx -= tw + 40;
+            }
+            if (ty + th > container.bottom - _attr.margins.bottom - 5) {
+                // Adjust until it fits in graph
+                for (var j=1; j++; j<th+30) {
+                    ty -= j;
+                    if (ty+th < container.bottom - _attr.margins.bottom - 5) {
+                        break;
+                    }
+                }
+            }
+
+            // Correct for edges
+            /*if (tx < container.left + _attr.margins.left + 10) {
                 tx += _attr.margins.left + 10;
-            } else if (tx + tw > container.right - _attr.margins.right) {
-                tx -= tw + 30;
             }
             if (ty < container.top + _attr.margins.top + 10) {
                 ty += _attr.margins.top + 10;
-            } else if (ty + th > container.bottom - _attr.margins.bottom) {
-                ty -= th + 30;
-            }
+            }*/
 
             // Set position
             tooltip
@@ -852,20 +870,6 @@
                             .style("font-size", "0.8em")
                             .style("line-height", "1.35em")
                             .html(content);
-
-                        // Remove after a while
-                        /*setTimeout(function () {
-                            if (_description !== null) {
-                                _description.transition();
-                                _description
-                                    .transition().duration(2000)
-                                    .style("opacity", 0)
-                                    .on("end", function () {
-                                        d3.select(this).remove();
-                                        _description = null;
-                                    });
-                            }
-                        }, 15000);*/
                     }
                 })
                 .on("mouseleave", function () {

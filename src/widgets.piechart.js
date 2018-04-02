@@ -131,6 +131,7 @@
         _w.utils.tooltip = function() {
             return _current ? {
                 title: _current.name,
+                stripe: _w.attr.colors[_current.name],
                 content: {
                     type: "metrics",
                     data: [
@@ -270,16 +271,15 @@
             // Interactions
             _svg.paths
                 .on("mouseover", function (d) {
+                    _current = d.data;
                     _w.attr.mouseover && _w.attr.mouseover(d.data.name);
                 })
                 .on("mouseleave", function (d) {
+                    _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.data.name);
                 })
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.data.name);
-                })
-                .on("mousemove", function (d) {
-                    _current = d.data;
                 });
         };
     }
