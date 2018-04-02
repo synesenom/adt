@@ -339,7 +339,7 @@ new du.widgets.ScatterPlot("scatterplot", "#scatterplot")
     .render();
 
 // Slider
-new du.widgets.Slider("widgets.slider", "#slider")
+new du.widgets.Slider("slider", "#slider")
     .x(10)
     .y(70)
     .width(width - 20)
@@ -373,4 +373,28 @@ new du.widgets.TrackPad("trackpad", "#trackpad")
     .fontSize(9)
     .xRange([0, 255])
     .yRange([0, 255])
+    .render();
+
+// Violin plot
+new du.widgets.ViolinPlot("violinplot", "#violinplot")
+    .data([
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function() {
+                return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
+            })
+        },
+        {
+            name: "pareto",
+            data: new Array(1000).fill(0).map(function () {
+                return 18 / Math.pow(1-Math.random(), 2/20);
+            })
+        }
+    ])
+    .width(width)
+    .height(height)
+    .xLabel("type")
+    .yLabel("dist")
+    .margins(60)
+    .fontSize(12)
     .render();

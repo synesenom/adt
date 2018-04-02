@@ -1,0 +1,55 @@
+- var name = "violinplot"
+- var links = {source: "widgets.violinplot", docs: "widgets.violinplot"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.violinplot"]
+- var description = "Violin plots are used to <span class='good'>compare distributions</span> by encapsulating the entire distribution in a small geometric objects. Similar to box plots they are good to detect differences in <span class='good'>summary metrics</span> but provide more details about the underlying distributions using <span class='good'>kernel density estimate</span>."
+include pug/example
+script.doc.
+    // generate some data
+    var data = [
+        {
+            name: "pareto",
+            data: new Array(1000).fill(0).map(function () {
+                return 18 / Math.pow(1-Math.random(), 2/20);
+            })
+        },
+        {
+            name: "uniform",
+            data: new Array(1000).fill(0).map(function () {
+                return Math.random() * 40;
+            })
+        },
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function() {
+                return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(1000).fill(0).map(function() {
+                var l = Math.exp(-10),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ];
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var violinplot = new du.widgets.ViolinPlot("mychart", "#widget")
+        .data(data)
+        .width(width)
+        .height(height)
+        .xLabel("name")
+        .yLabel("distribution")
+        .margins(60)
+        .fontSize(14)
+        .tooltip(true)
+        .render();

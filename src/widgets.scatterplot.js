@@ -8,6 +8,7 @@
  * @requires lodash@4.17.4
  * @requires du.Widget
  */
+// TODO add ticks on axis
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('./widget'));

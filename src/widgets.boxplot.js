@@ -51,10 +51,9 @@
          */
         this.data = function(data) {
             // Calculate box statistics
-            _data = [];
-            data.forEach(function(d) {
-                var sd = d.data.sort(d3.ascending);
-                var min = d3.min(sd),
+            _data = data.map(function(d) {
+                var sd = d.data.sort(d3.ascending),
+                    min = d3.min(sd),
                     max = d3.max(sd),
                     q1 = d3.quantile(sd, 0.25),
                     q3 = d3.quantile(sd, 0.75),
@@ -70,7 +69,7 @@
                         mildOutliers.push(x);
                     }
                 });
-                _data.push({
+                return {
                     name: d.name,
                     min: min,
                     max: max,
@@ -86,9 +85,8 @@
                         mild: mildOutliers,
                         extreme: extremeOutliers
                     }
-                });
+                };
             });
-            console.log(_data);
             return this;
         };
 
@@ -354,7 +352,7 @@
                         _w.attr.click && _w.attr.click(name);
                     });
             });
-        }
+        };
     }
 
     // Export
