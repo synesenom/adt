@@ -88,6 +88,7 @@
                     }
                 });
             });
+            console.log(_data);
             return this;
         };
 
@@ -245,7 +246,50 @@
 
                 // Update data
                 _data.forEach(function(d) {
-                    // TODO
+                    _svg.boxes[d.name].body
+                        .transition().duration(duration)
+                        .attr("x", _svg.scale.x(d.name) - 10)
+                        .attr("y", _svg.scale.y(d.q3))
+                        .attr("width", 20)
+                        .attr("height", _svg.scale.y(d.q1) - _svg.scale.y(d.q3));
+                    _svg.boxes[d.name].median
+                        .transition().duration(duration)
+                        .attr("x1", _svg.scale.x(d.name) - 10)
+                        .attr("x2", _svg.scale.x(d.name) + 10)
+                        .attr("y1", _svg.scale.y(d.median))
+                        .attr("y2", _svg.scale.y(d.median));
+                    _svg.boxes[d.name].whiskers.lower
+                        .transition().duration(duration)
+                        .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.lower) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.lower) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.lower));
+                    _svg.boxes[d.name].whiskers.upper
+                        .transition().duration(duration)
+                        .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.upper));
+                    // TODO make transition instead of just replotting dots
+                    _svg.boxes[d.name].outliers.mild.remove();
+                    _svg.boxes[d.name].outliers.mild = _svg.boxes[d.name].g.append("g")
+                        .attr("class", "mild-outlier")
+                        .selectAll(".mild-outlier")
+                        .data(d.outliers.mild)
+                        .enter().append("circle")
+                        .attr("r", 2.5)
+                        .attr("cx", _svg.scale.x(d.name))
+                        .attr("cy", function(dd) {
+                            return _svg.scale.y(dd);
+                        })
+                        .style("stroke", "none");
+                    _svg.boxes[d.name].outliers.extreme.remove();
+                    _svg.boxes[d.name].outliers.extreme = _svg.boxes[d.name].g.append("g")
+                        .attr("class", "extreme-outlier")
+                        .selectAll(".extreme-outlier")
+                        .data(d.outliers.extreme)
+                        .enter().append("circle")
+                        .attr("r", 2)
+                        .attr("cx", _svg.scale.x(d.name))
+                        .attr("cy", function(dd) {
+                            return _svg.scale.y(dd);
+                        })
+                        .attr("fill", "none")
+                        .attr("stroke-width", "0.5px");
                 });
             }
         };

@@ -53,3 +53,40 @@ script.doc.
         .fontSize(14)
         .tooltip(true)
         .render();
+script.
+    setTimeout(function() {
+        console.log("update data");
+        boxplot.data([
+            {
+                name: "pareto",
+                data: new Array(1000).fill(0).map(function () {
+                    var l = Math.exp(-20),
+                        k = 0,
+                        p = 1;
+                    do {
+                        k++;
+                        p *= Math.random();
+                    } while (p > l);
+                    return k - 1;
+                })
+            },
+            {
+                name: "uniform",
+                data: new Array(1000).fill(0).map(function () {
+                    return Math.random() * 40;
+                })
+            },
+            {
+                name: "normal",
+                data: new Array(1000).fill(0).map(function () {
+                    return 5 * Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()) + 20;
+                })
+            },
+            {
+                name: "poisson",
+                data: new Array(1000).fill(0).map(function () {
+                    return 18 / Math.pow(1 - Math.random(), 2 / 20);
+                })
+            }
+        ]).render();
+    }, 2000);
