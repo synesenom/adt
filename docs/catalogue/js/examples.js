@@ -198,7 +198,8 @@ new du.widgets.Histogram("histogram", "#histogram")
 
 // Info box
 d3.select("#infobox").append("div")
-    .style("margin-top", "50px")
+    .style("position", "absolute")
+    .style("top", "50px")
     .style("margin-left", "30px")
     .style("width", "auto")
     .style("max-width", "200px")

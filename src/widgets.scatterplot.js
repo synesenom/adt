@@ -117,6 +117,7 @@
             // Tooltip
             return {
                 title: site.data.name,
+                stripe: _w.attr.colors[site.data.name],
                 content: {
                     type: "metrics",
                     data: [
