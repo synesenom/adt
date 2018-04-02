@@ -222,7 +222,9 @@
                     _svg.violins = {};
                     _data.forEach(function (d) {
                         d.scale.x.range([_w.attr.innerHeight, 0]);
-                        var g = _svg.g.append("g")
+                        var g = _svg.g.selectAll("." + _w.utils.encode(d.name))
+                            .data([d])
+                            .enter().append("g")
                             .attr("class", "violin " + _w.utils.encode(d.name))
                             .attr("transform", "translate(" + _svg.scale.x(d.name) + ",0)");
                         var area = d3.area()

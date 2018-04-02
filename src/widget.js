@@ -46,7 +46,6 @@
  */
 // TODO add heat map
 // TODO add calendar plot
-// TODO add violin plot
 // TODO make plot data modifiable
 // TODO add graph widget
 // TODO add progress bar widget
