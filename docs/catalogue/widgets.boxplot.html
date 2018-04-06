@@ -47,4 +47,10 @@ var boxplot = new du.widgets.BoxPlot("mychart", "#widget")
     .margins(60)
     .fontSize(14)
     .tooltip(true)
-    .render();</script>
+    .render();</script><script>window.onresize = function () {
+    boxplot
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

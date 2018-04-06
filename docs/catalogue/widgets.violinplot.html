@@ -47,4 +47,10 @@ var violinplot = new du.widgets.ViolinPlot("mychart", "#widget")
     .margins(60)
     .fontSize(14)
     .tooltip(true)
-    .render();</script>
+    .render();</script><script>window.onresize = function () {
+    violinplot
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

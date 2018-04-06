@@ -42,6 +42,7 @@
          * @param {function} kernel Kernel function to use.
          * @param {Array} dist Array of values to apply KDE on.
          * @returns {Function} The calculated KDE.
+         * @private
          */
         function _kde(kernel, dist) {
             return function (sample) {
@@ -63,8 +64,9 @@
          * @methodOf du.widgets.violinplot.ViolinPlot
          * @param {number} scale Scale parameter of the kernel.
          * @returns {Function} The kernel function
+         * @private
          */
-        function epanechnikovKernel(scale) {
+        function _epanechnikovKernel(scale) {
             return function (u) {
                 return Math.abs(u /= scale) <= 1 ?
                     .75 * (1 - u * u) / scale : 0;
@@ -102,7 +104,7 @@
                     q1 = d3.quantile(sd, 0.25),
                     q3 = d3.quantile(sd, 0.75),
                     delta = 0.2 * (max - min);
-                var kde = _kde(epanechnikovKernel(0.05 * (max - min)),
+                var kde = _kde(_epanechnikovKernel(0.05 * (max - min)),
                     d3.scaleLinear().domain([min - delta, max + delta]).ticks(20));
                 var violinData = kde(d.data);
                 return {
@@ -282,7 +284,13 @@
 
                 // Update data
                 _data.forEach(function(d) {
+                    // Update scales
+                    d.scale.x.range([_w.attr.innerHeight, 0]);
+
                     // Area
+                    _svg.violins[d.name].g
+                        .transition().duration(duration)
+                        .attr("transform", "translate(" + _svg.scale.x(d.name) + ",0)");
                     _svg.violins[d.name].area.fn
                         .x(function (dd) {
                             return d.scale.x(Math.min(_yMax, Math.max(_yMin, dd.x)));
