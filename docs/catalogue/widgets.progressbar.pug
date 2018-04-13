@@ -1,0 +1,28 @@
+- var name = "progressbar"
+- var links = {source: "widgets.progressbar", docs: "widgets.progressbar"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.progressbar"]
+- var description = "A minimalistic progress bar."
+include pug/example
+script.doc.
+    // create widget
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var progressbar = new du.widgets.ProgressBar("mylabel", "#widget")
+        .width(width)
+        .height(height)
+        .label("Loading...")
+        .fontSize(24)
+        .fontColor("dodgerblue")
+        .render();
+script.doc.
+    // do some update
+    var t = 0;
+    function run() {
+        progressbar.percentage(t)
+            .render();
+        t = t < 100 ? t+.1 : 0.;
+        setTimeout(run, Math.random()*20)
+    }
+    run();
++resize()

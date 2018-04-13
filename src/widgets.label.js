@@ -62,16 +62,16 @@
         _w.attr.add(this, "align", "center");
 
         // Widget elements
-        var _svg = {};
+        var _div = {};
 
         // Builder
         _w.render.build = function() {
-            _svg.g = _w.widget.append("div")
+            _div.g = _w.widget.append("div")
                 .style("position", "absolute")
                 .style("width", "100%")
                 .style("height", "100%")
                 .style("display", "table");
-            _svg.label = _svg.g.append("div")
+            _div.label = _div.g.append("div")
                 .style("display", "table-cell")
                 .style("vertical-align", "middle")
                 .style("pointer-events", "none")
@@ -80,7 +80,7 @@
 
         // Style updater
         _w.render.style = function() {
-            _svg.label
+            _div.label
                 .style("color", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("font-weight", _w.attr.fontWeight)

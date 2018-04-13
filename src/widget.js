@@ -50,7 +50,8 @@
 // TODO add graph widget
 // TODO add progress bar widget
 // TODO implement resize
-// TODO implement tooltip box in Widget class
+
+// TODO make data modifiable
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -807,14 +808,6 @@
                     }
                 }
             }
-
-            // Correct for edges
-            /*if (tx < container.left + _attr.margins.left + 10) {
-                tx += _attr.margins.left + 10;
-            }
-            if (ty < container.top + _attr.margins.top + 10) {
-                ty += _attr.margins.top + 10;
-            }*/
 
             // Set position
             tooltip

@@ -1832,8 +1832,8 @@
                 }
 
                 _map.setView(_getLatLon([
-                    -transform.x/transform.k - 0.5 * (transform.k-1) * _w.attr.width / transform.k,
-                    -transform.y/transform.k - 0.5 * (transform.k-1) * _w.attr.height / transform.k
+                    -transform.x / transform.k - 0.5 * (transform.k - 1) * _w.attr.width / transform.k,
+                    -transform.y / transform.k - 0.5 * (transform.k - 1) * _w.attr.height / transform.k
                 ]), _getZoom(transform.k), true);
             }
 
