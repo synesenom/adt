@@ -86,7 +86,56 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _colors = {};
         var _current = null;
+        var _transition = false;
+
+        function _key(d) {
+            return d.data ? d.data.name : "";
+        }
+
+        function _findNeighborArc(i, data0, data1, key) {
+            var d;
+            return (d = _findPreceding(i, data0, data1, key)) ? {startAngle: d.endAngle, endAngle: d.endAngle}
+                : (d = _findFollowing(i, data0, data1, key)) ? {startAngle: d.startAngle, endAngle: d.startAngle}
+                    : null;
+        }
+
+        // Find the element in data0 that joins the highest preceding element in data1.
+        function _findPreceding(i, data0, data1, key) {
+            var m = data0.length;
+            while (--i >= 0) {
+                var k = key(data1[i]);
+                for (var j = 0; j < m; ++j) {
+                    if (key(data0[j]) === k) return data0[j];
+                }
+            }
+        }
+
+        // Find the element in data0 that joins the lowest following element in data1.
+        function _findFollowing(i, data0, data1, key) {
+            var n = data1.length, m = data0.length;
+            while (++i < n) {
+                var k = key(data1[i]);
+                for (var j = 0; j < m; ++j) {
+                    if (key(data0[j]) === k) return data0[j];
+                }
+            }
+        }
+
+        function _arcTween(d) {
+            var i = d3.interpolate(this._current, d);
+            this._current = i(0);
+            return function(t) { return _svg.arc(i(t)); };
+        }
+
+        function _arcTweenLabel(d) {
+            var i = d3.interpolate(this._current, d);
+            this._current = i(0);
+            return function (t) {
+                return "translate(" + _svg.arcLabel.centroid(i(t)) + ")";
+            };
+        }
 
         /**
          * Binds new data to pie chart.
@@ -99,16 +148,7 @@
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.data = function (data) {
-            // Transform data to array
-            _data = [];
-            _.forOwn(data, function(v, k) {
-                _data.push({name: k, value: v});
-            });
-
-            // Sort by category name
-            _data.sort(function(a, b) {
-                return b.value - a.value;
-            });
+            _data = data;
             return this;
         };
 
@@ -122,8 +162,10 @@
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(this, _svg, "path", key, duration);
-            _w.utils.highlight(this, _svg, "text", key, duration);
+            if (!_transition) {
+                _w.utils.highlight(this, _svg, "path", key, duration);
+                _w.utils.highlight(this, _svg, "text", key, duration);
+            }
             return this;
         };
 
@@ -135,10 +177,10 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "value:", value: _current.value},
+                        {label: "value:", value: _current.value.toFixed(6)},
                         {label: "fraction:", value: (100 * _current.value / d3.sum(_data, function(d) {
                             return d.value;
-                        })).toFixed(2) + "%"}
+                        })).toFixed(1) + "%"}
                     ]
                 }
             } : null;
@@ -154,70 +196,91 @@
                 .attr("text-anchor", "middle")
                 .attr("stroke-width", "0px")
                 .style("fill", "white");
-
-            // Add slices
-            _svg.arc = d3.arc();
-            _svg.pie = d3.pie()
-                .value(function (d) {
-                    return d.value;
-                })
-                .sort(null);
-
-            _svg.arcs = _svg.g.selectAll(".arc")
-                .data(_svg.pie(_data))
-                .enter().append("g")
-                .attr("class", "arc");
-            _svg.paths = _svg.arcs.append("path")
-                .attr("class", function (d) {
-                    return _w.utils.encode(d.data.name);
-                })
-                .style("shape-rendering", "geometricPrecision")
-                .style("pointer-events", "all")
-                .each(function (d) {
-                    this._current = d;
-                });
-            if (_w.attr.ticks) {
-                _svg.labelArc = d3.arc();
-                _svg.ticks = _svg.arcs.append("text")
-                    .attr("class", function (d) {
-                        return _w.utils.encode(d.data.name);
-                    })
-                    .style("text-anchor", "middle")
-                    .attr("dy", "0.35em")
-                    .each(function (d) {
-                        this._current = d;
-                    });
-            }
         };
 
         // Data updater
         _w.render.update = function (duration) {
-            _svg.arcs.datum(_data);
-            _svg.paths.data(_svg.pie(_data))
+            // Set up arc and pie
+            _svg.arc = d3.arc().outerRadius(_w.attr.outerRadius - _w.attr.margins.left)
+                .innerRadius(_w.attr.innerRadius);
+            _svg.arcLabel = d3.arc().outerRadius(0.5 * (_w.attr.innerRadius + _w.attr.outerRadius - _w.attr.margins.left))
+                .innerRadius(0.5 * (_w.attr.innerRadius + _w.attr.outerRadius - _w.attr.margins.left));
+            var pie = d3.pie()
+                .value(function (d) {
+                    return d.value;
+                })
+                .sort(null);
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+
+            // Get old and new data
+            var paths = _svg.g.selectAll(".slice");
+            var labels = _svg.g.selectAll(".label");
+            var data0 = paths.data(),
+                data1 = pie(_data);
+
+            // Paths
+            paths = paths.data(data1, _key);
+            paths.exit()
+                .datum(function(d, i) { return _findNeighborArc(i, data1, data0, _key) || d; })
                 .transition().duration(duration)
-                .attrTween("d", function (a) {
-                    var i = d3.interpolate(this._current, a);
-                    this._current = i(0);
-                    return function (t) {
-                        return _svg.arc(i(t));
-                    };
+                .attrTween("d", _arcTween)
+                .remove();
+            paths.enter().append("path")
+                .attr("class", function(d) {
+                    return "slice " + _w.utils.encode(d.data.name);
+                })
+                .each(function(d, i) {
+                    this._current = _findNeighborArc(i, data0, data1, _key) || d;
+                })
+                .style("pointer-events", "all")
+            .merge(paths)
+                .each(function() {
+                    _transition = true;
+                })
+                .attr("fill", function(d) { return _colors[d.data.name]; })
+                .on("mouseover", function (d) {
+                    _current = d.data;
+                    _w.attr.mouseover && _w.attr.mouseover(d.data.name);
+                })
+                .on("mouseleave", function (d) {
+                    _current = null;
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.data.name);
+                })
+                .on("click", function (d) {
+                    _w.attr.click && _w.attr.click(d.data.name);
+                })
+                .transition().duration(duration)
+                .style("opacity", 1)
+                .attrTween("d", _arcTween)
+                .on("end", function() {
+                    _transition = false;
                 });
-            if (_w.attr.ticks) {
-                _svg.ticks.data(_svg.pie(_data))
-                    .text(function (d) {
-                        return _w.attr.tickFormat(100 * d.data.value / d3.sum(_data, function(dd) {
-                            return dd.value;
-                        }));
-                    })
-                    .transition().duration(duration)
-                    .attrTween("transform", function (d) {
-                        var i = d3.interpolate(this._current, d);
-                        this._current = i(0);
-                        return function (t) {
-                            return "translate(" + _svg.labelArc.centroid(i(t)) + ")";
-                        };
-                    });
-            }
+
+            // Ticks
+            labels = labels.data(data1, _key);
+            labels.exit()
+                .datum(function(d, i) { return _findNeighborArc(i, data1, data0, _key) || d; })
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .attrTween("transform", _arcTweenLabel)
+                .remove();
+            labels.enter().append("text")
+                .attr("class", function(d) {
+                    return "label " + _w.utils.encode(d.data.name);
+                })
+                .each(function(d, i) { this._current = _findNeighborArc(i, data0, data1, _key) || d; })
+            .merge(labels)
+                .attr("dy", "0.35em")
+                .style("text-anchor", "middle")
+                .style("pointer-events", "none")
+                .attr("fill", _w.attr.fontColor)
+                .text(function (d) {
+                    return _w.attr.tickFormat(100 * d.data.value / d3.sum(data1, function(dd) {
+                        return dd.value;
+                    }));
+                })
+                .transition().duration(duration)
+                .attrTween("transform", _arcTweenLabel);
         };
 
         // Style updater
@@ -241,25 +304,6 @@
             _svg.g
                 .attr("transform", "translate(" + _w.attr.outerRadius + "," + _w.attr.outerRadius + ")");
 
-            // Plot
-            _svg.arc.outerRadius(outerRadius)
-                .innerRadius(_w.attr.innerRadius);
-            _svg.paths
-                .attr("d", _svg.arc)
-                .attr("fill", function (d) {
-                    return _w.attr.colors[d.data.name];
-                });
-
-            // Ticks
-            if (_w.attr.ticks) {
-                _svg.labelArc.outerRadius(0.5 * (_w.attr.innerRadius + outerRadius))
-                    .innerRadius(0.5 * (_w.attr.innerRadius + outerRadius));
-                _svg.ticks
-                    .attr("d", _svg.labelArc)
-                    .attr("fill", _w.attr.fontColor)
-                    .style("pointer-events", "none");
-            }
-
             // Label
             _svg.label
                 .attr("transform", "translate(0," + _w.attr.outerRadius + ")")
@@ -267,20 +311,6 @@
                 .style("font-size", Math.min(16, _w.attr.outerRadius * 0.4) + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.label);
-
-            // Interactions
-            _svg.paths
-                .on("mouseover", function (d) {
-                    _current = d.data;
-                    _w.attr.mouseover && _w.attr.mouseover(d.data.name);
-                })
-                .on("mouseleave", function (d) {
-                    _current = null;
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.data.name);
-                })
-                .on("click", function (d) {
-                    _w.attr.click && _w.attr.click(d.data.name);
-                });
         };
     }
 

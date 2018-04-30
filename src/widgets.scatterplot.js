@@ -46,26 +46,17 @@
          */
         _w.attr.add(this, "opacity", 0.4);
 
-        /**
-         * Sets the stroke color of the circles.
-         * Default is white.
-         *
-         * @method stroke
-         * @memberOf du.widgets.scatterplot.ScatterPlot
-         * @param {string} color Color to set stroke to.
-         * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
-         */
-        _w.attr.add(this, "stroke", "white");
-
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _colors = {};
         var _diagram = null;
+        var _transition = false;
 
         /**
          * Binds data to the scatter plot.
-         * Expected data format: array of objects with properties {x} and {y}, where both {x} and {y} are objects
-         * containing the coordinates for each quantity to plot.
+         * Expected data format: array of objects with property names for each plot and values as object having an {x}
+         * and {y} coordinates.
          *
          * @method data
          * @memberOf du.widgets.scatterplot.ScatterPlot
@@ -73,7 +64,17 @@
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
         this.data = function(data) {
-            _data = data;
+            _data = d3.keys(data[0]).map(function(id) {
+                return {
+                    id: id,
+                    values: data.map(function(d) {
+                        return {
+                            x: d[id].x,
+                            y: d[id].y
+                        };
+                    })
+                };
+            });
             return this;
         };
 
@@ -87,7 +88,8 @@
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".dot", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".dot-group", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -113,12 +115,12 @@
                 .attr("cy", site.data[1])
                 .style("pointer-events", "none")
                 .style("stroke", _w.attr.stroke)
-                .style("fill", _w.attr.colors[site.data.name]);
+                .style("fill", _colors[site.data.name]);
 
             // Tooltip
             return {
                 title: site.data.name,
-                stripe: _w.attr.colors[site.data.name],
+                stripe: _colors[site.data.name],
                 content: {
                     type: "metrics",
                     data: [
@@ -131,50 +133,24 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(7),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.map(function (d) {
-                    return d3.values(d.x);
-                }).reduce(function (a, d) {
-                    return a.concat(d);
-                }, []), [0, _w.attr.innerWidth]),
-                y: _w.utils.scale(_data.map(function (d) {
-                    return d3.values(d.y);
-                }).reduce(function (a, d) {
-                    return a.concat(d);
-                }, []), [_w.attr.innerHeight, 0])
+                x: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
+                    return d.x;
+                }), [0, _w.attr.innerWidth]),
+                y: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
+                    return d.y;
+                }), [_w.attr.innerHeight, 0])
             };
 
             // Update axes
@@ -185,55 +161,87 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if (_data.length > 0) {
-                // Add areas if needed
-                if (_svg.dots === undefined) {
-                    _svg.dots = {};
-                    _.forOwn(_data[0].x, function (xk, k) {
-                        _svg.dots[k] = _svg.g.selectAll(".dot." + _w.utils.encode(k))
-                            .data(_data.map(function(d) {
-                                return {x: d.x[k], y: d.y[k]};
-                            }))
-                            .enter().append("circle")
-                            .attr("class", "dot " + _w.utils.encode(k))
-                            .attr("r", 3)
-                            .attr("cx", function(d) {
-                                return _svg.scale.x(d.x);
-                            })
-                            .attr("cy", function(d) {
-                                return _svg.scale.y(d.y);
-                            })
-                            .style("stroke-width", "0.5px")
-                            .style("shape-rendering", "geometricPrecision");
-                    });
-                }
-
-                // Update data
-                _.forOwn(_data[0].x, function (xk, k) {
-                    _svg.dots[k]
-                        .transition().duration(duration)
-                        .attr("cx", function(d) {
-                            return _svg.scale.x(d.x);
-                        })
-                        .attr("cy", function(d) {
-                            return _svg.scale.y(d.y);
-                        });
+            // Build/update plots
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            // Groups
+            _svg.plots.groups = _svg.g.selectAll(".dot-group")
+                .data(_data, function(d) {
+                    return d.id;
+                });
+            _svg.plots.groups.exit()
+                .transition().duration(duration)
+                .remove();
+            var groups = _svg.plots.groups.enter().append("g")
+                .attr("class", function (d) {
+                    return "dot-group " + _w.utils.encode(d.id);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none")
+                .style("fill", "transparent");
+            _svg.plots.groups = groups.merge(_svg.plots.groups)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.id);
+                });
+            _svg.plots.groups
+                .transition().duration(duration)
+                .style("fill-opacity", _w.attr.opacity)
+                .style("fill", function(d) {
+                    return _colors[d.id];
+                })
+                .on("end", function() {
+                    _transition = false;
                 });
 
-                // Voronoi tessellation
-                var voronoi = d3.voronoi()
-                    .extent([[-1, -1], [_w.attr.width + 1, _w.attr.height + 1]]);
-                var sites = [];
-                _data.forEach(function(d) {
-                    _.forOwn(d.x, function(xk, k) {
-                        var site = [_svg.scale.x(xk), _svg.scale.y(d.y[k])];
-                        site.name = k;
-                        sites.push(site);
-                    });
+            // Dots
+            _svg.plots.dots = _svg.plots.groups.selectAll(".dot")
+                .data(function(d) {
+                    return d.values;
                 });
-                _diagram = voronoi(sites);
-            }
+            _svg.plots.dots.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.dots.enter().append("circle")
+                .attr("class", "dot")
+                .style("opacity", 0)
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.y);
+                })
+            .merge(_svg.plots.dots)
+                .transition().duration(duration)
+                .style("opacity", 1)
+                .attr("r", 3)
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.y);
+                });
+
+            // Update Voronoi tessellation
+            var sites = [];
+            _data.forEach(function(d) {
+                d.values.forEach(function(dd) {
+                    var site = [_svg.scale.x(dd.x), _svg.scale.y(dd.y)];
+                    site.name = d.id;
+                    sites.push(site);
+                });
+            });
+            var voronoi = d3.voronoi()
+                .extent([[-1, -1], [_w.attr.width + 1, _w.attr.height + 1]]);
+            _diagram = voronoi(sites);
         };
 
         // Style updater
@@ -271,23 +279,6 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _.forOwn(_svg.dots, function(dk, k) {
-                _svg.dots[k]
-                    .style("fill-opacity", _w.attr.opacity)
-                    .style("fill", _w.attr.colors[k])
-                    .style("stroke", _w.attr.stroke)
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(k);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(k);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(k);
-                    });
-            });
         };
     }
 

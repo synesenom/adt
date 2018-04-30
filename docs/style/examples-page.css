@@ -29,7 +29,7 @@ main {
     -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
 }
 .example:hover {
-    box-shadow: 2px 2px 5px grey;
+    box-shadow: 1px 1px 5px grey;
     border: 1px solid #aaa;
     filter: grayscale(0);
     -webkit-filter: grayscale(0);

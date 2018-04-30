@@ -1,37 +1,27 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.chordchart.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.chordchart.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>chordchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Chord charts represent <span class='good'>flow data</span> (provided as a matrix) between a set of categories. The angle of each sector (circumference) is proportional to the total out-flux of that category, and chords show the net in-flux, that is, they are colored by the category which has larger in-flux from the other. They are a convenient summary if there are <span class='good'>few categories</span>.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.chordchart.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.chordchart.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = [
-    {source: "melon", target: "plum", value: 1},
-    {source: "melon", target: "pear", value: 2},
-    {source: "melon", target: "kiwi", value: 3},
-    {source: "plum", target: "melon", value: 4},
-    {source: "plum", target: "pear", value: 5},
-    {source: "plum", target: "kiwi", value: 6},
-    {source: "pear", target: "melon", value: 7},
-    {source: "pear", target: "plum", value: 8},
-    {source: "pear", target: "kiwi", value: 9},
-    {source: "kiwi", target: "melon", value: 10},
-    {source: "kiwi", target: "plum", value: 11},
-    {source: "kiwi", target: "pear", value: 12},
-    {source: "orange", target: "plum", value: 1},
-    {source: "plum", target: "orange", value: 2}
-];
-var colors = {
-    plum: "#8E4585",
-    banana: "gold",
-    mango: "tomato",
-    orange: "orange",
-    melon: "green",
-    kiwi: "limegreen",
-    pear: "khaki"
-};</script><script class="doc">// create chart
+});</script><title>chordchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Chord charts represent <span class='good'>flow data</span> (provided as a matrix) between a set of categories. The angle of each sector (circumference) is proportional to the total out-flux of that category, and chords show the net in-flux, that is, they are colored by the category which has larger in-flux from the other. They are a convenient summary if there are <span class='good'>few categories</span>.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.chordchart.min.js">min.js</a><a href="../api/widgets.chordchart.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.chordchart.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var chordchart = new du.widgets.ChordChart("mychart", "#widget")
-    .data(data)
+    .data([
+        {source: "melon", target: "plum", value: 1},
+        {source: "melon", target: "pear", value: 2},
+        {source: "melon", target: "kiwi", value: 3},
+        {source: "plum", target: "melon", value: 4},
+        {source: "plum", target: "pear", value: 5},
+        {source: "plum", target: "kiwi", value: 6},
+        {source: "pear", target: "melon", value: 7},
+        {source: "pear", target: "plum", value: 8},
+        {source: "pear", target: "kiwi", value: 9},
+        {source: "kiwi", target: "melon", value: 10},
+        {source: "kiwi", target: "plum", value: 11},
+        {source: "kiwi", target: "pear", value: 12},
+        {source: "orange", target: "plum", value: 1},
+        {source: "plum", target: "orange", value: 2}
+    ])
     .x(width / 2 - height / 2)
     .radius(height / 2)
     .thickness(height / 30)
@@ -39,7 +29,15 @@ var chordchart = new du.widgets.ChordChart("mychart", "#widget")
     .margins(60)
     .fontSize(14)
     .ticks(true)
-    .colors(colors)
+    .colors({
+        plum: "#8E4585",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange",
+        melon: "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    })
     .render();</script><script class="doc">// add interactions
 chordchart
     .mouseover(function (k) {
@@ -54,7 +52,26 @@ chordchart
         // Show an alert on click
         alert("Plot clicked: '" + k + "'");
     })
-    .render();</script><script>window.onresize = function () {
+    .render();</script><script class="doc">// update data
+setInterval(function() {
+    data = [
+        {source: "melon", target: "plum", value: parseInt(Math.random()*10)},
+        {source: "melon", target: "pear", value: parseInt(Math.random()*10)},
+        {source: "melon", target: "kiwi", value: parseInt(Math.random()*10)},
+        {source: "plum", target: "melon", value: parseInt(Math.random()*10)},
+        {source: "plum", target: "pear", value: parseInt(Math.random()*10)},
+        {source: "plum", target: "kiwi", value: parseInt(Math.random()*10)},
+        {source: "pear", target: "melon", value: parseInt(Math.random()*10)},
+        {source: "pear", target: "plum", value: parseInt(Math.random()*10)},
+        {source: "pear", target: "kiwi", value: parseInt(Math.random()*10)},
+        {source: "kiwi", target: "melon", value: parseInt(Math.random()*10)},
+        {source: "kiwi", target: "plum", value: parseInt(Math.random()*10)},
+        {source: "kiwi", target: "pear", value: parseInt(Math.random()*10)},
+        {source: "orange", target: "plum", value: parseInt(Math.random()*10)},
+        {source: "plum", target: "orange", value: parseInt(Math.random()*10)}
+    ];
+    chordchart.data(data).render();
+}, 20000);</script><script>window.onresize = function () {
     width = parseFloat(d3.select("#widget").style("width"));
     height = parseFloat(d3.select("#widget").style("height"));
     chordchart

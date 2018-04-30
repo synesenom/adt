@@ -79,6 +79,8 @@
         var _current = null;
         var _yMin = 0;
         var _yMax = 1;
+        var _colors = {};
+        var _transition = false;
 
         /**
          * Binds data to the violin plot.
@@ -105,17 +107,12 @@
                     q3 = d3.quantile(sd, 0.75),
                     delta = 0.2 * (max - min);
                 var kde = _kde(_epanechnikovKernel(0.05 * (max - min)),
-                    d3.scaleLinear().domain([min - delta, max + delta]).ticks(20));
+                    d3.range(21).map(function(d) {
+                        return (max - min + 2*delta) * d / 20 + (min - delta);
+                    }));
                 var violinData = kde(d.data);
                 return {
                     name: d.name,
-                    min: min,
-                    max: max,
-                    mean: d3.mean(sd),
-                    median: d3.median(sd),
-                    q1: q1,
-                    q3: q3,
-                    data: violinData,
                     scale: {
                         x: d3.scaleLinear()
                             .domain([_yMin, _yMax])
@@ -125,6 +122,15 @@
                             .domain([0, d3.max(violinData, function (dd) {
                                 return dd.y;
                             })])
+                    },
+                    values: {
+                        min: min,
+                        max: max,
+                        mean: d3.mean(sd),
+                        median: d3.median(sd),
+                        q1: q1,
+                        q3: q3,
+                        data: violinData
                     }
                 };
             });
@@ -141,7 +147,8 @@
          * @returns {du.widgets.violinplot.ViolinPlot} Reference to the current ViolinPlot.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".violin", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".violin", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -152,11 +159,11 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "min/max:", value: _current.min.toPrecision(3) + "/" + _current.max.toPrecision(3)},
-                        {label: "mean:", value: _current.mean.toPrecision(3)},
-                        {label: "median:", value: _current.median.toPrecision(3)},
-                        {label: "Q1:", value: _current.q1.toPrecision(3)},
-                        {label: "Q3:", value: _current.q3.toPrecision(3)}
+                        {label: "min/max:", value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)},
+                        {label: "mean:", value: _current.values.mean.toPrecision(3)},
+                        {label: "median:", value: _current.values.median.toPrecision(3)},
+                        {label: "Q1:", value: _current.values.q1.toPrecision(3)},
+                        {label: "Q3:", value: _current.values.q3.toPrecision(3)}
                     ]
                 }
             } : null;
@@ -164,34 +171,8 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(5),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
@@ -203,7 +184,7 @@
                 }).reverse(), [_w.attr.innerWidth, 0], "point"),
                 y: _w.utils.scale(
                     _data.map(function (d) {
-                        return [d.min-0.1*(d.max-d.min), d.max+0.1*(d.max-d.min)];
+                        return [d.values.min-0.1*(d.values.max-d.values.min), d.values.max+0.1*(d.values.max-d.values.min)];
                     }).reduce(function (array, d) {
                         return array.concat(d);
                     }, []), [_w.attr.innerHeight, 0])
@@ -217,110 +198,78 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if(_data.length > 0) {
-                // Add violins
-                if (_svg.violins === undefined) {
-                    _svg.violins = {};
-                    _data.forEach(function (d) {
-                        d.scale.x.range([_w.attr.innerHeight, 0]);
-                        var g = _svg.g.selectAll("." + _w.utils.encode(d.name))
-                            .data([d])
-                            .enter().append("g")
-                            .attr("class", "violin " + _w.utils.encode(d.name))
-                            .attr("transform", "translate(" + _svg.scale.x(d.name) + ",0)");
-                        var area = d3.area()
-                            .curve(d3.curveBasis)
-                            .x(function (dd) {
-                                return d.scale.x(Math.min(_yMax, Math.max(_yMin, dd.x)));
-                            })
-                            .y0(10)
-                            .y1(function (dd) {
-                                return d.scale.y(dd.y);
-                            });
-                        var line = d3.line()
-                            .curve(d3.curveBasis)
-                            .x(function (dd) {
-                                return d.scale.x(Math.min(_yMax, Math.max(_yMin, dd.x)));
-                            })
-                            .y(function (dd) {
-                                return d.scale.y(dd.y);
-                            });
-                        _svg.violins[d.name] = {
-                            g: g,
-                            area: {
-                                fn: area,
-                                left: g.append("path")
-                                    .attr("class", "leftarea")
-                                    .attr("d", area(d.data))
-                                    .attr("transform", "rotate(90) translate(0," + (10 - 0.5) + ") scale(1,-1)")
-                                    .style("fill-opacity", 0.3)
-                                    .style("stroke", "none"),
-                                right: g.append("path")
-                                    .attr("class", "rightarea")
-                                    .attr("d", line(d.data))
-                                    .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")")
-                                    .style("fill-opacity", 0.3)
-                                    .style("stroke", "none")
-                            },
-                            line: {
-                                fn: line,
-                                left: g.append("path")
-                                    .attr("cladd", "leftline")
-                                    .attr("d", line(d.data))
-                                    .attr("transform", "rotate(90) translate(0," + (10 - 0.5) + ") scale(1,-1)")
-                                    .style("fill", "none")
-                                    .style("stroke-width", "1px"),
-                                right: g.append("path")
-                                    .attr("cladd", "rightline")
-                                    .attr("d", line(d.data))
-                                    .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")")
-                                    .style("fill", "none")
-                                    .style("stroke-width", "1px")
-                            }
-                        };
-                    });
-                }
+            // Build/update plots
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            // Groups
+            _svg.plots.groups = _svg.g.selectAll(".box-group")
+                .data(_data, function(d) {
+                    return d.name;
+                });
+            _svg.plots.groups.exit()
+                .style("opacity", 0)
+                .remove();
+            var enter = _svg.plots.groups.enter().append("g")
+                .attr("class", function (d) {
+                    return "box-group " + _w.utils.encode(d.name);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("opacity", 0)
+                .style("fill", "transparent");
+            var union = enter.merge(_svg.plots.groups)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _current = d;
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
+                })
+                .on("mouseleave", function(d) {
+                    _current = null;
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.name);
+                })
+                .attr("transform", function(d) {
+                    return "translate(" + _svg.scale.x(d.name) + ",0)";
+                });
+            union.transition().duration(duration)
+                .attr("transform", function(d) {
+                    return "translate(" + _svg.scale.x(d.name) + ",0)";
+                })
+                .style("opacity", 1)
+                .style("fill-opacity", 0.3)
+                .style("fill", function(d) {
+                    return _colors[d.name];
+                })
+                .style("stroke", function(d) {
+                    return _colors[d.name];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
 
-                // Update data
-                _data.forEach(function(d) {
-                    // Update scales
+            // Left inner
+            enter.append("path")
+                .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")");
+            union.select("path")
+                .transition().duration(duration)
+                .attr("d", function(d) {
                     d.scale.x.range([_w.attr.innerHeight, 0]);
-
-                    // Area
-                    _svg.violins[d.name].g
-                        .transition().duration(duration)
-                        .attr("transform", "translate(" + _svg.scale.x(d.name) + ",0)");
-                    _svg.violins[d.name].area.fn
+                    var area = d3.area()
+                        .curve(d3.curveBasis)
                         .x(function (dd) {
                             return d.scale.x(Math.min(_yMax, Math.max(_yMin, dd.x)));
+                        })
+                        .y0(function (dd) {
+                            return d.scale.y(-dd.y);
                         })
                         .y1(function (dd) {
                             return d.scale.y(dd.y);
                         });
-                    _svg.violins[d.name].area.left
-                        .transition().duration(duration)
-                        .attr("d", _svg.violins[d.name].area.fn(d.data));
-                    _svg.violins[d.name].area.right
-                        .transition().duration(duration)
-                        .attr("d", _svg.violins[d.name].area.fn(d.data));
-
-                    // Line
-                    _svg.violins[d.name].line.fn
-                        .x(function (dd) {
-                            return d.scale.x(Math.min(_yMax, Math.max(_yMin, dd.x)));
-                        })
-                        .y(function (dd) {
-                            return d.scale.y(dd.y);
-                        });
-                    _svg.violins[d.name].line.left
-                        .transition().duration(duration)
-                        .attr("d", _svg.violins[d.name].line.fn(d.data));
-                    _svg.violins[d.name].line.right
-                        .transition().duration(duration)
-                        .attr("d", _svg.violins[d.name].line.fn(d.data));
-                });
-            }
+                    return area(d.values.data);
+                })
+                .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")");
         };
 
         // Style updater
@@ -358,26 +307,6 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _.forOwn(_svg.violins, function(violin, name) {
-                violin.line.left.style("stroke", _w.attr.colors[name]);
-                violin.line.right.style("stroke", _w.attr.colors[name]);
-                violin.area.left.style("fill", _w.attr.colors[name]);
-                violin.area.right.style("fill", _w.attr.colors[name]);
-                violin.g
-                    .on("mouseover", function(d) {
-                        _current = d;
-                        _w.attr.mouseover && _w.attr.mouseover(name);
-                    })
-                    .on("mouseleave", function() {
-                        _current = null;
-                        _w.attr.mouseleave && _w.attr.mouseleave(name);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(name);
-                    });
-            });
         };
     }
 

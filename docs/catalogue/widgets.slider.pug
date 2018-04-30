@@ -1,5 +1,5 @@
 - var name = "slider"
-- var links = {source: "widgets.slider", docs: "widgets.slider"}
+- var links = {minjs: "widgets.slider", source: "widgets.slider", docs: "widgets.slider"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.barchart", "widgets.slider"]
 - var description = "A slider is a <span class='good'>one dimensional control</span> widget that can be used to adjust the data to be shown on a chart or the dashboard. It can be <span class='good'>discrete or continuous</span> depending on the use case."
@@ -8,24 +8,24 @@ include pug/example
 script.doc.
     // generate some data
     var data = {
-        2016: {
-            banana: 4,
-            mango: 6,
-            kiwi: 7,
-            pear: 3
-        },
-        2017: {
-            banana: 2,
-            mango: 7,
-            kiwi: 2,
-            pear: 8
-        },
-        2018: {
-            banana: 3,
-            mango: 1,
-            kiwi: 9,
-            pear: 2
-        }
+        2016: [
+            {name: "banana", value: 4},
+            {name: "mango", value: 6},
+            {name: "kiwi", value: 7},
+            {name: "pear", value: 3}
+        ],
+        2017: [
+            {name: "banana", value: 2},
+            {name: "mango", value: 7},
+            {name: "kiwi", value: 2},
+            {name: "pear", value: 8}
+        ],
+        2018: [
+            {name: "banana", value: 3},
+            {name: "mango", value: 1},
+            {name: "kiwi", value: 9},
+            {name: "pear", value: 2}
+        ]
     };
     var colors = {
         banana: "gold",

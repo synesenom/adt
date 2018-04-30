@@ -48,6 +48,7 @@
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
+     * @extends {du.widget.Widget}
      */
     function LineChart(name, parent) {
         var _w = Widget.call(this, name, "linechart", "svg", parent);
@@ -64,24 +65,11 @@
          */
         _w.attr.add(this, "xType", "number");
 
-        /**
-         * Adds a legend to the line chart (experimental feature).
-         * Legend is added to the right side of the chart and eats up 20% of the widget,
-         * therefore margin.right should be adjusted accordingly.
-         * Default is false.
-         * Note: this method is still experimental, and therefore it is unstable.
-         *
-         * @method legend
-         * @memberOf du.widgets.linechart.LineChart
-         * @param {boolean} on Whether legend should be added.
-         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
-         */
-        _w.attr.add(this, "legend", false);
-
         // Widget elements.
         var _svg = {};
         var _data = [];
-        var _scaleFactor = 1.0;
+        var _transition = false;
+        var _colors = {};
         var _markers = {};
 
         /**
@@ -94,30 +82,24 @@
          * @method data
          * @memberOf du.widgets.linechart.LineChart
          * @param {Array} data Data to plot.
-         * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
          * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
-        this.data = function(data, scale) {
-            var realScale = scale || 1;
-            _data = data.sort(function (a, b) {
+        this.data = function(data) {
+            var sorted = data.sort(function (a, b) {
                 return a.x - b.x;
-            }).map(function(d) {
-                var s = {x: d.x, y: {}};
-                _.forOwn(d.y, function(v, k) {
-                    s.y[k] = v / realScale;
-                });
-                if (d.dy) {
-                    s.dy = {};
-                    _.forOwn(d.dy, function(v, k) {
-                        s.dy[k] = v / realScale;
-                    });
-                }
-                return s;
             });
-
-            // Scale data
-            if (typeof scale === "number" && scale > 0)
-                _scaleFactor = scale;
+            _data = d3.keys(data[0].y).map(function(id) {
+                return {
+                    id: id,
+                    values: sorted.map(function(d) {
+                        return {
+                            x: d.x,
+                            y: d.y[id],
+                            dy: d.dy && d.dy[id] ? d.dy[id] : 0
+                        };
+                    })
+                };
+            });
             return this;
         };
 
@@ -131,12 +113,56 @@
          * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         this.highlight = function(key, duration) {
-            _w.utils.highlight(this, _svg, ".line", key, duration);
-            _w.utils.highlight(this, _svg, ".error", key, duration);
-            _w.utils.highlight(this, _svg, ".marker", key, duration);
+            if (!_transition) {
+                _w.utils.highlight(this, _svg, ".line", key, duration);
+                _w.utils.highlight(this, _svg, ".error", key, duration);
+                _w.utils.highlight(this, _svg, ".marker", key, duration);
+            }
             return this;
         };
-        var highlight = this.highlight;
+
+        function _adjustMarker(key, start, end) {
+            // Get data
+            var data = _data.filter(function(d) {
+                return d.id === key;
+            })[0];
+            if (!data) {
+                return null;
+            }
+
+            // Get marker data point indices
+            var bisect = d3.bisector(function (d) {
+                return d.x;
+            }).left;
+            var i1 = bisect(data.values, start);
+            var i2 = bisect(data.values, end);
+            if (i1 === null || i2 === null) {
+                return null;
+            }
+
+            // Get coordinates and color
+            var x1 = data.values[i1].x,
+                y1 = data.values[i1].y,
+                x2 = data.values[i2].x,
+                y2 = data.values[i2].y;
+            var xCorner = y1 < y2 ? x1 : x2;
+            var yCorner = y1 < y2 ? y2 : y1;
+
+            return {
+                start: {
+                    x: x1,
+                    y: y1
+                },
+                end: {
+                    x: x2,
+                    y: y2
+                },
+                corner: {
+                    x: xCorner,
+                    y: yCorner
+                }
+            };
+        }
 
         /**
          * Adds a marker to the specified line.
@@ -158,83 +184,88 @@
                 return null;
             }
 
-            // Get Y coordinates
-            var row1 = _data.filter(function(d) {
-                return d.x - start === 0;
-            })[0];
-            if (!row1 || !row1.hasOwnProperty('y') || !row1.y.hasOwnProperty(key))
-                return null;
-            var y1 = row1.y[key];
-            var row2 = _data.filter(function(d) {
-                return d.x - end === 0;
-            })[0];
-            if (!row2 || !row2.hasOwnProperty('y') || !row2.y.hasOwnProperty(key))
-                return null;
-            var y2 = row2.y[key];
-
-            // Get color
-            var color = typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[key];
-
-            // Add marker
-            var xCorner = y1 < y2 ? start : end;
-            var yCorner = y1 < y2 ? y2 : y1;
-            var marker = {
-                start: {
-                    x: start,
-                    y: y1
-                },
-                end: {
-                    x: end,
-                    y: y2
-                },
-                corner: {
-                    x: xCorner,
-                    y: yCorner
-                },
-                g: _svg.g.append("g")
-                    .attr("class", "marker " + _w.utils.encode(key))
-            };
-            marker.g.append("line")
+            var pos = _adjustMarker(key, start, end);
+            var g = _svg.g.append("g")
+                .attr("class", "marker " + _w.utils.encode(key));
+            g.append("line")
                 .attr("class", "horizontal")
-                .attr("x1", _svg.scale.x(start)+2)
-                .attr("y1", _svg.scale.y(yCorner))
-                .attr("x2", _svg.scale.x(end)+2)
-                .attr("y2", _svg.scale.y(yCorner))
-                .style("stroke", color)
+                .attr("x1", _svg.scale.x(pos.start.x)+2)
+                .attr("y1", _svg.scale.y(pos.corner.y))
+                .attr("x2", _svg.scale.x(pos.end.x)+2)
+                .attr("y2", _svg.scale.y(pos.corner.y))
+                .style("stroke", _colors[key])
                 .style("stroke-dasharray", "3 3")
                 .style("stroke-width", 1);
-           marker.g.append("line")
+           g.append("line")
                 .attr("class", "vertical")
-                .attr("x1", _svg.scale.x(xCorner)+2)
-                .attr("y1", _svg.scale.y(y1))
-                .attr("x2", _svg.scale.x(xCorner)+2)
-                .attr("y2", _svg.scale.y(y2))
-                .style("stroke", color)
+               .attr("x1", _svg.scale.x(pos.corner.x)+2)
+               .attr("y1", _svg.scale.y(pos.start.y))
+               .attr("x2", _svg.scale.x(pos.corner.x)+2)
+               .attr("y2", _svg.scale.y(pos.end.y))
+                .style("stroke", _colors[key])
                 .style("stroke-dasharray", "3 3")
                 .style("stroke-width", 1);
-            marker.g.append("circle")
+            g.append("circle")
                 .attr("class", "start")
-                .attr("cx", _svg.scale.x(start)+2)
-                .attr("cy", _svg.scale.y(y1))
+                .attr("cx", _svg.scale.x(pos.start.x)+2)
+                .attr("cy", _svg.scale.y(pos.start.y))
                 .attr("r", 4)
                 .style("stroke", "none")
-                .style("fill", color);
-            marker.g.append("circle")
+                .style("fill", _colors[key]);
+            g.append("circle")
                 .attr("class", "end")
-                .attr("cx", _svg.scale.x(end)+2)
-                .attr("cy", _svg.scale.y(y2))
+                .attr("cx", _svg.scale.x(pos.end.x)+2)
+                .attr("cy", _svg.scale.y(pos.end.y))
                 .attr("r", 4)
                 .style("stroke", "none")
-                .style("fill", color);
-            marker.g.append("text")
-                .attr("x", _svg.scale.x(xCorner)+2)
-                .attr("y", _svg.scale.y(yCorner))
+                .style("fill", _colors[key]);
+            g.append("text")
+                .attr("x", _svg.scale.x(pos.corner.x)+2)
+                .attr("y", _svg.scale.y(pos.corner.y))
                 .attr("dy", -5)
-                .attr("text-anchor", y1 < y2 ? "start" : "end")
+                .attr("text-anchor", pos.start.y < pos.end.y ? "start" : "end")
                 .style("fill", _w.attr.fontColor)
                 .style("font-family", "inherit")
                 .style("font-size", "0.9em")
                 .text(label);
+
+            var marker = {
+                key: key,
+                g: g,
+                update: function(duration) {
+                    var pos = _adjustMarker(key, start, end);
+                    g.select(".horizontal")
+                        .transition().duration(duration)
+                        .attr("x1", _svg.scale.x(pos.start.x)+2)
+                        .attr("y1", _svg.scale.y(pos.corner.y))
+                        .attr("x2", _svg.scale.x(pos.end.x)+2)
+                        .attr("y2", _svg.scale.y(pos.corner.y))
+                        .style("stroke", _colors[this.key]);
+                    g.select(".vertical")
+                        .transition().duration(duration)
+                        .attr("x1", _svg.scale.x(pos.corner.x)+2)
+                        .attr("y1", _svg.scale.y(pos.start.y))
+                        .attr("x2", _svg.scale.x(pos.corner.x)+2)
+                        .attr("y2", _svg.scale.y(pos.end.y))
+                        .style("stroke", _colors[this.key]);
+                    g.select(".start")
+                        .transition().duration(duration)
+                        .attr("cx", _svg.scale.x(pos.start.x)+2)
+                        .attr("cy", _svg.scale.y(pos.start.y))
+                        .style("fill", _colors[this.key]);
+                    g.select(".end")
+                        .transition().duration(duration)
+                        .attr("cx", _svg.scale.x(pos.end.x)+2)
+                        .attr("cy", _svg.scale.y(pos.end.y))
+                        .style("fill", _colors[this.key]);
+                    g.select("text")
+                        .transition().duration(duration)
+                        .attr("x", _svg.scale.x(pos.corner.x)+2)
+                        .attr("y", _svg.scale.y(pos.corner.y))
+                        .attr("text-anchor", pos.start.y < pos.end.y ? "start" : "end")
+                        .style("fill", _w.attr.fontColor);
+                }
+            };
 
             // Add to markers
             _markers[id] = marker;
@@ -266,10 +297,12 @@
             var bisect = d3.bisector(function (d) {
                 return _svg.scale.x(d.x);
             }).left;
-            var i = mouse ? bisect(_data, mouse[0]) : null;
+            var index = mouse ? _data.map(function(d) {
+                return bisect(d.values, mouse[0]);
+            }) : null;
 
             // If no data point is found, just remove tooltip elements
-            if (i === null) {
+            if (index === null) {
                 _.forOwn(this.tt, function(tt) {
                     tt.remove();
                 });
@@ -280,27 +313,28 @@
                 var tt = this.tt;
             }
 
-            // Get data entry
-            var left = _data[i - 1] ? _data[i - 1] : _data[i];
-            var right = _data[i] ? _data[i] : _data[i - 1];
-            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+            // Get plots
+            var x = 0;
+            var plots = _data.map(function(d, i) {
+                var j = index[i];
+                var data = d.values;
+                var left = data[j - 1] ? data[j - 1] : data[j];
+                var right = data[j] ? data[j] : data[j - 1];
+                var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+                x = point.x;
 
-            // Build tooltip content
-            // Build tooltip content
-            var plots = [];
-            _.forOwn(point.y, function(yk, k) {
-                plots.push({id: k, color: _w.attr.colors[k], value: yk.toPrecision(6)});
-
-                // Update markers
-                tt[k] = tt[k] || _svg.g.append("circle");
-                tt[k]
+                tt[d.id] = tt[d.id] || _svg.g.append("circle");
+                tt[d.id]
+                    .attr("cx", _svg.scale.x(point.x)+2)
+                    .attr("cy", _svg.scale.y(point.y))
                     .attr("r", 4)
-                    .attr("cx", _svg.scale.x(_data[i].x)+2)
-                    .attr("cy", _svg.scale.y(_data[i].y[k]))
-                    .style("fill", _w.attr.colors[k]);
+                    .style("fill", _colors[d.id]);
+
+                return {id: d.id, color: _colors[d.id], value: point.y.toPrecision(6)};
             });
+
             return {
-                title: _w.attr.xLabel + ": " + point.x,
+                title: _w.attr.xLabel + ": " + x,
                 content: {
                     type: "plots",
                     data: plots
@@ -310,83 +344,42 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(7),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
-
-            // Legend
-            if (_w.attr.legend) {
-                var legend = _svg.g.append("g")
-                    .attr("class", "legend");
-                var y = 0;
-                _.forOwn(_svg.lines, function(lk, k) {
-                    var g = legend.append("g")
-                        .style("cursor", "pointer")
-                        .on("mouseover", function() {
-                            highlight(k);
-                        })
-                        .on("mouseleave", function() {
-                            highlight();
-                        });
-                    g.append("rect")
-                        .attr("x", _w.attr.width*0.8)
-                        .attr("y", y)
-                        .attr("width", _w.attr.fontSize)
-                        .attr("height", _w.attr.fontSize)
-                        .style("fill", typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[k])
-                        .style("stroke", "none");
-                    g.append("text")
-                        .attr("x", _w.attr.width*0.83)
-                        .attr("y", y)
-                        .attr("dy", 0.8*_w.attr.fontSize)
-                        .attr("text-anchor", "start")
-                        .style("fill", _w.attr.fontColor)
-                        .attr("font-family", "inherit")
-                        .attr("font-size", _w.attr.fontSize + "px")
-                        .text(k);
-                    y += _w.attr.height*0.08;
-                });
-            }
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.map(function(d) {
+                x: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
                     return d.x;
                 }), [0, _w.attr.innerWidth]),
-                y: _w.utils.scale(_data.map(function (d) {
-                    return d3.values(d.y);
-                }).reduce(function (a, d) {
-                    return a.concat(d);
-                }, []), [_w.attr.innerHeight, 0])
+                y: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
+                    return d.y;
+                }), [_w.attr.innerHeight, 0])
             };
+
+            // Calculate line/error function
+            var line = d3.line()
+                .x(function (d) {
+                    return _svg.scale.x(d.x) + 2;
+                })
+                .y(function (d) {
+                    return _svg.scale.y(d.y);
+                });
+            var error = d3.area()
+                .x(function (d) {
+                    return _svg.scale.x(d.x) + 2;
+                }).y0(function (d) {
+                    return _svg.scale.y(Math.max(d.y - d.dy, 0));
+                }).y1(function (d) {
+                    return _svg.scale.y(Math.min(d.y + d.dy, _svg.scale.y.domain()[1]));
+                });
 
             // Update axes
             _svg.axes.x
@@ -396,65 +389,98 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if (_data.length > 0) {
-                // Add lines if needed
-                if (_svg.lines === undefined) {
-                    // Error bands
-                    _svg.errors = {};
-                    _.forOwn(_data[0].y, function (yk, k) {
-                        _svg.errors[k] = _svg.g.append("path")
-                            .attr("class", "error " + _w.utils.encode(k))
-                            .style("fill-opacity", 0.2)
-                            .style("stroke-width", "0px")
-                            .style("shape-rendering", "geometricPrecision");
-                    });
-
-                    // Add lines
-                    _svg.lines = {};
-                    _.forOwn(_data[0].y, function (yk, k) {
-                        _svg.lines[k] = _svg.g.append("path")
-                            .attr("class", "line " + _w.utils.encode(k))
-                            .style("fill", "none")
-                            .style("stroke-width", "2px")
-                            .style("shape-rendering", "geometricPrecision");
-                    });
-                }
-
-                // Update data
-                _.forOwn(_data[0].y, function (yk, k) {
-                    if (_data[0].hasOwnProperty('dy') && _data[0].dy.hasOwnProperty(k)) {
-                        var error = d3.area()
-                            .x(function (d) {
-                                return _svg.scale.x(d.x) + 2;
-                            }).y0(function (d) {
-                                return _svg.scale.y(Math.max(d.y[k] - d.dy[k], 0));
-                            }).y1(function (d) {
-                                return _svg.scale.y(Math.min(d.y[k] + d.dy[k], _svg.scale.y.domain()[1]));
-                            });
-                        _svg.errors[k]
-                            .transition().duration(duration)
-                            .attr("d", error(_data));
-                    }
-                    var line = d3.line()
-                        .x(function (d) {
-                            return _svg.scale.x(d.x) + 2;
-                        })
-                        .y(function (d) {
-                            return _svg.scale.y(d.y[k]);
-                        });
-                    _svg.lines[k]
-                        .transition().duration(duration)
-                        .attr("d", line(_data));
+            // Build/update error bands
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            _svg.plots.errors = _svg.g.selectAll(".error")
+                .data(_data, function(d) {
+                    return d.id;
                 });
-            }
+            _svg.plots.errors.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.errors = _svg.plots.errors.enter().append("path")
+                .attr("class", function (d) {
+                    return "error " + _w.utils.encode(d.id);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("opacity", 0)
+                .style("stroke", "none")
+                .style("fill", "transparent")
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.id);
+                })
+            .merge(_svg.plots.errors)
+                .each(function() {
+                    _transition = true;
+                })
+                .transition().duration(duration)
+                .style("opacity", 1)
+                .attr("d", function (d) {
+                    return error(d.values);
+                })
+                .style("fill-opacity", 0.2)
+                .style("fill", function(d) {
+                    return _colors[d.id];
+                });
+
+            // Build/update lines
+            _svg.plots.lines = _svg.g.selectAll(".line")
+                .data(_data, function(d) {
+                    return d.id;
+                });
+            _svg.plots.lines.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.lines.enter()
+                .append("path")
+                .attr("class", function (d) {
+                    return "line " + _w.utils.encode(d.id);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("opacity", 0)
+                .style("fill", "none")
+            .merge(_svg.plots.lines)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.id);
+                })
+                .transition().duration(duration)
+                .style("opacity", 1)
+                .attr("d", function (d) {
+                    return line(d.values);
+                })
+                .style("stroke-width", "2px")
+                .style("stroke", function(d) {
+                    return _colors[d.id];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
+
+            // Markers
+            _.forOwn(_markers, function(marker) {
+                marker.update(duration);
+            });
         };
 
         // Style updater
         _w.render.style = function() {
-            // Set colors
-            _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
-
             // Chart (using conventional margins)
             _svg.g
                 .attr("width", _w.attr.innerWidth + "px")
@@ -485,62 +511,6 @@
                 .style("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _.forOwn(_svg.errors, function(lk, k) {
-                _svg.errors[k]
-                    .style("fill", typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[k])
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(k);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(k);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(k);
-                    });
-            });
-            _.forOwn(_svg.lines, function(lk, k) {
-                _svg.lines[k]
-                    .style("stroke", typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[k])
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(k);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(k);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(k);
-                    });
-            });
-
-            // Markers
-            _.forOwn(_markers, function(marker) {
-                marker.g.select(".horizontal")
-                    .attr("x1", _svg.scale.x(marker.start.x)+2)
-                    .attr("y1", _svg.scale.y(marker.corner.y))
-                    .attr("x2", _svg.scale.x(marker.end.x)+2)
-                    .attr("y2", _svg.scale.y(marker.corner.y));
-                marker.g.select(".vertical")
-                    .attr("x1", _svg.scale.x(marker.corner.x)+2)
-                    .attr("y1", _svg.scale.y(marker.start.y))
-                    .attr("x2", _svg.scale.x(marker.corner.x)+2)
-                    .attr("y2", _svg.scale.y(marker.end.y));
-                marker.g.select(".start")
-                    .attr("cx", _svg.scale.x(marker.start.x)+2)
-                    .attr("cy", _svg.scale.y(marker.start.y));
-                marker.g.select(".end")
-                    .attr("cx", _svg.scale.x(marker.end.x)+2)
-                    .attr("cy", _svg.scale.y(marker.end.y));
-                marker.g.select("text")
-                    .attr("x", _svg.scale.x(marker.corner.x)+2)
-                    .attr("y", _svg.scale.y(marker.corner.y))
-                    .attr("text-anchor", marker.start.y < marker.end.y ? "start" : "end")
-                    .style("fill", _w.attr.fontColor)
-            });
-
-            // Tooltip
-
         };
     }
 

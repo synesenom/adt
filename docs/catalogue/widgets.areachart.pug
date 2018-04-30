@@ -1,26 +1,23 @@
 - var name = "areachart"
-- var links = {source: "widgets.areachart", docs: "widgets.areachart"}
+- var links = {minjs: "widgets.areachart", source: "widgets.areachart", docs: "widgets.areachart"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.areachart"]
 - var description = "Area charts are used to show <span class='good'>numerical series</span> in which consecutive values have a relationship. Good examples are time series of <span class='good'>volume type data</span> (e.g., sales) or a density distribution of some quantity (probability density).<br><br> Due to its transparent nature, only a <span class='bad'>few plots</span> should be used to avoid unrecognizable boundaries."
 include pug/example
 script.doc.
-    // generate some data
-    var data = Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            }
-        }
-    });
-script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));
     var height = parseFloat(d3.select("#widget").style("height"));
     var areachart = new du.widgets.AreaChart("mychart", "#widget")
-        .data(data)
+        .data(new Array(100).fill(0).map(function (d, i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i / 40, 2),
+                    kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+                }
+            };
+        }))
         .width(width)
         .height(height)
         .xLabel("value")
@@ -28,6 +25,22 @@ script.doc.
         .margins(40)
         .fontSize(14)
         .render();
+script.doc.
+    // update data
+    setInterval(function() {
+        var tau = 2 * Math.random();
+        var phi = 5 * Math.random() + 10;
+        var data = Array.from(new Array(100).keys()).map(function (i) {
+            return {
+                x: i,
+                y: {
+                    mango: 10 * Math.pow(i / 40, tau),
+                    kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / phi), 2) + 2
+                }
+            };
+        });
+        areachart.data(data).render();
+    }, 20000);
 script.doc.
     // add interactions
     areachart

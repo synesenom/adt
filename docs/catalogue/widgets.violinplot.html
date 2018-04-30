@@ -1,45 +1,44 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.violinplot.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.violinplot.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>violinplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Violin plots are used to <span class='good'>compare distributions</span> by encapsulating the entire distribution in a small geometric objects. Similar to box plots they are good to detect differences in <span class='good'>summary metrics</span> but provide more details about the underlying distributions using <span class='good'>kernel density estimate</span>.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.violinplot.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.violinplot.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = [
-    {
-        name: "pareto",
-        data: new Array(1000).fill(0).map(function () {
-            return 18 / Math.pow(1-Math.random(), 2/20);
-        })
-    },
-    {
-        name: "uniform",
-        data: new Array(1000).fill(0).map(function () {
-            return Math.random() * 40;
-        })
-    },
-    {
-        name: "normal",
-        data: new Array(1000).fill(0).map(function() {
-            return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
-        })
-    },
-    {
-        name: "poisson",
-        data: new Array(1000).fill(0).map(function() {
-            var l = Math.exp(-10),
-                k = 0,
-                p = 1;
-            do {
-                k++;
-                p *= Math.random();
-            } while (p > l);
-            return k - 1;
-        })
-    }
-];</script><script class="doc">// create chart
+});</script><title>violinplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Violin plots are used to <span class='good'>compare distributions</span> by encapsulating the entire distribution in a small geometric objects. Similar to box plots they are good to detect differences in <span class='good'>summary metrics</span> but provide more details about the underlying distributions using <span class='good'>kernel density estimate</span>.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.violinplot.min.js">min.js</a><a href="../api/widgets.violinplot.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.violinplot.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var violinplot = new du.widgets.ViolinPlot("mychart", "#widget")
-    .data(data)
+    .data([
+        {
+            name: "pareto",
+            data: new Array(1000).fill(0).map(function () {
+                return 18 / Math.pow(1 - Math.random(), 2 / 20);
+            })
+        },
+        {
+            name: "uniform",
+            data: new Array(1000).fill(0).map(function () {
+                return Math.random() * 40;
+            })
+        },
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function () {
+                return 5 * Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(1000).fill(0).map(function () {
+                var l = Math.exp(-10),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ])
     .width(width)
     .height(height)
     .xLabel("name")
@@ -47,7 +46,43 @@ var violinplot = new du.widgets.ViolinPlot("mychart", "#widget")
     .margins(60)
     .fontSize(14)
     .tooltip(true)
-    .render();</script><script>window.onresize = function () {
+    .render();</script><script class="doc">// update data
+setInterval(function() {
+    var data = [
+        {
+            name: "pareto",
+            data: new Array(1000).fill(0).map(function () {
+                return 18 / Math.pow(1 - Math.random(), 2 / 20);
+            })
+        },
+        {
+            name: "uniform",
+            data: new Array(1000).fill(0).map(function () {
+                return Math.random() * 40;
+            })
+        },
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function () {
+                return 5 * Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(1000).fill(0).map(function () {
+                var l = Math.exp(-10),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ];
+    violinplot.data(data).render();
+}, 20000);</script><script>window.onresize = function () {
     violinplot
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

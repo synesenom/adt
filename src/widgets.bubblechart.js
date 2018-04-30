@@ -59,7 +59,9 @@
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _colors = {};
         var _current = null;
+        var _transition = false;
 
         /**
          * Binds data to the bubble chart.
@@ -71,7 +73,16 @@
          * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
          */
         this.data = function(data) {
-            _data = data;
+            _data = data.map(function(d) {
+                return {
+                    name: d.name,
+                    values: {
+                        x: d.x,
+                        y: d.y,
+                        size: d.size
+                    }
+                };
+            });
             return this;
         };
 
@@ -85,7 +96,8 @@
          * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".bubble", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".bubble", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -96,9 +108,9 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: _w.attr.xLabel + ":", value: _current.x.toPrecision(4)},
-                        {label: _w.attr.yLabel + ":", value: _current.y.toPrecision(4)},
-                        {label: _w.attr.sizeLabel + ":", value: _current.size.toFixed(1)}
+                        {label: _w.attr.xLabel + ":", value: _current.values.x.toPrecision(4)},
+                        {label: _w.attr.yLabel + ":", value: _current.values.y.toPrecision(4)},
+                        {label: _w.attr.sizeLabel + ":", value: _current.values.size.toFixed(1)}
                     ]
                 }
             } : null;
@@ -106,34 +118,8 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(7),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
@@ -141,12 +127,12 @@
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.map(function (d) {
-                    return [d.x-1.1*_w.attr.scale*d.size, d.x+1.1*_w.attr.scale*d.size];
+                    return [d.values.x-1.1*_w.attr.scale*d.values.size, d.values.x+1.1*_w.attr.scale*d.values.size];
                 }).reduce(function (a, d) {
                     return a.concat(d);
                 }, []), [0, _w.attr.innerWidth]),
                 y: _w.utils.scale(_data.map(function (d) {
-                    return [d.y-1.1*_w.attr.scale*d.size, d.y+1.1*_w.attr.scale*d.size];
+                    return [d.values.y-1.1*_w.attr.scale*d.values.size, d.values.y+1.1*_w.attr.scale*d.values.size];
                 }).reduce(function (a, d) {
                     return a.concat(d);
                 }, []), [_w.attr.innerHeight, 0])
@@ -160,52 +146,65 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if (_data.length > 0) {
-                // Add areas if needed
-                if (_svg.bubbles === undefined) {
-                    _svg.bubbles = _svg.g.selectAll(".bubble")
-                        .data(_data)
-                        .enter().append("circle")
-                        .attr("class", function(d) {
-                            return "bubble " + _w.utils.encode(d.name);
-                        })
-                        .attr("r", function(d) {
-                            return _w.attr.scale * d.size;
-                        })
-                        .attr("cx", function(d) {
-                            return _svg.scale.x(d.x);
-                        })
-                        .attr("cy", function(d) {
-                            return _svg.scale.y(d.y);
-                        })
-                        .style("stroke", "none")
-                        .style("shape-rendering", "geometricPrecision");
-                }
-
-                // Update data
-                _svg.bubbles
-                    .data(_data)
-                    .transition().duration(duration)
-                    .attr("r", function(d) {
-                        return _w.attr.scale * d.size;
-                    })
-                    .attr("cx", function(d) {
-                        return _svg.scale.x(d.x);
-                    })
-                    .attr("cy", function(d) {
-                        return _svg.scale.y(d.y);
-                    });
-            }
+            // Build/update plots
+            _colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name;}) : null);
+            _svg.plots.bubbles = _svg.g.selectAll(".bubble")
+                .data(_data, function(d) {
+                    return d.name;
+                });
+            _svg.plots.bubbles.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.bubbles.enter().append("circle")
+                .attr("class", function (d) {
+                    return "bubble " + _w.utils.encode(d.name);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none")
+                .style("fill", "transparent")
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.values.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.values.y);
+                })
+            .merge(_svg.plots.bubbles)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _current = d;
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
+                })
+                .on("mouseleave", function(d) {
+                    _current = null;
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.name);
+                })
+                .transition().duration(duration)
+                .attr("r", function(d) {
+                    return _w.attr.scale * d.values.size;
+                })
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.values.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.values.y);
+                })
+                .style("opacity", 1)
+                .style("fill", function(d) {
+                    return _colors[d.name];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
         };
 
         // Style updater
         _w.render.style = function() {
-            // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {
-                return d.name;
-            }) : null);
-
             // Chart (using conventional margins)
             _svg.g
                 .attr("width", _w.attr.innerWidth + "px")
@@ -236,24 +235,6 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _svg.bubbles
-                .style("fill", function(d) {
-                    return _w.attr.colors[d.name];
-                })
-                .style("stroke", _w.attr.stroke)
-                .on("mouseover", function(d) {
-                    _current = d;
-                    _w.attr.mouseover && _w.attr.mouseover(d.name);
-                })
-                .on("mouseleave", function(d) {
-                    _current = null;
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
-                })
-                .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.name);
-                });
         };
     }
 

@@ -1,27 +1,27 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.barchart.min.js"></script><script src="../dl/widgets.slider.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.barchart.js"></script><script src="../../src/widgets.slider.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>slider | dashboard-utils</title></head><body><main><div id="widget"></div><div class="widget short" id="slider"></div><h1>description</h1><div id="desc">A slider is a <span class='good'>one dimensional control</span> widget that can be used to adjust the data to be shown on a chart or the dashboard. It can be <span class='good'>discrete or continuous</span> depending on the use case.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.slider.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.slider.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
+});</script><title>slider | dashboard-utils</title></head><body><main><div id="widget"></div><div class="widget short" id="slider"></div><h1>description</h1><div id="desc">A slider is a <span class='good'>one dimensional control</span> widget that can be used to adjust the data to be shown on a chart or the dashboard. It can be <span class='good'>discrete or continuous</span> depending on the use case.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.slider.min.js">min.js</a><a href="../api/widgets.slider.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.slider.js">source</a></div></main></body></html><script class="doc">// generate some data
 var data = {
-    2016: {
-        banana: 4,
-        mango: 6,
-        kiwi: 7,
-        pear: 3
-    },
-    2017: {
-        banana: 2,
-        mango: 7,
-        kiwi: 2,
-        pear: 8
-    },
-    2018: {
-        banana: 3,
-        mango: 1,
-        kiwi: 9,
-        pear: 2
-    }
+    2016: [
+        {name: "banana", value: 4},
+        {name: "mango", value: 6},
+        {name: "kiwi", value: 7},
+        {name: "pear", value: 3}
+    ],
+    2017: [
+        {name: "banana", value: 2},
+        {name: "mango", value: 7},
+        {name: "kiwi", value: 2},
+        {name: "pear", value: 8}
+    ],
+    2018: [
+        {name: "banana", value: 3},
+        {name: "mango", value: 1},
+        {name: "kiwi", value: 9},
+        {name: "pear", value: 2}
+    ]
 };
 var colors = {
     banana: "gold",

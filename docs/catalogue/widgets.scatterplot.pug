@@ -1,29 +1,26 @@
 - var name = "scatterplot"
-- var links = {source: "widgets.scatterplot", docs: "widgets.scatterplot"}
+- var links = {minjs: "widgets.scatterplot", source: "widgets.scatterplot", docs: "widgets.scatterplot"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.scatterplot"]
 - var description = "A scatter plot is useful to display <span class='good'>two dimensional numerical</span> data. It can be used to show <span class='good'>monotonic relationship</span> between two quantities, such as <span class='good'>correlations</span>."
 include pug/example
 script.doc.
-    // generate some data
-    var data = Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: {
-                mango: i + Math.random() - 0.5,
-                kiwi: i + Math.random()*8 - 4
-            },
-            y: {
-                mango: 10 * Math.pow(i / 40, 2) + Math.random()*10 - 5,
-                kiwi: 80 * (1-Math.exp(-i/30)) + Math.random()*10 - 5
-            }
-        }
-    });
-script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));
     var height = parseFloat(d3.select("#widget").style("height"));
     var scatterplot = new du.widgets.ScatterPlot("mychart", "#widget")
-        .data(data)
+        .data(new Array(100).fill(0).map(function(d, i) {
+            return {
+                mango: {
+                    x: i + Math.random() - 0.5,
+                    y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                },
+                kiwi: {
+                    x: i + Math.random() * 8 - 4,
+                    y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                }
+            };
+        }))
         .width(width)
         .height(height)
         .xLabel("x")
@@ -32,4 +29,21 @@ script.doc.
         .fontSize(14)
         .tooltip(true)
         .render();
+script.doc.
+    // update data
+    setInterval(function() {
+        var data = new Array(100 + parseInt(Math.random() * 40)).fill(0).map(function (d, i) {
+            return {
+                mango: {
+                    x: i + Math.random() - 0.5,
+                    y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                },
+                kiwi: {
+                    x: i + Math.random() * 8 - 4,
+                    y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                }
+            }
+        });
+        scatterplot.data(data).render();
+    }, 20000);
 +resize()

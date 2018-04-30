@@ -1,53 +1,50 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.barchart.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.barchart.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>barchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A bar chart displays one dimensional <span class='good'>categorical data</span>. Useful when there is <span class='good'>no relationship</span> between the values, for instance if the data is the result of a counting process. Also, it can handle <span class='good'>more categories</span> than a pie chart.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.barchart.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.barchart.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = {
-    plum: 13,
-    banana: 4,
-    mango: 6,
-    orange: 2,
-    melon: 11,
-    kiwi: 7,
-    pear: 3
-};
-var colors = {
-    plum: "darkmagenta",
-    banana: "gold",
-    mango: "tomato",
-    orange: "orange",
-    melon: "green",
-    kiwi: "limegreen",
-    pear: "khaki"
-};</script><script class="doc">// create chart
+});</script><title>barchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A bar chart displays one dimensional <span class='good'>categorical data</span>. Useful when there is <span class='good'>no relationship</span> between the values, for instance if the data is the result of a counting process. Also, it can handle <span class='good'>more categories</span> than a pie chart.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.barchart.min.js">min.js</a><a href="../api/widgets.barchart.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.barchart.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var barchart = new du.widgets.BarChart("mychart", "#widget")
-    .data(data)
+    .data([
+        {name: "plum", value: 13},
+        {name: "banana", value: 4},
+        {name: "mango", value: 6},
+        {name: "orange", value: 2},
+        {name: "melon", value: 11},
+        {name: "kiwi", value: 7},
+        {name: "pear", value: 3}
+    ])
     .width(width)
     .height(height)
     .xLabel("fruit")
     .yLabel("stock")
     .margins(60)
     .fontSize(14)
-    .colors(colors)
+    .colors({
+        plum: "darkmagenta",
+        banana: "gold",
+        mango: "tomato",
+        orange: "orange",
+        melon: "green",
+        kiwi: "limegreen",
+        pear: "khaki"
+    })
     .vertical(true)
-    .render();</script><script class="doc">// add interactions
-barchart
-    .mouseover(function (k) {
-        // Highlight hovered bar
-        barchart.highlight(k, 300);
-    })
-    .mouseleave(function () {
-        // Remove highlights by passing null
-        barchart.highlight(null, 300);
-    })
-    .click(function (k) {
-        // Show an alert on click
-        alert("Plot clicked: '" + k + "'");
-    })
-    .render();</script><script>window.onresize = function () {
+    .tooltip(true)
+    .render();</script><script class="doc">// update data
+setInterval(function () {
+    var data = [
+        {name: "plum", value: parseInt(Math.random()*10)},
+        {name: "banana", value: parseInt(Math.random()*10)},
+        {name: "mango", value: parseInt(Math.random()*10)},
+        {name: "orange", value: parseInt(Math.random()*10)},
+        {name: "melon", value: parseInt(Math.random()*10)},
+        {name: "kiwi", value: parseInt(Math.random()*10)},
+        {name: "pear", value: parseInt(Math.random()*10)}
+    ];
+    barchart.data(data).render();
+}, 20000);</script><script>window.onresize = function () {
     barchart
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

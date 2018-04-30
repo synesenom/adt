@@ -48,10 +48,15 @@
 // TODO add calendar plot
 // TODO make plot data modifiable
 // TODO add graph widget
-// TODO add progress bar widget
 // TODO implement resize
-
+// TODO separate data update from rendering
+// TODO handle missing data points
 // TODO make data modifiable
+// TODO update color automatically on data/color updates
+// TODO construct input data formats naturally, to allow for missing data
+// TODO fix tooltip bug with positioning
+// TODO add internal parameters such as animation flag, etc
+// TODO move all adjustable attribute to union
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -514,6 +519,45 @@
         _attr.add(this, "tooltip", false);
 
         /**
+         * Namespace containing and managing data related information.
+         *
+         * @namespace _data
+         * @memberOf du.widget.Widget
+         * @private
+         */
+        var _data = (function () {
+            var _keys = [];
+
+            /**
+             * Updates data plot keys and returns the entering/exiting keys and returns the status of different
+             * keys.
+             *
+             * @method update
+             * @methodOf du.widget.Widget._data
+             * @param {Array} keys New data keys.
+             * @returns {object} Object containing the different keys: {remain}, {enter} and {exit}.
+             */
+            function update(keys) {
+               return {
+                   remain: _keys.reduce(function(e, k) {
+                       return keys.indexOf(k) > -1 ? e.concat(k) : e;
+                   }, []),
+                   exit: _keys.reduce(function (e, k) {
+                       return keys.indexOf(k) === -1 ? e.concat(k) : e;
+                   }, []),
+                   enter: keys.forEach(function (e, k) {
+                       return _keys.indexOf(k) === -1 ? e.concat(k) : e;
+                   }, [])
+               };
+            }
+
+            // Public methods
+            return {
+                update: update
+            };
+        })();
+
+        /**
          * Collection of some convenience methods.
          *
          * @namespace _utils
@@ -524,29 +568,57 @@
             /**
              * Encodes a plot key by replacing spaces with double underscore.
              *
-             * @method _encode
+             * @method encode
              * @memberOf du.widget.Widget._utils
              * @param {string} key Key to encode.
              * @returns {(number|string)} Encoded key if key is valid, empty string otherwise.
-             * @private
              */
-            function _encode(key) {
+            function encode(key) {
                 if (typeof key !== "number" && typeof key !== "string")
                     return "";
                 return (""+key).replace(/ /g, '__');
             }
 
+            function standardAxis() {
+                var g = _widget.append("g");
+
+                return {
+                    g: g,
+                    axisFn: {
+                        x: d3.axisBottom()
+                            .ticks(7),
+                        y: d3.axisLeft()
+                            .ticks(5)
+                    },
+                    axes: {
+                        x: g.append("g")
+                            .attr("class", "x axis"),
+                        y: g.append("g")
+                            .attr("class", "y axis")
+                    },
+                    labels: {
+                        x: g.append("text")
+                            .attr("class", "x axis-label")
+                            .attr("text-anchor", "end")
+                            .attr("stroke-width", 0),
+                        y: g.append("text")
+                            .attr("class", "y axis-label")
+                            .attr("text-anchor", "begin")
+                            .attr("stroke-width", 0)
+                    }
+                };
+            }
+
             /**
              * Creates a scale from an array of values.
              *
-             * @method _scale
+             * @method scale
              * @memberOf du.widgets.Widget._utils
              * @param {Array} data Array of values to build scale for.
              * @param {Array} range Array of the range.
              * @param {string=} type Type of the values. Can be {number}, {string}.
-             * @private
              */
-            function _scale(data, range, type) {
+            function scale(data, range, type) {
                 // If no data, return default
                 if (!data || data.length < 1) {
                     return d3.scaleLinear()
@@ -579,7 +651,7 @@
             /**
              * Highlights an element in the widget.
              *
-             * @method _highlight
+             * @method highlight
              * @memberOf du.widget.Widget._utils
              * @param {du.widget.Widget} widget The current widget that called the method.
              * @param {object} svg The inner SVG of the widget.
@@ -587,16 +659,15 @@
              * @param {string} key Key of the element to highlight.
              * @param {number} duration Duration of the highlight animation.
              * @returns {du.widget.Widget} The widget calling the method.
-             * @private
              */
-            function _highlight(widget, svg, selector, key, duration) {
+            function highlight(widget, svg, selector, key, duration) {
                 if (svg !== null) {
                     if (typeof key === "string") {
                         svg.g.selectAll(selector).transition();
                         svg.g.selectAll(selector)
                             .transition().duration(duration ? duration : 0)
                             .style("opacity", function () {
-                                return d3.select(this).classed(_encode(key)) ? 1 : 0.1;
+                                return d3.select(this).classed(encode(key)) ? 1 : 0.1;
                             });
                     } else {
                         svg.g.selectAll(selector).transition();
@@ -614,13 +685,12 @@
              * If single color is defined, a sequential color scheme is generated for 10 categories.
              * If a full color mapping is specified, it is used directly without change.
              *
-             * @method _colors
+             * @method colors
              * @memberOf du.widget.Widget._utils
              * @param {Array=} keys Array of keys to build color mapping for.
              * @returns {object} Object containing the keys as property names and the associated colors as values.
-             * @private
              */
-            function _colors(keys) {
+            function colors(keys) {
                 // Return empty color scheme if keys are invalid
                 if (keys === null || keys === undefined) {
                     return {};
@@ -661,163 +731,13 @@
 
             // Exposed methods
             return {
-                encode: _encode,
-                scale: _scale,
-                highlight: _highlight,
-                colors: _colors
+                encode: encode,
+                standardAxis: standardAxis,
+                scale: scale,
+                highlight: highlight,
+                colors: colors
             };
         })();
-
-        /**
-         * Shows/hides the within-widget tooltip.
-         *
-         * @method _showTooltip
-         * @memberOf du.widget.Widget
-         * @private
-         */
-        function _showTooltip() {
-            var tooltipId = "du-widgets-plot-tooltip";
-            var m = d3.mouse(_widget.node());
-            var mx = d3.event.pageX;
-            var my = d3.event.pageY;
-            var container = _widget.node().getBoundingClientRect();
-
-            // If content is null or we are outside the charting area
-            // just remove tooltip
-            if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
-                || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
-                d3.select("#" + tooltipId)
-                    .style("opacity", 0)
-                    .html("");
-                _utils.tooltip();
-                return;
-            }
-
-            // Create tooltip if needed
-            var tooltip = d3.select("#" + tooltipId);
-            if (d3.select("#" + tooltipId).empty()) {
-                var color = d3.color(_attr.fontColor);
-                color.opacity = 0.3;
-                tooltip = d3.select("body").append("div")
-                    .attr("id", tooltipId)
-                    .style("position", "absolute")
-                    .style("background-color", "rgba(255, 255, 255, 0.95)")
-                    .style("border-radius", "2px")
-                    .style("box-shadow", "0 0 3px " + color)
-                    .style("padding", "5px")
-                    .style("font-family", "'Courier', monospace")
-                    .style("font-size", "0.7em")
-                    .style("color", _attr.fontColor)
-                    .style("pointer-events", "none")
-                    .style("left", (container.left + container.right) / 2 + 'px')
-                    .style("top", (container.top + container.bottom) / 2 + 'px');
-            }
-
-            // Get content
-            // If content is invalid, remove tooltip
-            var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
-            if (!content) {
-                d3.select("#" + tooltipId)
-                    .style("opacity", 0)
-                    .html("");
-                _utils.tooltip();
-                return;
-            }
-
-            // Erase tooltip content and add title
-            tooltip.html("").append("div")
-                .style('position', "relative")
-                .style("width", "calc(100% - 10px)")
-                .style("line-height", "11px")
-                .style("margin", "5px")
-                .style("margin-bottom", "10px")
-                .style("border-bottom", "solid 0.5px " + _attr.fontColor)
-                .text(content.title);
-
-            // Add color
-            tooltip.style("border-left", content.stripe ? "solid 2px " + content.stripe : null);
-
-            // Add content
-            switch (content.content.type) {
-                case "metrics":
-                    // List of metrics
-                    content.content.data.forEach(function(row) {
-                        var entry = tooltip.append("div")
-                            .style("position", "relative")
-                            .style("display", "block")
-                            .style("width", "auto")
-                            .style("height", "10px")
-                            .style("margin", "5px");
-                        entry.append("div")
-                            .style("position", "relative")
-                            .style("float", "left")
-                            .style("color", "#888")
-                            .html(row.label);
-                        entry.append("div")
-                            .style("position", "relative")
-                            .style("float", "right")
-                            .style("margin-left", "10px")
-                            .html(row.value);
-                    });
-                    break;
-                case "plots":
-                    // List of plots
-                    content.content.data.sort(function(a, b) {
-                        return a.id.localeCompare(b.id);
-                    }).forEach(function(plot) {
-                        var entry = tooltip.append("div")
-                            .style("position", "relative")
-                            .style("max-width", "150px")
-                            .style("height", "10px")
-                            .style("margin", "5px")
-                            .style("padding-right", "10px");
-                        entry.append("div")
-                            .style("position", "relative")
-                            .style("width", "9px")
-                            .style("height", "9px")
-                            .style("float", "left")
-                            .style("background-color", plot.color);
-                        entry.append("span")
-                            .style("position", "relative")
-                            .style("width", "calc(100% - 20px)")
-                            .style("height", "10px")
-                            .style("float", "right")
-                            .style("line-height", "11px")
-                            .html(plot.value);
-                    });
-                    break;
-            }
-
-            // Calculate position
-            var elem = tooltip.node().getBoundingClientRect();
-            var tw = elem.width;
-            var th = elem.height;
-            var tx = mx + 20;
-            var ty = my + 20;
-
-            // Correct for edges
-            if (tx + tw > container.right - _attr.margins.right - 5) {
-                tx -= tw + 40;
-            }
-            if (ty + th > container.bottom - _attr.margins.bottom - 5) {
-                // Adjust until it fits in graph
-                for (var j=1; j++; j<th+30) {
-                    ty -= j;
-                    if (ty+th < container.bottom - _attr.margins.bottom - 5) {
-                        break;
-                    }
-                }
-            }
-
-            // Set position
-            tooltip
-                .style("opacity", 1)
-                .transition();
-            tooltip
-                .transition().duration(200).ease(d3.easeLinear)
-                .style("left", tx + 'px')
-                .style("top", ty + 'px');
-        }
 
         /**
          * Returns the widget ID.
@@ -929,6 +849,156 @@
             }
             return this;
         };
+
+        /**
+         * Shows/hides the within-widget tooltip.
+         *
+         * @method _showTooltip
+         * @memberOf du.widget.Widget
+         * @private
+         */
+        function _showTooltip() {
+            var tooltipId = "du-widgets-plot-tooltip";
+            var m = d3.mouse(_widget.node());
+            var mx = d3.event.pageX;
+            var my = d3.event.pageY;
+            var container = _widget.node().getBoundingClientRect();
+
+            // If content is null or we are outside the charting area
+            // just remove tooltip
+            if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
+                || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
+                d3.select("#" + tooltipId)
+                    .style("opacity", 0)
+                    .html("");
+                _utils.tooltip();
+                return;
+            }
+
+            // Create tooltip if needed
+            var tooltip = d3.select("#" + tooltipId);
+            if (d3.select("#" + tooltipId).empty()) {
+                var color = d3.color(_attr.fontColor);
+                color.opacity = 0.3;
+                tooltip = d3.select("body").append("div")
+                    .attr("id", tooltipId)
+                    .style("position", "absolute")
+                    .style("background-color", "rgba(255, 255, 255, 0.95)")
+                    .style("border-radius", "2px")
+                    .style("box-shadow", "0 0 3px " + color)
+                    .style("padding", "5px")
+                    .style("font-family", "'Courier', monospace")
+                    .style("font-size", "0.7em")
+                    .style("color", _attr.fontColor)
+                    .style("pointer-events", "none")
+                    .style("left", (container.left + container.right) / 2 + 'px')
+                    .style("top", (container.top + container.bottom) / 2 + 'px');
+            }
+
+            // Get content
+            // If content is invalid, remove tooltip
+            var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
+            if (!content) {
+                d3.select("#" + tooltipId)
+                    .style("opacity", 0)
+                    .html("");
+                _utils.tooltip();
+                return;
+            }
+
+            // Erase tooltip content and add title
+            tooltip.html("").append("div")
+                .style('position', "relative")
+                .style("width", "calc(100% - 10px)")
+                .style("line-height", "11px")
+                .style("margin", "5px")
+                .style("margin-bottom", "10px")
+                .text(content.title);
+
+            // Add color
+            tooltip.style("border-left", content.stripe ? "solid 2px " + content.stripe : null);
+
+            // Add content
+            switch (content.content.type) {
+                case "metrics":
+                    // List of metrics
+                    content.content.data.forEach(function(row) {
+                        var entry = tooltip.append("div")
+                            .style("position", "relative")
+                            .style("display", "block")
+                            .style("width", "auto")
+                            .style("height", "10px")
+                            .style("margin", "5px");
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("float", "left")
+                            .style("color", "#888")
+                            .html(row.label);
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("float", "right")
+                            .style("margin-left", "10px")
+                            .html(row.value);
+                    });
+                    break;
+                case "plots":
+                    // List of plots
+                    content.content.data.sort(function(a, b) {
+                        return a.id.localeCompare(b.id);
+                    }).forEach(function(plot) {
+                        var entry = tooltip.append("div")
+                            .style("position", "relative")
+                            .style("max-width", "150px")
+                            .style("height", "10px")
+                            .style("margin", "5px")
+                            .style("padding-right", "10px");
+                        entry.append("div")
+                            .style("position", "relative")
+                            .style("width", "9px")
+                            .style("height", "9px")
+                            .style("float", "left")
+                            .style("background-color", plot.color);
+                        entry.append("span")
+                            .style("position", "relative")
+                            .style("width", "calc(100% - 20px)")
+                            .style("height", "10px")
+                            .style("float", "right")
+                            .style("line-height", "11px")
+                            .html(plot.value);
+                    });
+                    break;
+            }
+
+            // Calculate position
+            var elem = tooltip.node().getBoundingClientRect();
+            var tw = elem.width;
+            var th = elem.height;
+            var tx = mx + 20;
+            var ty = my + 20;
+
+            // Correct for edges
+            if (tx + tw > container.right - _attr.margins.right - 5) {
+                tx -= tw + 40;
+            }
+            if (ty + th > container.bottom - _attr.margins.bottom - 5) {
+                // Adjust until it fits in graph
+                for (var j=1; j++; j<th+30) {
+                    ty -= j;
+                    if (ty+th < container.bottom - _attr.margins.bottom - 5) {
+                        break;
+                    }
+                }
+            }
+
+            // Set position
+            tooltip
+                .style("opacity", 1)
+                .transition();
+            tooltip
+                .transition().duration(200).ease(d3.easeLinear)
+                .style("left", tx + 'px')
+                .style("top", ty + 'px');
+        }
 
         /**
          * The rendering methods of the widget.
@@ -1079,6 +1149,7 @@
         return {
             widget: _widget,
             attr: _attr,
+            data: _data,
             utils: _utils,
             render: _render
         };

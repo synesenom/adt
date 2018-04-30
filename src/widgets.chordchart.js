@@ -110,6 +110,7 @@
         var _nameByIndex = d3.map();
         var _aura = 10;
         var _prev_chord = null;
+        var _transition = false;
 
         /**
          * Binds data to the chord chart.
@@ -298,7 +299,8 @@
          * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".ribbon", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".ribbon", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -378,7 +380,9 @@
                 });
             _svg.newGroups = _svg.groups
                 .enter().append("g")
-                .each(function(d){ d.name = _nameByIndex.get(d.index); })
+                .each(function(d){
+                    d.name = _nameByIndex.get(d.index);
+                })
                 .attr("class", "group")
                 .style("pointer-events", "all")
                 .on("mouseover", function(d) {
@@ -434,10 +438,17 @@
                 .each(function(d){ d.name = _nameByIndex.get(d.index); })
                 .attr("d", _svg.arc)
                 .transition().duration(duration)
+                .each(function() {
+                    _transition = true;
+                })
+                .style("opacity", 1)
                 .style("fill", function (d) {
                     return _w.attr.colors[d.name];
                 })
-                .attrTween("d", _arcTween(_prev_chord));
+                .attrTween("d", _arcTween(_prev_chord))
+                .on("end", function() {
+                    _transition = false;
+                });
             if (_w.attr.ticks) {
                 _svg.groups.select("text")
                     .transition().duration(duration)
@@ -493,6 +504,7 @@
                     return "ribbon " + _w.utils.encode(d.source.name);
                 })
                 .transition().duration(duration)
+                .style("opacity", 1)
                 .style("fill", function (d) {
                     return _w.attr.colors[_w.attr.invert ? d.source.name : d.target.name];
                 })

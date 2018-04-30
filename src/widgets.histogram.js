@@ -80,6 +80,8 @@
         var _svg = {};
         var _data = [];
         var _bins = [];
+        var _colors = {};
+        var _transition = false;
 
         /**
          * Binds data to the histogram.
@@ -108,14 +110,15 @@
          * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".bar", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".bar", key, duration);
+            return this;
         };
 
         // Tooltip builder
         _w.utils.tooltip = function(mouse) {
             // Get bisection
             var bisect = d3.bisector(function (d) {
-                return _svg.scale.x(d.x0);
+                return _svg.scale.x(d.values.x0);
             }).right;
             var i = mouse ? bisect(_bins, mouse[0]) : null;
 
@@ -131,15 +134,15 @@
 
             // Build tooltip content
             return {
-                title: "bin #" + i,
+                title: point.id,
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "min:", value: point.x0.toPrecision(3)},
-                        {label: "max:", value: point.x1.toPrecision(3)},
-                        {label: "count:", value: point.length},
-                        {label: "fraction:", value: (100 * point.length / d3.sum(_bins, function(d) {
-                            return d.length;
+                        {label: "min:", value: point.values.x0.toPrecision(3)},
+                        {label: "max:", value: point.values.x1.toPrecision(3)},
+                        {label: "count:", value: point.values.length},
+                        {label: "fraction:", value: (100 * point.values.length / d3.sum(_bins, function(d) {
+                            return d.values.length;
                         })).toFixed(2) + "%"}
                     ]
                 }
@@ -148,34 +151,8 @@
 
         // Builder
         _w.render.build = function() {
-            // Add chart itself
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(4),
-                y: d3.axisLeft()
-                    .ticks(4)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
@@ -204,13 +181,18 @@
             _bins = d3.histogram()
                 .domain([realMin, realMin+n*realBin])
                 .thresholds(thresholds)
-                (_data);
+                (_data).map(function(d, i) {
+                    return {
+                        id: "bin " + i,
+                        values: d
+                    };
+                });
 
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale([realMin, realMin+n*realBin], [0, _w.attr.innerWidth]),
                 y: _w.utils.scale([0, d3.max(_bins, function (d) {
-                    return d.length / norm;
+                    return d.values.length / norm;
                 })], [_w.attr.innerHeight, 0])
             };
 
@@ -222,47 +204,71 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Plot
-            if (_data.length > 0) {
-                // Add bars if needed
-                if (_svg.bars === undefined) {
-                    _svg.bars = _svg.g.selectAll(".bar")
-                        .data(_bins)
-                        .enter().append("rect")
-                        .attr("class", function (d, i) {
-                            return "bar bin-" + i;
-                        })
-                        .style("pointer-events", "all")
-                        .style("stroke", "none")
-                        .style("shape-rendering", "geometricPrecision");
-                    _svg.bars
-                        .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
-                        .attr("height", 0);
-                }
-
-                // Update data
-                _svg.bars.data(_bins);
-                _svg.bars
-                    .attr("x", function (d) {
-                        return _svg.scale.x(d.x0) + 1;
-                    })
-                    .attr("width", function(d) {
-                        return Math.max(0, Math.abs(_svg.scale.x(d.x1) - _svg.scale.x(d.x0)) - 2);
-                    })
-                    .attr("y", function (d) {
-                        return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.length / norm);
-                    })
-                    .attr("height", function (d) {
-                        return _w.attr.height -_w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.length / norm);
-                    });
-            }
+            // Build/update plot
+            _colors = _w.utils.colors(_bins ? _bins.map(function(d){ return d.id; }) : null);
+            _svg.plots.bars = _svg.g.selectAll(".bar")
+                .data(_bins, function(d) {
+                    return d.id;
+                });
+            _svg.plots.bars.exit()
+                .transition().duration(duration)
+                .style("height", 0)
+                .remove();
+            _svg.plots.bars.enter().append("rect")
+                .attr("class", function (d) {
+                    return "bar " + _w.utils.encode(d.id);
+                })
+                .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
+                .attr("height", 0)
+                .style("pointer-events", "all")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none")
+                .attr("x", function (d) {
+                    return _svg.scale.x(d.values.x0) + 1;
+                })
+                .attr("width", function(d) {
+                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
+                })
+                .style("fill", function() {
+                    return _colors[_bins[0].id];
+                })
+            .merge(_svg.plots.bars)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.id);
+                })
+                .transition().duration(duration)
+                .attr("x", function (d) {
+                    return _svg.scale.x(d.values.x0) + 1;
+                })
+                .attr("width", function(d) {
+                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
+                })
+                .attr("y", function (d) {
+                    return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.values.length / norm);
+                })
+                .attr("height", function (d) {
+                    return _w.attr.height -_w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.values.length / norm);
+                })
+                .style("opacity", 1)
+                .style("fill", function() {
+                    return _colors[_bins[0].id];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
         };
 
         // Style updater
         _w.render.style = function() {
-            // Set colors
-            _w.attr.colors = _w.utils.colors([0]);
-
             // Chart
             _svg.g
                 .style("width", _w.attr.innerWidth + "px")
@@ -301,21 +307,6 @@
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.yLabel);
-
-            // Plot
-            if (_svg.bars !== undefined) {
-                _svg.bars
-                    .style("fill", _w.attr.colors[0])
-                    .on("mouseover", function (d, i) {
-                        _w.attr.mouseover && _w.attr.mouseover("bin-" + i);
-                    })
-                    .on("mouseleave", function (d, i) {
-                        _w.attr.mouseleave && _w.attr.mouseleave("bin-" + i);
-                    })
-                    .on("click", function (d, i) {
-                        _w.attr.click && _w.attr.click("bin-" + i);
-                    });
-            }
         };
     }
 

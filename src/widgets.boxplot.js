@@ -38,6 +38,8 @@
         var _svg = {};
         var _data = [];
         var _current = null;
+        var _colors = {};
+        var _transition = false;
 
         /**
          * Binds data to the box plot.
@@ -71,19 +73,21 @@
                 });
                 return {
                     name: d.name,
-                    min: min,
-                    max: max,
-                    mean: d3.mean(sd),
-                    median: d3.median(sd),
-                    q1: q1,
-                    q3: q3,
-                    whiskers: {
-                        lower: Math.max(min, q1 - 1.5*iqr),
-                        upper: Math.min(max, q3 + 1.5*iqr)
-                    },
-                    outliers: {
-                        mild: mildOutliers,
-                        extreme: extremeOutliers
+                    values: {
+                        min: min,
+                        max: max,
+                        mean: d3.mean(sd),
+                        median: d3.median(sd),
+                        q1: q1,
+                        q3: q3,
+                        whiskers: {
+                            lower: Math.max(min, q1 - 1.5 * iqr),
+                            upper: Math.min(max, q3 + 1.5 * iqr)
+                        },
+                        outliers: {
+                            mild: mildOutliers,
+                            extreme: extremeOutliers
+                        }
                     }
                 };
             });
@@ -100,7 +104,8 @@
          * @returns {du.widgets.boxplot.BoxPlot} Reference to the current BoxPlot.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".box", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".box", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -111,13 +116,13 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "min/max:", value: _current.min.toPrecision(3) + "/" + _current.max.toPrecision(3)},
-                        {label: "mean:", value: _current.mean.toPrecision(3)},
-                        {label: "median:", value: _current.median.toPrecision(3)},
-                        {label: "Q1:", value: _current.q1.toPrecision(3)},
-                        {label: "Q3:", value: _current.q3.toPrecision(3)},
-                        {label: "#mild outliers:", value: _current.outliers.mild.length},
-                        {label: "#extreme outliers:", value: _current.outliers.extreme.length}
+                        {label: "min/max:", value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)},
+                        {label: "mean:", value: _current.values.mean.toPrecision(3)},
+                        {label: "median:", value: _current.values.median.toPrecision(3)},
+                        {label: "Q1:", value: _current.values.q1.toPrecision(3)},
+                        {label: "Q3:", value: _current.values.q3.toPrecision(3)},
+                        {label: "mild outliers:", value: _current.values.outliers.mild.length},
+                        {label: "extreme outliers:", value: _current.values.outliers.extreme.length}
                     ]
                 }
             } : null;
@@ -125,34 +130,8 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(5),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
@@ -164,7 +143,7 @@
                 }).reverse(), [_w.attr.innerWidth, 0], "point"),
                 y: _w.utils.scale(
                     _data.map(function (d) {
-                        return [d.min-0.1*(d.max-d.min), d.max+0.1*(d.max-d.min)];
+                        return [d.values.min-0.1*(d.values.max-d.values.min), d.values.max+0.1*(d.values.max-d.values.min)];
                     }).reduce(function (array, d) {
                         return array.concat(d);
                     }, []), [_w.attr.innerHeight, 0])
@@ -178,118 +157,187 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if(_data.length > 0) {
-                // Add boxes
-                if (_svg.boxes === undefined) {
-                    _svg.boxes = {};
-                    _data.forEach(function (d) {
-                        var g = _svg.g.selectAll("." + _w.utils.encode(d.name))
-                            .data([d])
-                            .enter().append("g")
-                            .attr("class", "box " + _w.utils.encode(d.name));
-                        _svg.boxes[d.name] = {
-                            g: g,
-                            body: g.append("rect")
-                                .attr("x", _svg.scale.x(d.name) - 10)
-                                .attr("y", _svg.scale.y(d.q3))
-                                .attr("width", 20)
-                                .attr("height", _svg.scale.y(d.q1) - _svg.scale.y(d.q3))
-                                .style("rx", "2px")
-                                .style("ry", "2px")
-                                .style("fill-opacity", 0.3)
-                                .style("stroke-width", "1px"),
-                            median: g.append("line")
-                                .attr("class", "median")
-                                .attr("x1", _svg.scale.x(d.name) - 10)
-                                .attr("x2", _svg.scale.x(d.name) + 10)
-                                .attr("y1", _svg.scale.y(d.median))
-                                .attr("y2", _svg.scale.y(d.median))
-                                .style("stroke-width", "2px")
-                                .style("fill-opacity", 0.8),
-                            whiskers: {
-                                lower: g.append("path")
-                                    .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.lower) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.lower) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.lower)),
-                                upper: g.append("path")
-                                    .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.upper))
-                            },
-                            outliers: {
-                                mild: g.append("g")
-                                    .attr("class", "mild-outlier")
-                                    .selectAll(".mild-outlier")
-                                    .data(d.outliers.mild)
-                                    .enter().append("circle")
-                                    .attr("r", 2.5)
-                                    .attr("cx", _svg.scale.x(d.name))
-                                    .attr("cy", function(dd) {
-                                        return _svg.scale.y(dd);
-                                    })
-                                    .attr("stroke", "none"),
-                                extreme: g.append("g")
-                                    .attr("class", "extreme-outlier")
-                                    .selectAll(".extreme-outlier")
-                                    .data(d.outliers.extreme)
-                                    .enter().append("circle")
-                                    .attr("r", 2)
-                                    .attr("cx", _svg.scale.x(d.name))
-                                    .attr("cy", function(dd) {
-                                        return _svg.scale.y(dd);
-                                    })
-                                    .attr("fill", "none")
-                                    .attr("stroke-width", "0.5px")
-                            }
-                        }
-                    });
-                }
-
-                // Update data
-                _data.forEach(function(d) {
-                    _svg.boxes[d.name].body
-                        .transition().duration(duration)
-                        .attr("x", _svg.scale.x(d.name) - 10)
-                        .attr("y", _svg.scale.y(d.q3))
-                        .attr("width", 20)
-                        .attr("height", _svg.scale.y(d.q1) - _svg.scale.y(d.q3));
-                    _svg.boxes[d.name].median
-                        .transition().duration(duration)
-                        .attr("x1", _svg.scale.x(d.name) - 10)
-                        .attr("x2", _svg.scale.x(d.name) + 10)
-                        .attr("y1", _svg.scale.y(d.median))
-                        .attr("y2", _svg.scale.y(d.median));
-                    _svg.boxes[d.name].whiskers.lower
-                        .transition().duration(duration)
-                        .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.lower) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.lower) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.lower));
-                    _svg.boxes[d.name].whiskers.upper
-                        .transition().duration(duration)
-                        .attr("d", "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.whiskers.upper));
-                    // TODO make transition instead of just replotting dots
-                    _svg.boxes[d.name].outliers.mild.remove();
-                    _svg.boxes[d.name].outliers.mild = _svg.boxes[d.name].g.append("g")
-                        .attr("class", "mild-outlier")
-                        .selectAll(".mild-outlier")
-                        .data(d.outliers.mild)
-                        .enter().append("circle")
-                        .attr("r", 2.5)
-                        .attr("cx", _svg.scale.x(d.name))
-                        .attr("cy", function(dd) {
-                            return _svg.scale.y(dd);
-                        })
-                        .style("stroke", "none");
-                    _svg.boxes[d.name].outliers.extreme.remove();
-                    _svg.boxes[d.name].outliers.extreme = _svg.boxes[d.name].g.append("g")
-                        .attr("class", "extreme-outlier")
-                        .selectAll(".extreme-outlier")
-                        .data(d.outliers.extreme)
-                        .enter().append("circle")
-                        .attr("r", 2)
-                        .attr("cx", _svg.scale.x(d.name))
-                        .attr("cy", function(dd) {
-                            return _svg.scale.y(dd);
-                        })
-                        .attr("fill", "none")
-                        .attr("stroke-width", "0.5px");
+            // Build/update plots
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            // Groups
+            _svg.plots.groups = _svg.g.selectAll(".box-group")
+                .data(_data, function(d) {
+                    return d.name;
                 });
-            }
+            _svg.plots.groups.exit()
+                .style("opacity", 0)
+                .remove();
+            var enter = _svg.plots.groups.enter().append("g")
+                .attr("class", function (d) {
+                    return "box-group " + _w.utils.encode(d.name);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("opacity", 0)
+                .style("fill", "transparent");
+            var union = enter.merge(_svg.plots.groups)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _current = d;
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
+                })
+                .on("mouseleave", function(d) {
+                    _current = null;
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.name);
+                });
+            union.transition().duration(duration)
+                .style("opacity", 1)
+                .style("fill-opacity", _w.attr.opacity)
+                .style("fill", function(d) {
+                    return _colors[d.name];
+                })
+                .style("stroke", function(d) {
+                    return _colors[d.name];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
+
+            // Body
+            enter.append("rect")
+                .attr("class", "body")
+                .attr("x", function(d) {
+                    return _svg.scale.x(d.name) - 10;
+                })
+                .attr("y", function(d) {
+                    return _svg.scale.y(d.values.q3);
+                })
+                .attr("width", 20)
+                .attr("height", function(d) {
+                    return _svg.scale.y(d.values.q1) - _svg.scale.y(d.values.q3);
+                })
+                .style("rx", "2px")
+                .style("ry", "2px")
+                .style("fill-opacity", 0.3)
+                .style("stroke-width", "1px");
+            union.select(".body")
+                .transition().duration(duration)
+                .attr("x", function(d) {
+                    return _svg.scale.x(d.name) - 10;
+                })
+                .attr("y", function(d) {
+                    return _svg.scale.y(d.values.q3);
+                })
+                .attr("width", 20)
+                .attr("height", function(d) {
+                    return _svg.scale.y(d.values.q1) - _svg.scale.y(d.values.q3);
+                });
+
+            // Median
+            enter.append("line")
+                .attr("class", "median")
+                .attr("x1", function(d){
+                    return _svg.scale.x(d.name) - 10;
+                })
+                .attr("x2", function(d) {
+                    return _svg.scale.x(d.name) + 10;
+                })
+                .attr("y1", function(d) {
+                    return _svg.scale.y(d.values.median);
+                })
+                .attr("y2", function(d) {
+                    return _svg.scale.y(d.values.median);
+                })
+                .style("stroke-width", "2px")
+                .style("fill-opacity", 0.8);
+            union.select(".median")
+                .transition().duration(duration)
+                .attr("x1", function(d) {
+                    return _svg.scale.x(d.name) - 10;
+                })
+                .attr("x2", function(d) {
+                    return _svg.scale.x(d.name) + 10;
+                })
+                .attr("y1", function(d) {
+                    return _svg.scale.y(d.values.median);
+                })
+                .attr("y2", function(d) {
+                    return _svg.scale.y(d.values.median);
+                });
+
+            // Upper whisker
+            enter.append("path")
+                .attr("class", "lower-whisker")
+                .attr("d", function(d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.lower) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.lower) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.lower);
+                });
+            union.select(".lower-whisker")
+                .transition().duration(duration)
+                .attr("d", function(d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.lower) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.lower) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.lower);
+                });
+
+            // Lower whisker
+            enter.append("path")
+                .attr("class", "upper-whisker")
+                .attr("d", function(d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.values.whiskers.upper);
+                });
+            union.select(".upper-whisker")
+                .transition().duration(duration)
+                .attr("d", function(d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.values.whiskers.upper);
+                });
+
+            // Mild outliers
+            union.selectAll(".mild-outlier")
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            var mildOutliers = union.selectAll(".mild-outlier")
+                .data(function(d) {
+                    return d.values.outliers.mild.map(function(dd) {
+                        return {x: d.name, y: dd};
+                    });
+                });
+            mildOutliers.enter().append("circle")
+                .attr("class", "mild-outlier")
+                .attr("r", 2.5)
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.y);
+                })
+                .attr("stroke", "none")
+                .style("opacity", 0)
+                .transition().duration(duration)
+                .style("opacity", 1);
+
+            // Extreme outliers
+            union.selectAll(".extreme-outlier")
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            var extremeOutliers = union.selectAll(".extreme-outlier")
+                .data(function(d) {
+                    return d.values.outliers.extreme.map(function(dd) {
+                        return {x: d.name, y: dd};
+                    });
+                });
+            extremeOutliers.enter().append("circle")
+                .attr("class", "extreme-outlier")
+                .attr("r", 2)
+                .attr("cx", function(d) {
+                    return _svg.scale.x(d.x);
+                })
+                .attr("cy", function(d) {
+                    return _svg.scale.y(d.y);
+                })
+                .attr("fill", "none")
+                .attr("stroke-width", "0.5px")
+                .style("opacity", 0)
+                .transition().duration(duration)
+                .style("opacity", 1);
         };
 
         // Style updater
@@ -327,31 +375,6 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _.forOwn(_svg.boxes, function(box, name) {
-                box.body.style("fill", _w.attr.colors[name])
-                    .style("stroke", _w.attr.colors[name]);
-                box.whiskers.lower.style("stroke", _w.attr.colors[name]);
-                box.whiskers.upper.style("stroke", _w.attr.colors[name]);
-                box.median
-                    .style("fill", _w.attr.colors[name])
-                    .style("stroke", _w.attr.colors[name]);
-                box.outliers.mild.style("fill", _w.attr.colors[name]);
-                box.outliers.extreme.style("stroke", _w.attr.colors[name]);
-                box.g
-                    .on("mouseover", function(d) {
-                        _current = d;
-                        _w.attr.mouseover && _w.attr.mouseover(name);
-                    })
-                    .on("mouseleave", function() {
-                        _current = null;
-                        _w.attr.mouseleave && _w.attr.mouseleave(name);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(name);
-                    });
-            });
         };
     }
 

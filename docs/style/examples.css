@@ -13,6 +13,18 @@ main {
 .short {
     height: 60px;
 }
+a,
+a:visited {
+    margin-right: 20px;
+    color: #bbb;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 2px;
+    transition: .3s color, .3s border-bottom;
+}
+a:hover {
+    color: black;
+    border-bottom: 2px solid dodgerblue;
+}
 @media screen and (max-width: 800px) {
     main {
         width: 70%;
@@ -33,9 +45,13 @@ main {
 }
 pre {
     width: auto;
+    border-radius: 3px;
 }
 pre code {
     min-width: 100%;
+    background-color: white !important;
+    font-size: 0.9em;
+    padding: 0 !important;
 }
 #desc {
     position: relative;
@@ -50,10 +66,12 @@ pre code {
     margin-top: 20px;
 }
 h1 {
-    padding-top: 30px;
+    margin: 40px 0 20px -20px;
+    padding: 5px 5px 5px 15px;
+    border-left: 5px solid dodgerblue;
 }
 .good {
-    color: dodgerblue;
+    color: limegreen;
     font-weight: bold;
 }
 .bad {

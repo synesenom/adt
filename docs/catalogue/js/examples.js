@@ -29,15 +29,15 @@ new du.widgets.BarChart("barchart", "#barchart")
     .margins({left: 60, top: 20, right: 20, bottom: 40})
     .fontSize(12)
     .vertical(true)
-    .data({
-        plum: 13,
-        banana: 4,
-        mango: 6,
-        orange: 2,
-        melon: 11,
-        kiwi: 7,
-        pear: 3
-    })
+    .data([
+        {name: "plum", value: 13},
+        {name: "banana", value: 4},
+        {name: "mango", value: 6},
+        {name: "orange", value: 2},
+        {name: "melon", value: 11},
+        {name: "kiwi", value: 7},
+        {name: "pear", value: 3}
+    ])
     .render();
 
 // Box plot
@@ -153,15 +153,15 @@ grid.add(new du.widgets.BarChart("subchart3")
     .margins({left: 50, top: 10, right: 10, bottom: 20})
     .fontSize(10)
     .vertical(true)
-    .data({
-        plum: 13,
-        banana: 4,
-        mango: 6,
-        orange: 2,
-        melon: 11,
-        kiwi: 7,
-        pear: 3
-    }), 0, 1, 2, 1);
+    .data([
+        {name: "plum", value: 13},
+        {name: "banana", value: 4},
+        {name: "mango", value: 6},
+        {name: "orange", value: 2},
+        {name: "melon", value: 11},
+        {name: "kiwi", value: 7},
+        {name: "pear", value: 3}
+    ]), 0, 1, 2, 1);
 grid.add(new du.widgets.AreaChart("subchart2")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
@@ -283,12 +283,12 @@ new du.widgets.PieChart("piechart", "#piechart")
     .fontColor("white")
     .fontSize(14)
     .ticks(true)
-    .data({
-        orange: 3,
-        mango: 4,
-        banana: 4,
-        plum: 2
-    })
+    .data([
+        {name: "orange", value: 3},
+        {name: "mango", value: 4},
+        {name: "banana", value: 4},
+        {name: "kiwi", value: 2}
+    ])
     .render();
 
 // Placeholder
@@ -326,13 +326,13 @@ new du.widgets.ScatterPlot("scatterplot", "#scatterplot")
     .tooltip(true)
     .data(Array.from(new Array(100).keys()).map(function (i) {
         return {
-            x: {
-                mango: i + Math.random() - 0.5,
-                kiwi: i + Math.random()*8 - 4
+            mango: {
+                x: i + Math.random() - 0.5,
+                y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
             },
-            y: {
-                mango: 10 * Math.pow(i / 40, 2) + Math.random()*10 - 5,
-                kiwi: 80 * (1-Math.exp(-i/30)) + Math.random()*10 - 5
+            kiwi: {
+                x: i + Math.random() * 8 - 4,
+                y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
             }
         }
     }))

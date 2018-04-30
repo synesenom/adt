@@ -1,45 +1,44 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.boxplot.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.boxplot.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>boxplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Box plots are useful to <span class='good'>compare data sets</span> by simple <span class='good'>summary statistics</span> such as median and extremal values. Box plots are based on simple metrics and <span class='bad'>hides details</span> of the underlying distributions. If details are needed, use a violin plot instead.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.boxplot.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.boxplot.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = [
-    {
-        name: "pareto",
-        data: new Array(1000).fill(0).map(function () {
-            return 18 / Math.pow(1-Math.random(), 2/20);
-        })
-    },
-    {
-        name: "uniform",
-        data: new Array(1000).fill(0).map(function () {
-            return Math.random() * 40;
-        })
-    },
-    {
-        name: "normal",
-        data: new Array(1000).fill(0).map(function() {
-            return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
-        })
-    },
-    {
-        name: "poisson",
-        data: new Array(1000).fill(0).map(function() {
-            var l = Math.exp(-10),
-                k = 0,
-                p = 1;
-            do {
-                k++;
-                p *= Math.random();
-            } while (p > l);
-            return k - 1;
-        })
-    }
-];</script><script class="doc">// create chart
+});</script><title>boxplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Box plots are useful to <span class='good'>compare data sets</span> by simple <span class='good'>summary statistics</span> such as median and extremal values. Box plots are based on simple metrics and <span class='bad'>hides details</span> of the underlying distributions. If details are needed, use a violin plot instead.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.boxplot.min.js">min.js</a><a href="../api/widgets.boxplot.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.boxplot.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var boxplot = new du.widgets.BoxPlot("mychart", "#widget")
-    .data(data)
+    .data([
+        {
+            name: "pareto",
+            data: new Array(1000).fill(0).map(function () {
+                return 18 / Math.pow(1 - Math.random(), 2 / 20);
+            })
+        },
+        {
+            name: "uniform",
+            data: new Array(1000).fill(0).map(function () {
+                return Math.random() * 40;
+            })
+        },
+        {
+            name: "normal",
+            data: new Array(1000).fill(0).map(function () {
+                return 5 * Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(1000).fill(0).map(function () {
+                var l = Math.exp(-10),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ])
     .width(width)
     .height(height)
     .xLabel("name")
@@ -47,7 +46,43 @@ var boxplot = new du.widgets.BoxPlot("mychart", "#widget")
     .margins(60)
     .fontSize(14)
     .tooltip(true)
-    .render();</script><script>window.onresize = function () {
+    .render();</script><script class="doc">// update data
+setInterval(function() {
+    var data = [
+        {
+            name: "pareto",
+            data: new Array(100).fill(0).map(function () {
+                return 18 / Math.pow(1 - Math.random(), 2 / 20);
+            })
+        },
+        {
+            name: "uniform",
+            data: new Array(100).fill(0).map(function () {
+                return Math.random() * 40;
+            })
+        },
+        {
+            name: "normal",
+            data: new Array(100).fill(0).map(function () {
+                return 5 * Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()) + 20;
+            })
+        },
+        {
+            name: "poisson",
+            data: new Array(100).fill(0).map(function () {
+                var l = Math.exp(-10),
+                    k = 0,
+                    p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > l);
+                return k - 1;
+            })
+        }
+    ];
+    boxplot.data(data).render();
+}, 20000);</script><script>window.onresize = function () {
     boxplot
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

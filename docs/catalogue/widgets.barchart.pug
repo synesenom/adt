@@ -1,58 +1,53 @@
 - var name = "barchart"
-- var links = {source: "widgets.barchart", docs: "widgets.barchart"}
+- var links = {minjs: "widgets.barchart", source: "widgets.barchart", docs: "widgets.barchart"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
 - var modules = ["widget", "widgets.barchart"]
 - var description = "A bar chart displays one dimensional <span class='good'>categorical data</span>. Useful when there is <span class='good'>no relationship</span> between the values, for instance if the data is the result of a counting process. Also, it can handle <span class='good'>more categories</span> than a pie chart."
 include pug/example
 script.doc.
-    // generate some data
-    var data = {
-        plum: 13,
-        banana: 4,
-        mango: 6,
-        orange: 2,
-        melon: 11,
-        kiwi: 7,
-        pear: 3
-    };
-    var colors = {
-        plum: "darkmagenta",
-        banana: "gold",
-        mango: "tomato",
-        orange: "orange",
-        melon: "green",
-        kiwi: "limegreen",
-        pear: "khaki"
-    };
-script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));
     var height = parseFloat(d3.select("#widget").style("height"));
     var barchart = new du.widgets.BarChart("mychart", "#widget")
-        .data(data)
+        .data([
+            {name: "plum", value: 13},
+            {name: "banana", value: 4},
+            {name: "mango", value: 6},
+            {name: "orange", value: 2},
+            {name: "melon", value: 11},
+            {name: "kiwi", value: 7},
+            {name: "pear", value: 3}
+        ])
         .width(width)
         .height(height)
         .xLabel("fruit")
         .yLabel("stock")
         .margins(60)
         .fontSize(14)
-        .colors(colors)
+        .colors({
+            plum: "darkmagenta",
+            banana: "gold",
+            mango: "tomato",
+            orange: "orange",
+            melon: "green",
+            kiwi: "limegreen",
+            pear: "khaki"
+        })
         .vertical(true)
+        .tooltip(true)
         .render();
 script.doc.
-    // add interactions
-    barchart
-        .mouseover(function (k) {
-            // Highlight hovered bar
-            barchart.highlight(k, 300);
-        })
-        .mouseleave(function () {
-            // Remove highlights by passing null
-            barchart.highlight(null, 300);
-        })
-        .click(function (k) {
-            // Show an alert on click
-            alert("Plot clicked: '" + k + "'");
-        })
-        .render();
+    // update data
+    setInterval(function () {
+        var data = [
+            {name: "plum", value: parseInt(Math.random()*10)},
+            {name: "banana", value: parseInt(Math.random()*10)},
+            {name: "mango", value: parseInt(Math.random()*10)},
+            {name: "orange", value: parseInt(Math.random()*10)},
+            {name: "melon", value: parseInt(Math.random()*10)},
+            {name: "kiwi", value: parseInt(Math.random()*10)},
+            {name: "pear", value: parseInt(Math.random()*10)}
+        ];
+        barchart.data(data).render();
+    }, 20000);
 +resize()

@@ -1,25 +1,25 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../dl/widget.min.js"></script><script src="../dl/widgets.linechart.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script src="../dependencies/d3.v4.min.js"></script><script src="../dependencies/lodash.4.17.4.min.js"></script><script src="../../src/widget.js"></script><script src="../../src/widgets.linechart.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
     .callback(function() {
         hljs.initHighlighting.called = false;
         hljs.initHighlighting();
-});</script><title>linechart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Line charts are most commonly used to show <span class='good'>temporal changes</span> or trends in quantitative data. As the data points are connected, it is expected that consecutive points are <span class='good'>related</span> to each other.</div><div id="code-doc"></div><div id="doc-link">[&nbsp;<a href="../dl/widgets.linechart.min.js">source</a>&nbsp;]&nbsp;[&nbsp;<a href="../api/widgets.linechart.html">documentation</a>&nbsp;]</div></main></body></html><script class="doc">// generate some data
-var data = Array.from(new Array(100).keys()).map(function (i) {
-    return {
-        x: i,
-        y: {
-            mango: 10 * Math.pow(i / 40, 2),
-            kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-        },
-        dy: {
-            mango: i / 10,
-            kiwi: 6
-        }
-    }
-});</script><script class="doc">// create chart
+});</script><title>linechart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Line charts are most commonly used to show <span class='good'>temporal changes</span> or trends in quantitative data. As the data points are connected, it is expected that consecutive points are <span class='good'>related</span> to each other.</div><div id="code-doc"></div><div id="doc-link"><a href="../dl/widgets.linechart.min.js">min.js</a><a href="../api/widgets.linechart.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.linechart.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var linechart = new du.widgets.LineChart("mychart", "#widget")
-    .data(data)
+    .data(new Array(100).fill(0).map(function (d, i) {
+        return {
+            x: i,
+            y: {
+                mango: Math.pow(i / 40, 2),
+                kiwi: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+            },
+            dy: {
+                mango: i / 100,
+                kiwi: .6
+            }
+        }
+    }))
     .width(width)
     .height(height)
     .xLabel("days")
@@ -27,7 +27,26 @@ var linechart = new du.widgets.LineChart("mychart", "#widget")
     .tooltip(true)
     .margins(40)
     .fontSize(14)
-    .render();</script><script class="doc">// add marker
+    .render();</script><script class="doc">// update data
+setInterval(function () {
+    var tau = 2 * Math.random();
+    var phi = 5 * Math.random() + 10;
+    var data = Array.from(new Array(100).keys()).map(function (i) {
+        return {
+            x: i,
+            y: {
+                mango: Math.pow(i / 40, tau),
+                kiwi: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / phi), 2) + 2
+            },
+            dy: {
+                mango: i / 100,
+                kiwi: .6
+            }
+        }
+    });
+    linechart.data(data).render();
+}, 20000);</script><script class="doc">// add marker
 linechart.addMarker("mymarker", "mango", 34, 87, "trend");</script><script>window.onresize = function () {
     linechart
         .width(parseFloat(d3.select('#widget').style('width')))

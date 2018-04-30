@@ -65,6 +65,8 @@
         // Widget elements
         var _svg = {};
         var _data = [];
+        var _colors = {};
+        var _transition = false;
 
         /**
          * Binds data to the bar chart.
@@ -78,15 +80,7 @@
          */
         this.data = function(data) {
             // Transform data to array
-            _data = [];
-            _.forOwn(data, function(v, k) {
-                _data.push({name: k, value: v});
-            });
-
-            // Sort by category name
-            _data.sort(function(a, b) {
-                return a.name.localeCompare(b.name);
-            });
+            _data = data;
             return this;
         };
 
@@ -100,7 +94,8 @@
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".bar", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".bar", key, duration);
+            return this;
         };
 
         // Tooltip builder
@@ -137,34 +132,8 @@
 
         // Builder
         _w.render.build = function() {
-            // Add chart itself
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(4),
-                y: d3.axisLeft()
-                    .ticks(4)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
@@ -174,11 +143,9 @@
                 x: _w.utils.scale(_data.map(function(d) {
                     return d.name;
                 }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
-                y: _w.utils.scale(_data.map(function (d) {
-                    return [0, d.value];
-                }).reduce(function (a, d) {
-                    return a.concat(d);
-                }, []), _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
+                y: _w.utils.scale([0, d3.max(_data, function (d) {
+                    return d.value;
+                })], _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
             };
 
             // Axes
@@ -190,64 +157,89 @@
                 .call(_svg.axisFn.y.scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
 
             // Plot
-            if (_data.length > 0) {
-                // Add bars if needed
-                if (_svg.bars === undefined) {
-                    _svg.bars = _svg.g.selectAll(".bar")
-                        .data(_data)
-                        .enter().append("rect")
-                        .attr("class", function (d) {
-                            return "bar " + _w.utils.encode(d.name);
-                        })
-                        .style("pointer-events", "all")
-                        .style("stroke", "none")
-                        .style("shape-rendering", "geometricPrecision");
-                    if (_w.attr.vertical) {
-                        _svg.bars
-                            .attr("x", 1)
-                            .attr("width", 0);
-                    } else {
-                        _svg.bars
-                            .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
-                            .attr("height", 0);
-                    }
-                }
-
-                // Update data
-                _svg.bars.data(_data);
-                if (_w.attr.vertical) {
-                    _svg.bars
-                        .attr("y", function (d) {
-                            return _svg.scale.x(d.name);
-                        })
-                        .attr("height", _svg.scale.x.bandwidth())
-                        .transition().duration(duration)
-                        .attr("x", 1)
-                        .attr("width", function (d) {
-                            return _svg.scale.y(d.value);
-                        });
-                } else {
-                    _svg.bars
-                        .attr("x", function (d) {
-                            return _svg.scale.x(d.name);
-                        })
-                        .attr("width", _svg.scale.x.bandwidth())
-                        .transition().duration(duration)
-                        .attr("y", function (d) {
-                            return _svg.scale.y(d.value);
-                        })
-                        .attr("height", function (d) {
-                            return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
-                        });
-                }
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _svg.plots.bars = _svg.g.selectAll(".bar")
+                .data(_data, function(d) {
+                    return d.name;
+                });
+            var exit = _svg.plots.bars.exit()
+                .transition().duration(duration)
+                .style('opacity', 0)
+                .remove();
+            var enter = _svg.plots.bars.enter().append("rect")
+                .attr("class", function (d) {
+                    return "bar " + _w.utils.encode(d.name);
+                })
+                .style("pointer-events", "all")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none")
+                .style("fill", function(d) {
+                    return _colors[d.name];
+                });
+            if (_w.attr.vertical) {
+                enter
+                    .attr("y", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("height", _svg.scale.x.bandwidth())
+                    .attr("x", 1)
+                    .attr("width", 0);
+            } else {
+                enter
+                    .attr("x", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("width", _svg.scale.x.bandwidth())
+                    .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
+                    .attr("height", 0);
             }
+            var union = enter.merge(_svg.plots.bars)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.name);
+                });
+            if (_w.attr.vertical) {
+                union = union
+                    .transition().duration(duration)
+                    .attr("y", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("height", _svg.scale.x.bandwidth())
+                    .attr("x", 1)
+                    .attr("width", function (d) {
+                        return _svg.scale.y(d.value);
+                    });
+            } else {
+                union = union
+                    .transition().duration(duration)
+                    .attr("x", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("width", _svg.scale.x.bandwidth())
+                    .attr("y", function (d) {
+                        return _svg.scale.y(d.value);
+                    })
+                    .attr("height", function (d) {
+                        return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
+                    });
+            }
+            union
+                .style("opacity", 1)
+                .on("end", function() {
+                    _transition = false;
+                });
         };
 
         // Style updater
         _w.render.style = function() {
-            // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
-
             // Chart
             _svg.g
                 .style("width", _w.attr.innerWidth + "px")
@@ -296,7 +288,7 @@
                 .text(_w.attr.vertical ? _w.attr.xLabel : _w.attr.yLabel);
 
             // Plot
-            if (_svg.bars !== undefined) {
+            /*if (_svg.bars !== undefined) {
                 _svg.bars
                     .style("fill", function (d) {
                         return typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[d.name];
@@ -333,7 +325,7 @@
                             _w.attr.click && _w.attr.click(_data[i].name);
                         });
                 }
-            }
+            }*/
         };
     }
 

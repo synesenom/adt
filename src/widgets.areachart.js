@@ -53,18 +53,6 @@
         var _w = Widget.call(this, name, "areachart", "svg", parent);
 
         /**
-         * Sets the type of the X axis.
-         * Supported values are: number, time, string.
-         * Default is number.
-         *
-         * @method xType
-         * @memberOf du.widgets.areachart.AreaChart
-         * @param {string} type Type of the X axis.
-         * @returns {du.widget.Widget} Reference to the current widget.
-         */
-        _w.attr.add(this, "xType", "number");
-
-        /**
          * Sets the opacity of the area plots.
          * Default is 0.3.
          *
@@ -73,11 +61,13 @@
          * @param {number} value The opacity value to set.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
-        _w.attr.add(this, "opacity", 0.4);
+        _w.attr.add(this, "opacity", 0.3);
 
         // Widget elements.
         var _svg = {};
         var _data = [];
+        var _colors = {};
+        var _transition = false;
 
         /**
          * Binds data to the area plot.
@@ -88,19 +78,22 @@
          * @method data
          * @memberOf du.widgets.areachart.AreaChart
          * @param {Array} data Data to plot.
-         * @param {number} scale Optional scaling parameter. Each data point is divided by this value.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
-        this.data = function(data, scale) {
-            var realScale = scale || 1;
-            _data = data.sort(function (a, b) {
+        this.data = function(data) {
+            var sorted = data.sort(function (a, b) {
                 return a.x - b.x;
-            }).map(function(d) {
-                var s = {x: d.x, y: {}};
-                _.forOwn(d.y, function(v, k) {
-                    s.y[k] = v / realScale;
-                });
-                return s;
+            });
+            _data = d3.keys(data[0].y).map(function(id) {
+                return {
+                    id: id,
+                    values: sorted.map(function(d) {
+                        return {
+                            x: d.x,
+                            y: d.y[id]
+                        };
+                    })
+                };
             });
             return this;
         };
@@ -115,19 +108,22 @@
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         this.highlight = function(key, duration) {
-            return _w.utils.highlight(this, _svg, ".area", key, duration);
+            if (!_transition) _w.utils.highlight(this, _svg, ".area", key, duration);
+            return this;
         };
 
         // Tooltip builder
         _w.utils.tooltip = function(mouse) {
-            // Get bisection
+            // Get bisections
             var bisect = d3.bisector(function (d) {
                 return _svg.scale.x(d.x);
             }).left;
-            var i = mouse ? bisect(_data, mouse[0]) : null;
+            var index = mouse ? _data.map(function(d) {
+                return bisect(d.values, mouse[0]);
+            }) : null;
 
             // If no data point is found, just remove tooltip elements
-            if (i === null) {
+            if (index === null) {
                 _.forOwn(this.tt, function(tt) {
                     tt.remove();
                 });
@@ -138,26 +134,28 @@
                 var tt = this.tt;
             }
 
-            // Get data entry
-            var left = _data[i - 1] ? _data[i - 1] : _data[i];
-            var right = _data[i] ? _data[i] : _data[i - 1];
-            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+            // Get plots
+            var x = 0;
+            var plots = _data.map(function(d, i) {
+                var j = index[i];
+                var data = d.values;
+                var left = data[j - 1] ? data[j - 1] : data[j];
+                var right = data[j] ? data[j] : data[j - 1];
+                var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+                x = point.x;
 
-            // Build tooltip content
-            var plots = [];
-            _.forOwn(point.y, function(yk, k) {
-                plots.push({id: k, color: _w.attr.colors[k], value: yk.toPrecision(6)});
-
-                // Update markers
-                tt[k] = tt[k] || _svg.g.append("circle");
-                tt[k]
+                tt[d.id] = tt[d.id] || _svg.g.append("circle");
+                tt[d.id]
                     .attr("r", 4)
-                    .attr("cx", _svg.scale.x(_data[i].x)+1)
-                    .attr("cy", _svg.scale.y(_data[i].y[k])+1)
-                    .style("fill", _w.attr.colors[k]);
+                    .attr("cx", _svg.scale.x(point.x)+1)
+                    .attr("cy", _svg.scale.y(point.y)+1)
+                    .style("fill", _colors[d.id]);
+
+                return {id: d.id, color: _colors[d.id], value: point.y.toPrecision(6)};
             });
+
             return {
-                title: _w.attr.xLabel + ": " + point.x,
+                title: _w.attr.xLabel + ": " + x,
                 content: {
                     type: "plots",
                     data: plots
@@ -167,49 +165,35 @@
 
         // Builder
         _w.render.build = function() {
-            // Add widget
-            _svg.g = _w.widget.append("g");
-
-            // Axes
-            _svg.axisFn = {
-                x: d3.axisBottom()
-                    .ticks(7),
-                y: d3.axisLeft()
-                    .ticks(5)
-            };
-            _svg.axes = {
-                x: _svg.g.append("g")
-                    .attr("class", "x axis"),
-                y: _svg.g.append("g")
-                    .attr("class", "y axis")
-            };
-
-            // Labels
-            _svg.labels = {
-                x: _svg.g.append("text")
-                    .attr("class", "x axis-label")
-                    .attr("text-anchor", "end")
-                    .attr("stroke-width", 0),
-                y: _svg.g.append("text")
-                    .attr("class", "y axis-label")
-                    .attr("text-anchor", "begin")
-                    .attr("stroke-width", 0)
-            };
+            _svg = _w.utils.standardAxis();
+            _svg.plots = {};
         };
 
         // Data updater
         _w.render.update = function(duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.map(function(d) {
+                x: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
                     return d.x;
                 }), [0, _w.attr.innerWidth]),
-                y: _w.utils.scale(_data.map(function (d) {
-                    return d3.values(d.y).concat([0]);
-                }).reduce(function (a, d) {
-                    return a.concat(d);
-                }, []), [_w.attr.innerHeight, 0])
+                y: _w.utils.scale(_data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
+                    return d.y;
+                }), [_w.attr.innerHeight, 0])
             };
+
+            // Calculate area function
+            var area = d3.area()
+                .x(function (d) {
+                    return _svg.scale.x(d.x) + 1;
+                })
+                .y0(_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
+                .y1(function (d) {
+                    return _svg.scale.y(d.y);
+                });
 
             // Update axes
             _svg.axes.x
@@ -219,41 +203,54 @@
                 .transition().duration(duration)
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
-            // Update plots
-            if (_data.length > 0) {
-                // Add areas if needed
-                if (_svg.areas === undefined) {
-                    _svg.areas = {};
-                    _.forOwn(_data[0].y, function (yk, k) {
-                        _svg.areas[k] = _svg.g.append("path")
-                            .attr("class", "area " + _w.utils.encode(k))
-                            .style("shape-rendering", "geometricPrecision");
-                    });
-                }
-
-                // Update data
-                _.forOwn(_data[0].y, function (yk, k) {
-                    var area = d3.area()
-                        .x(function (d) {
-                            return _svg.scale.x(d.x) + 1;
-                        })
-                        .y0(_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
-                        .y1(function (d) {
-                            return _svg.scale.y(d.y[k]);
-                        });
-                    _svg.g.select(".area." + _w.utils.encode(k))
-                        .transition().duration(duration)
-                        .attr("d", area(_data));
+            // Build/update plots
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            _svg.plots.areas = _svg.g.selectAll(".area")
+                .data(_data, function(d) {
+                    return d.id;
                 });
-            }
+            _svg.plots.areas.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.areas.enter().append("path")
+                .attr("class", function (d) {
+                    return "area " + _w.utils.encode(d.id);
+                })
+                .style("shape-rendering", "geometricPrecision")
+                .style("opacity", 0)
+                .style("stroke", "none")
+                .style("fill", "transparent")
+            .merge(_svg.plots.areas)
+                .each(function() {
+                    _transition = true;
+                })
+                .on("mouseover", function(d) {
+                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                })
+                .on("mouseleave", function(d) {
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                })
+                .on("click", function(d) {
+                    _w.attr.click && _w.attr.click(d.id);
+                })
+                .transition().duration(duration)
+                .style("opacity", 1)
+                .attr("d", function (d) {
+                    return area(d.values);
+                })
+                .style("fill-opacity", _w.attr.opacity)
+                .style("fill", function(d) {
+                    return _colors[d.id];
+                })
+                .on("end", function() {
+                    _transition = false;
+                });
         };
 
         // Style updater
         _w.render.style = function() {
-            // Set colors
-            _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
-
-            // Chart (using conventional margins)
+            // Chart
             _svg.g
                 .attr("width", _w.attr.innerWidth + "px")
                 .attr("height", _w.attr.innerHeight + "px")
@@ -283,23 +280,7 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plot
-            _.forOwn(_svg.areas, function(ak, k) {
-                _svg.areas[k]
-                    .style("fill-opacity", _w.attr.opacity)
-                    .style("fill", _w.attr.colors[k])
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(k);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(k);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(k);
-                    });
-            });
-        };
+        }
     }
 
     // Export
