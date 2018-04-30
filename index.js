@@ -10,6 +10,8 @@ module.exports = {
     widgets: {
         AreaChart: require("./src/widgets.areachart"),
         BarChart: require("./src/widgets.barchart"),
+        BoxPlot: require("./src/widgets.boxplot"),
+        BubbleChart: require("./src/widgets.bubblechart"),
         ChordChart: require("./src/widgets.chordchart"),
         Grid: require("./src/widgets.grid"),
         Hint: require("./src/widgets.hint"),
@@ -21,8 +23,11 @@ module.exports = {
         Map: require("./src/widgets.map"),
         Picture: require("./src/widgets.picture"),
         PieChart: require("./src/widgets.piechart"),
+        ProgressBar: require("./src/widgets.progressbar"),
+        ScatterPlot: require("./src/widgets.scatterplot"),
         Slider: require("./src/widgets.slider"),
         Status: require("./src/widgets.status"),
-        TrackPad: require("./src/widgets.trackpad")
+        TrackPad: require("./src/widgets.trackpad"),
+        ViolinPlot: require("./src/widgets.violinplot")
     }
 };
