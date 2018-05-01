@@ -5,20 +5,19 @@
  * @module violinplot
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash@4.17.4
  * @requires du.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
+        module.exports = factory(require('d3'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.ViolinPlot = factory(global.d3, global._, global.du.Widget);
+        global.du.widgets.ViolinPlot = factory(global.d3, global.du.Widget);
     }
-} (this, function (d3, _, Widget) {
+} (this, function (d3, Widget) {
     "use strict";
 
     /**
@@ -93,15 +92,14 @@
          * @param {object} data Data to plot.
          * @returns {du.widgets.violinplot.ViolinPlot} Reference to the current ViolinPlot.
          */
-        // TODO add mode
         this.data = function (data) {
             var fullData = data.reduce(function (a, d) {
-                return a.concat(d.data);
+                return a.concat(d.values);
             }, []);
             _yMin = d3.min(fullData);
             _yMax = d3.max(fullData);
             _data = data.map(function (d) {
-                var sd = d.data.sort(d3.ascending),
+                var sd = d.values.sort(d3.ascending),
                     min = d3.min(sd),
                     max = d3.max(sd),
                     q1 = d3.quantile(sd, 0.25),
@@ -111,7 +109,7 @@
                     d3.range(21).map(function (d) {
                         return (max - min + 2 * delta) * d / 20 + (min - delta);
                     }));
-                var violinData = kde(d.data);
+                var violinData = kde(d.values);
                 return {
                     name: d.name,
                     scale: {

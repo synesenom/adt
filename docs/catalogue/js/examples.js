@@ -9,15 +9,26 @@ new du.widgets.AreaChart("areachart", "#areachart")
     .yLabel("probability density")
     .margins({left: 40, top: 20, right: 20, bottom: 40})
     .fontSize(12)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: 5 * Math.pow(i / 40, 2)
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+                };
+            })
         }
-    }))
+    ])
     .render();
 
 // Bar chart
@@ -45,13 +56,13 @@ new du.widgets.BoxPlot("boxplot", "#boxplot")
     .data([
         {
             name: "normal",
-            data: new Array(1000).fill(0).map(function() {
+            values: new Array(1000).fill(0).map(function() {
                 return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
             })
         },
         {
             name: "poisson",
-            data: new Array(1000).fill(0).map(function() {
+            values: new Array(1000).fill(0).map(function() {
                 var l = Math.exp(-20),
                     k = 0,
                     p = 1;
@@ -140,15 +151,29 @@ var grid = new du.widgets.Grid("grid", "#grid")
 grid.add(new du.widgets.LineChart("subchart1")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.pow(i / 40, 2),
+                    dy: i / 100
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2,
+                    dy: .6
+                };
+            })
         }
-    })), 0, 0, 1, 1);
+    ]), 0, 0, 1, 1);
 grid.add(new du.widgets.BarChart("subchart3")
     .margins({left: 50, top: 10, right: 10, bottom: 20})
     .fontSize(10)
@@ -165,15 +190,26 @@ grid.add(new du.widgets.BarChart("subchart3")
 grid.add(new du.widgets.AreaChart("subchart2")
     .margins({left: 30, top: 10, right: 10, bottom: 20})
     .fontSize(10)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: 5 * Math.pow(i / 40, 2)
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+                };
+            })
         }
-    })), 1, 0, 1, 1);
+    ]), 1, 0, 1, 1);
 
 // Hint
 new du.widgets.Hint("hint", "#hint")
@@ -239,19 +275,29 @@ new du.widgets.LineChart("linechart", "#linechart")
     .yLabel("price")
     .margins({left: 40, top: 20, right: 20, bottom: 40})
     .fontSize(12)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            },
-            dy: {
-                mango: i / 10,
-                kiwi: 6
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.pow(i / 40, 2),
+                    dy: i / 100
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2,
+                    dy: .6
+                };
+            })
         }
-    }))
+    ])
     .render();
 
 // Map
@@ -299,19 +345,29 @@ new du.widgets.LineChart("placeholder", "#placeholder")
     .yLabel("trends")
     .margins({left: 40, top: 20, right: 20, bottom: 40})
     .fontSize(14)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            },
-            dy: {
-                mango: i / 10,
-                kiwi: 6
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.pow(i / 40, 2),
+                    dy: i / 100
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2,
+                    dy: .6
+                };
+            })
         }
-    }))
+    ])
     .render()
     .placeholder("This chart is empty and you see a placeholder instead");
 
@@ -324,18 +380,26 @@ new du.widgets.ScatterPlot("scatterplot", "#scatterplot")
     .margins(40)
     .fontSize(14)
     .tooltip(true)
-    .data(Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            mango: {
-                x: i + Math.random() - 0.5,
-                y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
-            },
-            kiwi: {
-                x: i + Math.random() * 8 - 4,
-                y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
-            }
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function(d, i) {
+                return {
+                    x: i + Math.random() - 0.5,
+                    y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                }
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i + Math.random() * 8 - 4,
+                    y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                }
+            })
         }
-    }))
+    ])
     .render();
 
 // Slider
@@ -380,13 +444,13 @@ new du.widgets.ViolinPlot("violinplot", "#violinplot")
     .data([
         {
             name: "normal",
-            data: new Array(1000).fill(0).map(function() {
+            values: new Array(1000).fill(0).map(function() {
                 return 5 * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()) + 20;
             })
         },
         {
             name: "pareto",
-            data: new Array(1000).fill(0).map(function () {
+            values: new Array(1000).fill(0).map(function () {
                 return 18 / Math.pow(1-Math.random(), 2/20);
             })
         }

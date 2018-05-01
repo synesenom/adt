@@ -10,8 +10,6 @@ import json
 import re
 import templates
 
-# TODO make HTML export (no @ignore and @private)
-
 class Path:
     """
     Describes a path in the documentation hierarchy.

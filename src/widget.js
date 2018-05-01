@@ -42,7 +42,6 @@
  * @module widget
  * @memberOf du
  * @requires d3@v4
- * @requires lodash@4.17.4
  */
 // TODO add heat map
 // TODO add calendar plot
@@ -55,14 +54,14 @@
 // TODO put all plots in groups and update those
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), exports);
+        module.exports = factory(require('d3'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'exports'], factory);
+        define(['d3', 'exports'], factory);
     } else {
         global.du = global.du || {};
-        global.du.Widget = factory(global.d3, global._);
+        global.du.Widget = factory(global.d3);
     }
-} (this, function (d3, _) {
+} (this, function (d3) {
     "use strict";
 
     /**
@@ -299,9 +298,11 @@
                     _attr.margins[m] = margins;
                 });
             } else {
-                _.forOwn(margins, function(margin, side) {
-                    _attr.margins[side] = margins[side];
-                });
+                for (var side in margins) {
+                    if (margins.hasOwnProperty(side)) {
+                        _attr.margins[side] = margins[side];
+                    }
+                }
             }
             _attr.innerWidth = _attr.width - _attr.margins.left - _attr.margins.right;
             _attr.innerHeight = _attr.height - _attr.margins.top - _attr.margins.bottom;
@@ -321,9 +322,11 @@
                     _attr.borders[m] = borders;
                 });
             }
-            _.forOwn(borders, function(border, side) {
-                _attr.borders[side] = borders[side];
-            });
+            for (var side in borders) {
+                if (borders.hasOwnProperty(side)) {
+                    _attr.margins[side] = borders[side];
+                }
+            }
         });
 
         /**
@@ -1067,7 +1070,7 @@
 
             // Build widget if first time render
             if (!this._isBuilt) {
-                _render.build && _render.build(dur);
+                _render.build && _render.build();
                 this._isBuilt = true;
             }
 

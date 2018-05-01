@@ -25,20 +25,19 @@
  * @module status
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash@4.17.4
  * @requires du.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
+        module.exports = factory(require('d3'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Status = factory(global.d3, global._, global.du.Widget);
+        global.du.widgets.Status = factory(global.d3, global.du.Widget);
     }
-} (this, function (d3, _, Widget) {
+} (this, function (d3, Widget) {
     "use strict";
 
     /**
@@ -96,12 +95,16 @@
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("pointer-events", "none");
 
-            _.forOwn(_w.attr.margins, function(margin, side) {
-                _w.widget.style("margin-" + side, margin + "px");
-            });
-            _.forOwn(_w.attr.borders, function(border, side) {
-                _w.widget.style("border-" + side, border);
-            });
+            for (var side in _w.attr.margins) {
+                if (_w.attr.margins.hasOwnProperty(side)) {
+                    _w.widget.style("margin-" + side, _w.attr.margins[side] + "px");
+                }
+            }
+            for (side in _w.attr.borders) {
+                if (_w.attr.borders.hasOwnProperty(side)) {
+                    _w.widget.style("border-" + side, _w.attr.borders[side]);
+                }
+            }
             _svg.label
                 .style("color", _w.attr.fontColor)
                 .style("font-weight", _w.attr.fontWeight);

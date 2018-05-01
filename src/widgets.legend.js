@@ -25,20 +25,19 @@
  * @module legend
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash@4.17.4
  * @requires du.Widget
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('./widget'));
+        module.exports = factory(require('d3'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'src/widget', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Legend = factory(global.d3, global._, global.du.Widget);
+        global.du.widgets.Legend = factory(global.d3, global.du.Widget);
     }
-} (this, function (d3, _, Widget) {
+} (this, function (d3, Widget) {
     "use strict";
 
     /**
@@ -134,50 +133,55 @@
                 .style("height", _w.attr.height + 'px')
                 .style("pointer-events", "all");
 
-            _.forOwn(_svg.legends, function(legend, label) {
-                legend.g
-                    .style("width", _w.attr.twoColumns ? "50%" : "100%");
+            for (var label in _svg.legends) {
+                if (_svg.legends.hasOwnProperty(label)) {
+                    (function(label) {
+                        var legend = _svg.legends[label];
+                        legend.g
+                            .style("width", _w.attr.twoColumns ? "50%" : "100%");
 
-                legend.square
-                    .style("width", 0.7 * _w.attr.fontSize + "px")
-                    .style("height", 0.7 * _w.attr.fontSize + "px")
-                    .style("margin", 0.15 * _w.attr.fontSize + "px " + 0.15 * _w.attr.fontSize + "px")
-                    .style("background-color", _w.attr.colors[label]);
-                if (_w.attr.mouseover) {
-                    legend.square
-                        .style("cursor", "pointer")
-                        .on("mouseover", function() {
-                            _w.attr.mouseover(label);
-                        });
-                }
-                if (_w.attr.mouseleave) {
-                    legend.square
-                        .on("mouseleave", function() {
-                            _w.attr.mouseleave(label);
-                        });
-                }
-                if (_w.attr.click) {
-                    legend.square
-                        .style("cursor", "pointer")
-                        .on("click", function() {
-                            _w.attr.click(label);
-                        });
-                }
+                        legend.square
+                            .style("width", 0.7 * _w.attr.fontSize + "px")
+                            .style("height", 0.7 * _w.attr.fontSize + "px")
+                            .style("margin", 0.15 * _w.attr.fontSize + "px " + 0.15 * _w.attr.fontSize + "px")
+                            .style("background-color", _w.attr.colors[label]);
+                        if (_w.attr.mouseover) {
+                            legend.square
+                                .style("cursor", "pointer")
+                                .on("mouseover", function () {
+                                    _w.attr.mouseover(label);
+                                });
+                        }
+                        if (_w.attr.mouseleave) {
+                            legend.square
+                                .on("mouseleave", function () {
+                                    _w.attr.mouseleave(label);
+                                });
+                        }
+                        if (_w.attr.click) {
+                            legend.square
+                                .style("cursor", "pointer")
+                                .on("click", function () {
+                                    _w.attr.click(label);
+                                });
+                        }
 
-                legend.text
-                    .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
-                    .style("line-height", _w.attr.fontSize + "px")
-                    .style("cursor", _w.attr.mouseover || _w.attr.click ? "pointer" : null)
-                    .on("mouseover", function() {
-                        _w.attr.mouseover && _w.attr.mouseover(label);
-                    })
-                    .on("mouseleave", function() {
-                        _w.attr.mouseleave && _w.attr.mouseleave(label);
-                    })
-                    .on("click", function() {
-                        _w.attr.click && _w.attr.click(label);
-                    });
-            });
+                        legend.text
+                            .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
+                            .style("line-height", _w.attr.fontSize + "px")
+                            .style("cursor", _w.attr.mouseover || _w.attr.click ? "pointer" : null)
+                            .on("mouseover", function () {
+                                _w.attr.mouseover && _w.attr.mouseover(label);
+                            })
+                            .on("mouseleave", function () {
+                                _w.attr.mouseleave && _w.attr.mouseleave(label);
+                            })
+                            .on("click", function () {
+                                _w.attr.click && _w.attr.click(label);
+                            });
+                    })(label);
+                }
+            }
         }
     }
 

@@ -23,21 +23,20 @@
  * @module linechart
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash@4.17.4
  * @requires du.Widget
  */
 // TODO add log axes
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('./widget'), exports);
+        module.exports = factory(require('d3'), require('./widget'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', 'lodash', 'src/widget', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.LineChart = factory(global.d3, global._, global.du.Widget);
+        global.du.widgets.LineChart = factory(global.d3, global.du.Widget);
     }
-} (this, function (d3, _, Widget) {
+} (this, function (d3, Widget) {
     "use strict";
 
     /**
@@ -303,9 +302,10 @@
 
             // If no data point is found, just remove tooltip elements
             if (index === null) {
-                _.forOwn(this.tt, function(tt) {
-                    tt.remove();
-                });
+                for (var t in this.tt) {
+                    if (this.tt.hasOwnProperty(t))
+                        this.tt[t].remove();
+                }
                 this.tt = null;
                 return;
             } else {
@@ -472,9 +472,11 @@
                 });
 
             // Markers
-            _.forOwn(_markers, function(marker) {
-                marker.update(duration);
-            });
+            for (var marker in _markers) {
+                if (_markers.hasOwnProperty(marker)) {
+                    marker.update(duration);
+                }
+            }
         };
 
         // Style updater
