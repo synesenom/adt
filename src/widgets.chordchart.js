@@ -370,21 +370,28 @@
             // Update chord data
             _svg.chord = _svg.chordFn(_data);
 
-            // Entering groups
+            // Arc
             _svg.arc
                 .innerRadius(innerRadius)
                 .outerRadius(outerRadius);
+
+            // Groups
             _svg.groups = _svg.g.selectAll(".group")
                 .data(_svg.chord.groups, function (d) {
                     return d.index;
                 });
+            _svg.groups.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
             _svg.newGroups = _svg.groups
                 .enter().append("g")
                 .each(function (d) {
                     d.name = _nameByIndex.get(d.index);
                 })
                 .attr("class", "group")
-                .style("pointer-events", "all")
+                .style("pointer-events", "all");
+            _svg.newGroups.merge(_svg.groups)
                 .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
@@ -398,6 +405,8 @@
                 .on("mousemove", function (d) {
                     _current = d;
                 });
+
+            // Paths
             _svg.newGroups.append("path")
                 .attr("id", function (d) {
                     return "group" + d.index;
@@ -407,6 +416,8 @@
                 })
                 .transition().duration(duration)
                 .attrTween("d", _arcTween(_prev_chord));
+
+            // Ticks
             if (_w.attr.ticks) {
                 _svg.newGroups.append("text")
                     .attr("xlink:href", function (d) {
@@ -427,13 +438,7 @@
                     });
             }
 
-            // Exiting groups
-            _svg.groups.exit()
-                .transition().duration(duration)
-                .style("opacity", 0)
-                .remove();
-
-            // Update groups
+            // Update paths
             _svg.groups.select("path")
                 .each(function (d) {
                     d.name = _nameByIndex.get(d.index);
@@ -451,6 +456,8 @@
                 .on("end", function () {
                     _transition = false;
                 });
+
+            // Update ticks
             if (_w.attr.ticks) {
                 _svg.groups.select("text")
                     .transition().duration(duration)

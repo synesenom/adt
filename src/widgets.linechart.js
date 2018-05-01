@@ -405,6 +405,10 @@
                 .style("opacity", 0)
                 .style("stroke", "none")
                 .style("fill", "transparent")
+            .merge(_svg.plots.errors)
+                .each(function() {
+                    _transition = true;
+                })
                 .on("mouseover", function(d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
@@ -414,15 +418,11 @@
                 .on("click", function(d) {
                     _w.attr.click && _w.attr.click(d.name);
                 })
-            .merge(_svg.plots.errors)
-                .each(function() {
-                    _transition = true;
-                })
                 .transition().duration(duration)
-                .style("opacity", 1)
                 .attr("d", function (d) {
                     return error(d.values);
                 })
+                .style("opacity", 1)
                 .style("fill-opacity", 0.2)
                 .style("fill", function(d) {
                     return _colors[d.name];
@@ -474,7 +474,7 @@
             // Markers
             for (var marker in _markers) {
                 if (_markers.hasOwnProperty(marker)) {
-                    marker.update(duration);
+                    _markers[marker].update(duration);
                 }
             }
         };

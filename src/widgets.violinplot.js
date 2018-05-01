@@ -223,6 +223,9 @@
                 .each(function () {
                     _transition = true;
                 })
+                .attr("transform", function (d) {
+                    return "translate(" + _svg.scale.x(d.name) + ",0)";
+                })
                 .on("mouseover", function (d) {
                     _current = d;
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
@@ -233,9 +236,6 @@
                 })
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
-                })
-                .attr("transform", function (d) {
-                    return "translate(" + _svg.scale.x(d.name) + ",0)";
                 });
             union.transition().duration(duration)
                 .attr("transform", function (d) {

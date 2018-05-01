@@ -218,17 +218,17 @@
                 .attr("class", function (d) {
                     return "bar " + _w.utils.encode(d.name);
                 })
+                .attr("x", function (d) {
+                    return _svg.scale.x(d.values.x0) + 1;
+                })
                 .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
+                .attr("width", function(d) {
+                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
+                })
                 .attr("height", 0)
                 .style("pointer-events", "all")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none")
-                .attr("x", function (d) {
-                    return _svg.scale.x(d.values.x0) + 1;
-                })
-                .attr("width", function(d) {
-                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
-                })
                 .style("fill", function() {
                     return _colors[_bins[0].name];
                 })
@@ -249,11 +249,11 @@
                 .attr("x", function (d) {
                     return _svg.scale.x(d.values.x0) + 1;
                 })
-                .attr("width", function(d) {
-                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
-                })
                 .attr("y", function (d) {
                     return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.values.length / norm);
+                })
+                .attr("width", function(d) {
+                    return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
                 })
                 .attr("height", function (d) {
                     return _w.attr.height -_w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.values.length / norm);

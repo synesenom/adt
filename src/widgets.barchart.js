@@ -162,7 +162,7 @@
                 .data(_data, function (d) {
                     return d.name;
                 });
-            var exit = _svg.plots.bars.exit()
+            _svg.plots.bars.exit()
                 .transition().duration(duration)
                 .style('opacity', 0)
                 .remove();
@@ -170,12 +170,12 @@
                 .attr("class", function (d) {
                     return "bar " + _w.utils.encode(d.name);
                 })
-                .style("pointer-events", "all")
-                .style("shape-rendering", "geometricPrecision")
-                .style("stroke", "none")
                 .style("fill", function (d) {
                     return _colors[d.name];
-                });
+                })
+                .style("pointer-events", "all")
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none");
             if (_w.attr.vertical) {
                 enter
                     .attr("y", function (d) {
@@ -233,6 +233,9 @@
             }
             union
                 .style("opacity", 1)
+                .style("fill", function (d) {
+                    return _colors[d.name];
+                })
                 .on("end", function () {
                     _transition = false;
                 });

@@ -160,15 +160,15 @@
                 .attr("class", function (d) {
                     return "bubble " + _w.utils.encode(d.name);
                 })
-                .style("shape-rendering", "geometricPrecision")
-                .style("stroke", "none")
-                .style("fill", "transparent")
                 .attr("cx", function(d) {
                     return _svg.scale.x(d.values.x);
                 })
                 .attr("cy", function(d) {
                     return _svg.scale.y(d.values.y);
                 })
+                .style("shape-rendering", "geometricPrecision")
+                .style("stroke", "none")
+                .style("fill", "transparent")
             .merge(_svg.plots.bubbles)
                 .each(function() {
                     _transition = true;

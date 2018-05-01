@@ -50,7 +50,6 @@
 // TODO separate data update from rendering
 // TODO update color automatically on data/color updates
 // TODO add internal parameters such as animation flag, etc
-// TODO move all adjustable attribute to union
 // TODO put all plots in groups and update those
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
@@ -324,7 +323,7 @@
             }
             for (var side in borders) {
                 if (borders.hasOwnProperty(side)) {
-                    _attr.margins[side] = borders[side];
+                    _attr.borders[side] = borders[side];
                 }
             }
         });
