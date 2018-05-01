@@ -64,13 +64,13 @@
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
         this.data = function(data) {
-            _data = d3.keys(data[0]).map(function(id) {
+            _data = d3.keys(data[0]).map(function(name) {
                 return {
-                    id: id,
+                    name: name,
                     values: data.map(function(d) {
                         return {
-                            x: d[id].x,
-                            y: d[id].y
+                            x: d[name].x,
+                            y: d[name].y
                         };
                     })
                 };
@@ -162,18 +162,18 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
             // Groups
             _svg.plots.groups = _svg.g.selectAll(".dot-group")
                 .data(_data, function(d) {
-                    return d.id;
+                    return d.name;
                 });
             _svg.plots.groups.exit()
                 .transition().duration(duration)
                 .remove();
             var groups = _svg.plots.groups.enter().append("g")
                 .attr("class", function (d) {
-                    return "dot-group " + _w.utils.encode(d.id);
+                    return "dot-group " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none")
@@ -183,19 +183,19 @@
                     _transition = true;
                 })
                 .on("mouseover", function(d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.id);
+                    _w.attr.click && _w.attr.click(d.name);
                 });
             _svg.plots.groups
                 .transition().duration(duration)
                 .style("fill-opacity", _w.attr.opacity)
                 .style("fill", function(d) {
-                    return _colors[d.id];
+                    return _colors[d.name];
                 })
                 .on("end", function() {
                     _transition = false;
@@ -235,7 +235,7 @@
             _data.forEach(function(d) {
                 d.values.forEach(function(dd) {
                     var site = [_svg.scale.x(dd.x), _svg.scale.y(dd.y)];
-                    site.name = d.id;
+                    site.name = d.name;
                     sites.push(site);
                 });
             });

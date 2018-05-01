@@ -46,17 +46,14 @@
  */
 // TODO add heat map
 // TODO add calendar plot
-// TODO make plot data modifiable
 // TODO add graph widget
 // TODO implement resize
 // TODO separate data update from rendering
 // TODO handle missing data points
-// TODO make data modifiable
 // TODO update color automatically on data/color updates
-// TODO construct input data formats naturally, to allow for missing data
-// TODO fix tooltip bug with positioning
 // TODO add internal parameters such as animation flag, etc
 // TODO move all adjustable attribute to union
+// TODO put all plots in groups and update those
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), exports);
@@ -944,7 +941,7 @@
                 case "plots":
                     // List of plots
                     content.content.data.sort(function(a, b) {
-                        return a.id.localeCompare(b.id);
+                        return a.name.localeCompare(b.name);
                     }).forEach(function(plot) {
                         var entry = tooltip.append("div")
                             .style("position", "relative")
@@ -981,13 +978,7 @@
                 tx -= tw + 40;
             }
             if (ty + th > container.bottom - _attr.margins.bottom - 5) {
-                // Adjust until it fits in graph
-                for (var j=1; j++; j<th+30) {
-                    ty -= j;
-                    if (ty+th < container.bottom - _attr.margins.bottom - 5) {
-                        break;
-                    }
-                }
+                ty = container.bottom - _attr.margins.bottom - 10 - th;
             }
 
             // Set position

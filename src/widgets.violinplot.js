@@ -84,8 +84,9 @@
 
         /**
          * Binds data to the violin plot.
-         * Expected data format: array containing objects with a {name} property with the box name and a {data}
-         * property that contains the array of values for each violin.
+         * Expected data format: array containing the violin objects. Each violin needs to have a {name} property
+         * denoting its name and a {data} property that contains the array of corresponding values. The violins are
+         * calculated automatically.
          *
          * @method data
          * @memberOf du.widgets.violinplot.ViolinPlot

@@ -84,13 +84,13 @@
             var sorted = data.sort(function (a, b) {
                 return a.x - b.x;
             });
-            _data = d3.keys(data[0].y).map(function(id) {
+            _data = d3.keys(data[0].y).map(function(name) {
                 return {
-                    id: id,
+                    name: name,
                     values: sorted.map(function(d) {
                         return {
                             x: d.x,
-                            y: d.y[id]
+                            y: d.y[name]
                         };
                     })
                 };
@@ -144,14 +144,14 @@
                 var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
                 x = point.x;
 
-                tt[d.id] = tt[d.id] || _svg.g.append("circle");
-                tt[d.id]
+                tt[d.name] = tt[d.name] || _svg.g.append("circle");
+                tt[d.name]
                     .attr("r", 4)
                     .attr("cx", _svg.scale.x(point.x)+1)
                     .attr("cy", _svg.scale.y(point.y)+1)
-                    .style("fill", _colors[d.id]);
+                    .style("fill", _colors[d.name]);
 
-                return {id: d.id, color: _colors[d.id], value: point.y.toPrecision(6)};
+                return {name: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
             });
 
             return {
@@ -204,10 +204,10 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
             _svg.plots.areas = _svg.g.selectAll(".area")
                 .data(_data, function(d) {
-                    return d.id;
+                    return d.name;
                 });
             _svg.plots.areas.exit()
                 .transition().duration(duration)
@@ -215,7 +215,7 @@
                 .remove();
             _svg.plots.areas.enter().append("path")
                 .attr("class", function (d) {
-                    return "area " + _w.utils.encode(d.id);
+                    return "area " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("opacity", 0)
@@ -226,13 +226,13 @@
                     _transition = true;
                 })
                 .on("mouseover", function(d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.id);
+                    _w.attr.click && _w.attr.click(d.name);
                 })
                 .transition().duration(duration)
                 .style("opacity", 1)
@@ -241,7 +241,7 @@
                 })
                 .style("fill-opacity", _w.attr.opacity)
                 .style("fill", function(d) {
-                    return _colors[d.id];
+                    return _colors[d.name];
                 })
                 .on("end", function() {
                     _transition = false;

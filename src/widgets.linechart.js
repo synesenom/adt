@@ -88,14 +88,14 @@
             var sorted = data.sort(function (a, b) {
                 return a.x - b.x;
             });
-            _data = d3.keys(data[0].y).map(function(id) {
+            _data = d3.keys(data[0].y).map(function(name) {
                 return {
-                    id: id,
+                    name: name,
                     values: sorted.map(function(d) {
                         return {
                             x: d.x,
-                            y: d.y[id],
-                            dy: d.dy && d.dy[id] ? d.dy[id] : 0
+                            y: d.y[name],
+                            dy: d.dy && d.dy[name] ? d.dy[name] : 0
                         };
                     })
                 };
@@ -124,7 +124,7 @@
         function _adjustMarker(key, start, end) {
             // Get data
             var data = _data.filter(function(d) {
-                return d.id === key;
+                return d.name === key;
             })[0];
             if (!data) {
                 return null;
@@ -323,14 +323,14 @@
                 var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
                 x = point.x;
 
-                tt[d.id] = tt[d.id] || _svg.g.append("circle");
-                tt[d.id]
+                tt[d.name] = tt[d.name] || _svg.g.append("circle");
+                tt[d.name]
                     .attr("cx", _svg.scale.x(point.x)+2)
                     .attr("cy", _svg.scale.y(point.y))
                     .attr("r", 4)
-                    .style("fill", _colors[d.id]);
+                    .style("fill", _colors[d.name]);
 
-                return {id: d.id, color: _colors[d.id], value: point.y.toPrecision(6)};
+                return {id: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
             });
 
             return {
@@ -390,10 +390,10 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update error bands
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.id; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
             _svg.plots.errors = _svg.g.selectAll(".error")
                 .data(_data, function(d) {
-                    return d.id;
+                    return d.name;
                 });
             _svg.plots.errors.exit()
                 .transition().duration(duration)
@@ -401,20 +401,20 @@
                 .remove();
             _svg.plots.errors = _svg.plots.errors.enter().append("path")
                 .attr("class", function (d) {
-                    return "error " + _w.utils.encode(d.id);
+                    return "error " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("opacity", 0)
                 .style("stroke", "none")
                 .style("fill", "transparent")
                 .on("mouseover", function(d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.id);
+                    _w.attr.click && _w.attr.click(d.name);
                 })
             .merge(_svg.plots.errors)
                 .each(function() {
@@ -427,13 +427,13 @@
                 })
                 .style("fill-opacity", 0.2)
                 .style("fill", function(d) {
-                    return _colors[d.id];
+                    return _colors[d.name];
                 });
 
             // Build/update lines
             _svg.plots.lines = _svg.g.selectAll(".line")
                 .data(_data, function(d) {
-                    return d.id;
+                    return d.name;
                 });
             _svg.plots.lines.exit()
                 .transition().duration(duration)
@@ -442,7 +442,7 @@
             _svg.plots.lines.enter()
                 .append("path")
                 .attr("class", function (d) {
-                    return "line " + _w.utils.encode(d.id);
+                    return "line " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("opacity", 0)
@@ -452,13 +452,13 @@
                     _transition = true;
                 })
                 .on("mouseover", function(d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.id);
+                    _w.attr.click && _w.attr.click(d.name);
                 })
                 .transition().duration(duration)
                 .style("opacity", 1)
@@ -467,7 +467,7 @@
                 })
                 .style("stroke-width", "2px")
                 .style("stroke", function(d) {
-                    return _colors[d.id];
+                    return _colors[d.name];
                 })
                 .on("end", function() {
                     _transition = false;

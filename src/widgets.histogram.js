@@ -134,7 +134,7 @@
 
             // Build tooltip content
             return {
-                title: point.id,
+                title: point.name,
                 content: {
                     type: "metrics",
                     data: [
@@ -183,7 +183,7 @@
                 .thresholds(thresholds)
                 (_data).map(function(d, i) {
                     return {
-                        id: "bin " + i,
+                        name: "bin " + i,
                         values: d
                     };
                 });
@@ -205,10 +205,10 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plot
-            _colors = _w.utils.colors(_bins ? _bins.map(function(d){ return d.id; }) : null);
+            _colors = _w.utils.colors(_bins ? _bins.map(function(d){ return d.name; }) : null);
             _svg.plots.bars = _svg.g.selectAll(".bar")
                 .data(_bins, function(d) {
-                    return d.id;
+                    return d.name;
                 });
             _svg.plots.bars.exit()
                 .transition().duration(duration)
@@ -216,7 +216,7 @@
                 .remove();
             _svg.plots.bars.enter().append("rect")
                 .attr("class", function (d) {
-                    return "bar " + _w.utils.encode(d.id);
+                    return "bar " + _w.utils.encode(d.name);
                 })
                 .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1)
                 .attr("height", 0)
@@ -230,20 +230,20 @@
                     return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
                 })
                 .style("fill", function() {
-                    return _colors[_bins[0].id];
+                    return _colors[_bins[0].name];
                 })
             .merge(_svg.plots.bars)
                 .each(function() {
                     _transition = true;
                 })
                 .on("mouseover", function(d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.id);
+                    _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
                 .on("mouseleave", function(d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.id);
+                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
                 .on("click", function(d) {
-                    _w.attr.click && _w.attr.click(d.id);
+                    _w.attr.click && _w.attr.click(d.name);
                 })
                 .transition().duration(duration)
                 .attr("x", function (d) {
@@ -260,7 +260,7 @@
                 })
                 .style("opacity", 1)
                 .style("fill", function() {
-                    return _colors[_bins[0].id];
+                    return _colors[_bins[0].name];
                 })
                 .on("end", function() {
                     _transition = false;
