@@ -49,7 +49,6 @@
 // TODO add graph widget
 // TODO implement resize
 // TODO separate data update from rendering
-// TODO handle missing data points
 // TODO update color automatically on data/color updates
 // TODO add internal parameters such as animation flag, etc
 // TODO move all adjustable attribute to union

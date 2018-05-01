@@ -74,10 +74,11 @@
 
         /**
          * Binds data to the line plot.
-         * Expected data format: array of objects with properties {x} and {y}, where {x} is a number or time, {y}
-         * is an object containing the values for each quantity to plot. Each data point can optionally contain a {dy}
-         * property with the errors corresponding to the keys in {y}.
-         * Data is sorted by the {x} values.
+         * Expected data format: array containing an object for each plot. A plot object has a {name} property with the
+         * name of the plot and a {values} property which is the array of {(x, y)} coordinates. Each data point can have
+         * an optional {dy} value representing the error of the {y} value. Default value of {dy} for all data points is
+         * 0.
+         * All plots are sorted by their {x} values before plot.
          *
          * @method data
          * @memberOf du.widgets.linechart.LineChart
@@ -85,17 +86,16 @@
          * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */
         this.data = function(data) {
-            var sorted = data.sort(function (a, b) {
-                return a.x - b.x;
-            });
-            _data = d3.keys(data[0].y).map(function(name) {
+            _data = data.map(function(d) {
                 return {
-                    name: name,
-                    values: sorted.map(function(d) {
+                    name: d.name,
+                    values: d.values.sort(function (a, b) {
+                        return a.x - b.x;
+                    }).map(function(dd) {
                         return {
-                            x: d.x,
-                            y: d.y[name],
-                            dy: d.dy && d.dy[name] ? d.dy[name] : 0
+                            x: dd.x,
+                            y: dd.y,
+                            dy: dd.dy || 0
                         };
                     })
                 };
