@@ -53,7 +53,7 @@ script.doc.
 script.doc.
     // update data
     setInterval(function() {
-        var data = [
+        violinplot.data([
             {
                 name: "pareto",
                 data: new Array(1000).fill(0).map(function () {
@@ -85,7 +85,6 @@ script.doc.
                     return k - 1;
                 })
             }
-        ];
-        violinplot.data(data).render();
+        ]).render();
     }, 20000);
 +resize()

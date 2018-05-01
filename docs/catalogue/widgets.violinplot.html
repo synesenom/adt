@@ -48,7 +48,7 @@ var violinplot = new du.widgets.ViolinPlot("mychart", "#widget")
     .tooltip(true)
     .render();</script><script class="doc">// update data
 setInterval(function() {
-    var data = [
+    violinplot.data([
         {
             name: "pareto",
             data: new Array(1000).fill(0).map(function () {
@@ -80,8 +80,7 @@ setInterval(function() {
                 return k - 1;
             })
         }
-    ];
-    violinplot.data(data).render();
+    ]).render();
 }, 20000);</script><script>window.onresize = function () {
     violinplot
         .width(parseFloat(d3.select('#widget').style('width')))

@@ -6,18 +6,26 @@
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var scatterplot = new du.widgets.ScatterPlot("mychart", "#widget")
-    .data(new Array(100).fill(0).map(function(d, i) {
-        return {
-            mango: {
-                x: i + Math.random() - 0.5,
-                y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
-            },
-            kiwi: {
-                x: i + Math.random() * 8 - 4,
-                y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
-            }
-        };
-    }))
+    .data([
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function(d, i) {
+                return {
+                    x: i + Math.random() - 0.5,
+                    y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                }
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i + Math.random() * 8 - 4,
+                    y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                }
+            })
+        }
+    ])
     .width(width)
     .height(height)
     .xLabel("x")
@@ -27,19 +35,26 @@ var scatterplot = new du.widgets.ScatterPlot("mychart", "#widget")
     .tooltip(true)
     .render();</script><script class="doc">// update data
 setInterval(function() {
-    var data = new Array(100 + parseInt(Math.random() * 40)).fill(0).map(function (d, i) {
-        return {
-            mango: {
-                x: i + Math.random() - 0.5,
-                y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
-            },
-            kiwi: {
-                x: i + Math.random() * 8 - 4,
-                y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
-            }
+    scatterplot.data([
+        {
+            name: "mango",
+            values: new Array(80 + parseInt(40*Math.random())).fill(0).map(function (d, i) {
+                return {
+                    x: i + Math.random() - 0.5,
+                    y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                }
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(80 + parseInt(40*Math.random())).fill(0).map(function (d, i) {
+                return {
+                    x: i + Math.random() * 8 - 4,
+                    y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                }
+            })
         }
-    });
-    scatterplot.data(data).render();
+    ]).render();
 }, 20000);</script><script>window.onresize = function () {
     scatterplot
         .width(parseFloat(d3.select('#widget').style('width')))

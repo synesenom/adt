@@ -70,16 +70,15 @@
 
         /**
          * Binds data to the bar chart.
-         * Expected data format: object with property names as the categories and properties as the values.
-         * Data is sorted by the category names.
+         * Expected data format: array of objects with properties {name} (name of the bar) and {value} (corresponding
+         * number).
          *
          * @method data
          * @memberOf du.widgets.barchart.BarChart
          * @param {object} data Data to plot.
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
-        this.data = function(data) {
-            // Transform data to array
+        this.data = function (data) {
             _data = data;
             return this;
         };
@@ -93,13 +92,13 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".bar", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function(mouse) {
+        _w.utils.tooltip = function (mouse) {
             // Get bisection
             var dir = _w.attr.vertical ? 1 : 0;
             var bisect = d3.bisector(function (d) {
@@ -131,16 +130,16 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.map(function(d) {
+                x: _w.utils.scale(_data.map(function (d) {
                     return d.name;
                 }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
                 y: _w.utils.scale([0, d3.max(_data, function (d) {
@@ -157,9 +156,11 @@
                 .call(_svg.axisFn.y.scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
 
             // Plot
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             _svg.plots.bars = _svg.g.selectAll(".bar")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             var exit = _svg.plots.bars.exit()
@@ -173,7 +174,7 @@
                 .style("pointer-events", "all")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none")
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 });
             if (_w.attr.vertical) {
@@ -194,16 +195,16 @@
                     .attr("height", 0);
             }
             var union = enter.merge(_svg.plots.bars)
-                .each(function() {
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 });
             if (_w.attr.vertical) {
@@ -233,13 +234,13 @@
             }
             union
                 .style("opacity", 1)
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Chart
             _svg.g
                 .style("width", _w.attr.innerWidth + "px")
@@ -276,7 +277,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.vertical ? _w.attr.yLabel : _w.attr.xLabel);

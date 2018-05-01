@@ -314,14 +314,12 @@
             }
 
             // Get plots
-            var x = 0;
             var plots = _data.map(function(d, i) {
                 var j = index[i];
                 var data = d.values;
                 var left = data[j - 1] ? data[j - 1] : data[j];
                 var right = data[j] ? data[j] : data[j - 1];
                 var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
-                x = point.x;
 
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
@@ -330,11 +328,11 @@
                     .attr("r", 4)
                     .style("fill", _colors[d.name]);
 
-                return {id: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
+                return {name: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
             });
 
             return {
-                title: _w.attr.xLabel + ": " + x,
+                title: _w.attr.xLabel + ": " + _svg.scale.x.invert(mouse[0]).toFixed(2),
                 content: {
                     type: "plots",
                     data: plots

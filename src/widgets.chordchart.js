@@ -122,7 +122,7 @@
          * @param {Array} data Data to plot.
          * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
-        this.data = function(data) {
+        this.data = function (data) {
             _indexByName.clear();
             _nameByIndex.clear();
             _data = [];
@@ -130,7 +130,7 @@
                 d = 0;
 
             // Build index/name mappings
-            data.forEach(function(dd) {
+            data.forEach(function (dd) {
                 if (!_indexByName.has(d = dd.source)) {
                     _nameByIndex.set(n, d);
                     _indexByName.set(d, n++);
@@ -142,23 +142,23 @@
             });
 
             // Build data matrix
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 var source = _indexByName.get(d.source),
                     target = _indexByName.get(d.target),
                     row = _data[source];
                 if (!row) {
                     row = _data[source] = [];
-                    for (var i=0; i<n; i++) row[i] = 0;
+                    for (var i = 0; i < n; i++) row[i] = 0;
                 }
                 row[target] = d.value;
                 if (!_data[target]) {
                     _data[target] = [];
-                    for (i=0; i<n; i++) _data[target][i] = 0;
+                    for (i = 0; i < n; i++) _data[target][i] = 0;
                 }
             });
 
             // Get length of largest segment name
-            _aura = d3.max(_nameByIndex.values(), function(d) {
+            _aura = d3.max(_nameByIndex.values(), function (d) {
                 return d.length;
             });
 
@@ -298,7 +298,7 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.chordchart.ChordChart} Reference to the current ChordChart.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".ribbon", key, duration);
             return this;
         };
@@ -315,11 +315,11 @@
                 stripe: _w.attr.colors[_current.name],
                 content: {
                     type: "metrics",
-                    data: row.map(function(d, i) {
+                    data: row.map(function (d, i) {
                         return {name: _nameByIndex.get(i), value: 100 * d / d3.sum(row)};
-                    }).sort(function(a, b) {
+                    }).sort(function (a, b) {
                         return b.value - a.value;
-                    }).map(function(d) {
+                    }).map(function (d) {
                         return {label: d.name, value: d.value.toFixed(1) + "%"};
                     })
                 }
@@ -327,7 +327,7 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             // Add widget
             _svg.g = _w.widget.append("g");
 
@@ -349,7 +349,7 @@
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Set colors
             _w.attr.colors = _w.utils.colors(_indexByName ? _indexByName.keys() : null);
 
@@ -380,22 +380,22 @@
                 });
             _svg.newGroups = _svg.groups
                 .enter().append("g")
-                .each(function(d){
+                .each(function (d) {
                     d.name = _nameByIndex.get(d.index);
                 })
                 .attr("class", "group")
                 .style("pointer-events", "all")
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 })
-                .on("mousemove", function(d) {
+                .on("mousemove", function (d) {
                     _current = d;
                 });
             _svg.newGroups.append("path")
@@ -435,10 +435,12 @@
 
             // Update groups
             _svg.groups.select("path")
-                .each(function(d){ d.name = _nameByIndex.get(d.index); })
+                .each(function (d) {
+                    d.name = _nameByIndex.get(d.index);
+                })
                 .attr("d", _svg.arc)
                 .transition().duration(duration)
-                .each(function() {
+                .each(function () {
                     _transition = true;
                 })
                 .style("opacity", 1)
@@ -446,7 +448,7 @@
                     return _w.attr.colors[d.name];
                 })
                 .attrTween("d", _arcTween(_prev_chord))
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
             if (_w.attr.ticks) {
@@ -469,11 +471,11 @@
             _svg.ribbons = _svg.g.selectAll(".ribbon")
                 .data(_svg.chord, _ribbonId);
             _svg.newRibbons = _svg.ribbons.enter().append("path")
-                .each(function(d){
+                .each(function (d) {
                     d.source.name = _nameByIndex.get(d.source.index);
                     d.target.name = _nameByIndex.get(d.target.index);
                 })
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return "ribbon " + _w.utils.encode(d.source.name);
                 })
                 .style("pointer-events", "all")
@@ -496,11 +498,11 @@
 
             // Update ribbons
             _svg.ribbons
-                .each(function(d){
+                .each(function (d) {
                     d.source.name = _nameByIndex.get(d.source.index);
                     d.target.name = _nameByIndex.get(d.target.index);
                 })
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return "ribbon " + _w.utils.encode(d.source.name);
                 })
                 .transition().duration(duration)
@@ -515,10 +517,10 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Adjust size
-            _w.attr.width = 2*_w.attr.radius;
-            _w.attr.height = 2*_w.attr.radius;
+            _w.attr.width = 2 * _w.attr.radius;
+            _w.attr.height = 2 * _w.attr.radius;
 
             // Widget
             _w.widget
@@ -540,7 +542,7 @@
             // Label
             _svg.label
                 .attr("transform", "translate(0," + _w.attr.radius + ")")
-                .style("width", 2*(_w.attr.radius + _w.attr.thickness) + "px")
+                .style("width", 2 * (_w.attr.radius + _w.attr.thickness) + "px")
                 .attr("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.label);

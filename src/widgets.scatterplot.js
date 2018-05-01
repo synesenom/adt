@@ -55,26 +55,16 @@
 
         /**
          * Binds data to the scatter plot.
-         * Expected data format: array of objects with property names for each plot and values as object having an {x}
-         * and {y} coordinates.
+         * Expected data format: array of objects with two properties: {name} which is the name of the plot and
+         * {values} which is an array containing {(x, y)} objects for the points.
          *
          * @method data
          * @memberOf du.widgets.scatterplot.ScatterPlot
          * @param {Array} data Data to plot.
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
-        this.data = function(data) {
-            _data = d3.keys(data[0]).map(function(name) {
-                return {
-                    name: name,
-                    values: data.map(function(d) {
-                        return {
-                            x: d[name].x,
-                            y: d[name].y
-                        };
-                    })
-                };
-            });
+        this.data = function (data) {
+            _data = data;
             return this;
         };
 
@@ -87,13 +77,13 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".dot-group", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function(mouse) {
+        _w.utils.tooltip = function (mouse) {
             if (!mouse) {
                 this.tt && this.tt.remove();
                 this.tt = null;
@@ -132,13 +122,13 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.reduce(function (a, d) {
@@ -162,10 +152,12 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             // Groups
             _svg.plots.groups = _svg.g.selectAll(".dot-group")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             _svg.plots.groups.exit()
@@ -179,31 +171,31 @@
                 .style("stroke", "none")
                 .style("fill", "transparent");
             _svg.plots.groups = groups.merge(_svg.plots.groups)
-                .each(function() {
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 });
             _svg.plots.groups
                 .transition().duration(duration)
                 .style("fill-opacity", _w.attr.opacity)
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
 
             // Dots
             _svg.plots.dots = _svg.plots.groups.selectAll(".dot")
-                .data(function(d) {
+                .data(function (d) {
                     return d.values;
                 });
             _svg.plots.dots.exit()
@@ -213,27 +205,27 @@
             _svg.plots.dots.enter().append("circle")
                 .attr("class", "dot")
                 .style("opacity", 0)
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.y);
                 })
-            .merge(_svg.plots.dots)
+                .merge(_svg.plots.dots)
                 .transition().duration(duration)
                 .style("opacity", 1)
                 .attr("r", 3)
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.y);
                 });
 
             // Update Voronoi tessellation
             var sites = [];
-            _data.forEach(function(d) {
-                d.values.forEach(function(dd) {
+            _data.forEach(function (d) {
+                d.values.forEach(function (dd) {
                     var site = [_svg.scale.x(dd.x), _svg.scale.y(dd.y)];
                     site.name = d.name;
                     sites.push(site);
@@ -245,7 +237,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set colors
             _w.attr.colors = _w.utils.colors(_data[0] ? d3.keys(_data[0].y) : null);
 
@@ -269,7 +261,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

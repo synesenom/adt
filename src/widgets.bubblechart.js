@@ -65,7 +65,8 @@
 
         /**
          * Binds data to the bubble chart.
-         * Expected data format: array of object with properties {name}, {x}, {y} and {size}.
+         * Expected data format: array of object with properties {name} (name of the bubble), {x}, {y} (bubble
+         * coordinates) and {size} (relative size of the bubble).
          *
          * @method data
          * @memberOf du.widgets.bubblechart.BubbleChart

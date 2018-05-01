@@ -9,7 +9,7 @@
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>The opacity value to set.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.areachart.AreaChart</code></i></td><td>Reference to the current AreaChart.</td></tr></table></div><br><h2 id='api-du.widgets.areachart.AreaChart.data'>data</h2>
 <div class='card'><pre><code>du.widgets.areachart.AreaChart.data(data)</code></pre>
-<br>Binds data to the area plot. Expected data format: array of objects with properties <code>x</code> and <code>y</code>, where <code>x</code> is a number or time, <code>y</code> is an object containing the values for each quantity to plot. Data is sorted by the <code>x</code> values. 
+<br>Binds data to the area plot. Expected data format: array containing an object for each plot. A plot object has a <code>name</code> property with the name of the plot and a <code>values</code> property which is the array of <code>(x, y)</code> coordinates. All plots are sorted by their <code>x</code> values before plot. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.areachart.AreaChart</code></i></td><td>Reference to the current AreaChart.</td></tr></table></div><br><h2 id='api-du.widgets.areachart.AreaChart.highlight'>highlight</h2>
 <div class='card'><pre><code>du.widgets.areachart.AreaChart.highlight(key, duration)</code></pre>

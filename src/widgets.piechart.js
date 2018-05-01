@@ -126,7 +126,9 @@
         function _arcTween(d) {
             var i = d3.interpolate(this._current, d);
             this._current = i(0);
-            return function(t) { return _svg.arc(i(t)); };
+            return function (t) {
+                return _svg.arc(i(t));
+            };
         }
 
         function _arcTweenLabel(d) {
@@ -139,8 +141,8 @@
 
         /**
          * Binds new data to pie chart.
-         * Expected data format: object with property names as the categories and properties as the values.
-         * Data is sorted by the category values in descending order.
+         * Expected data format: array of objects with properties {name} (name of the slice) and {value} (corresponding
+         * number).
          *
          * @method data
          * @memberOf du.widgets.piechart.PieChart
@@ -161,7 +163,7 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) {
                 _w.utils.highlight(this, _svg, "path", key, duration);
                 _w.utils.highlight(this, _svg, "text", key, duration);
@@ -170,7 +172,7 @@
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function() {
+        _w.utils.tooltip = function () {
             return _current ? {
                 title: _current.name,
                 stripe: _w.attr.colors[_current.name],
@@ -178,16 +180,18 @@
                     type: "metrics",
                     data: [
                         {label: "value:", value: _current.value.toFixed(6)},
-                        {label: "fraction:", value: (100 * _current.value / d3.sum(_data, function(d) {
+                        {
+                            label: "fraction:", value: (100 * _current.value / d3.sum(_data, function (d) {
                             return d.value;
-                        })).toFixed(1) + "%"}
+                        })).toFixed(1) + "%"
+                        }
                     ]
                 }
             } : null;
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             // Add chart itself
             _svg.g = _w.widget.append("g");
 
@@ -210,7 +214,9 @@
                     return d.value;
                 })
                 .sort(null);
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
 
             // Get old and new data
             var paths = _svg.g.selectAll(".slice");
@@ -221,23 +227,27 @@
             // Paths
             paths = paths.data(data1, _key);
             paths.exit()
-                .datum(function(d, i) { return _findNeighborArc(i, data1, data0, _key) || d; })
+                .datum(function (d, i) {
+                    return _findNeighborArc(i, data1, data0, _key) || d;
+                })
                 .transition().duration(duration)
                 .attrTween("d", _arcTween)
                 .remove();
             paths.enter().append("path")
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return "slice " + _w.utils.encode(d.data.name);
                 })
-                .each(function(d, i) {
+                .each(function (d, i) {
                     this._current = _findNeighborArc(i, data0, data1, _key) || d;
                 })
                 .style("pointer-events", "all")
-            .merge(paths)
-                .each(function() {
+                .merge(paths)
+                .each(function () {
                     _transition = true;
                 })
-                .attr("fill", function(d) { return _colors[d.data.name]; })
+                .attr("fill", function (d) {
+                    return _colors[d.data.name];
+                })
                 .on("mouseover", function (d) {
                     _current = d.data;
                     _w.attr.mouseover && _w.attr.mouseover(d.data.name);
@@ -252,30 +262,34 @@
                 .transition().duration(duration)
                 .style("opacity", 1)
                 .attrTween("d", _arcTween)
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
 
             // Ticks
             labels = labels.data(data1, _key);
             labels.exit()
-                .datum(function(d, i) { return _findNeighborArc(i, data1, data0, _key) || d; })
+                .datum(function (d, i) {
+                    return _findNeighborArc(i, data1, data0, _key) || d;
+                })
                 .transition().duration(duration)
                 .style("opacity", 0)
                 .attrTween("transform", _arcTweenLabel)
                 .remove();
             labels.enter().append("text")
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return "label " + _w.utils.encode(d.data.name);
                 })
-                .each(function(d, i) { this._current = _findNeighborArc(i, data0, data1, _key) || d; })
-            .merge(labels)
+                .each(function (d, i) {
+                    this._current = _findNeighborArc(i, data0, data1, _key) || d;
+                })
+                .merge(labels)
                 .attr("dy", "0.35em")
                 .style("text-anchor", "middle")
                 .style("pointer-events", "none")
                 .attr("fill", _w.attr.fontColor)
                 .text(function (d) {
-                    return _w.attr.tickFormat(100 * d.data.value / d3.sum(data1, function(dd) {
+                    return _w.attr.tickFormat(100 * d.data.value / d3.sum(data1, function (dd) {
                         return dd.value;
                     }));
                 })
@@ -284,7 +298,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set colors
             _w.attr.colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;

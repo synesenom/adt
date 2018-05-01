@@ -94,13 +94,13 @@
          * @returns {du.widgets.violinplot.ViolinPlot} Reference to the current ViolinPlot.
          */
         // TODO add mode
-        this.data = function(data) {
-            var fullData = data.reduce(function(a, d) {
+        this.data = function (data) {
+            var fullData = data.reduce(function (a, d) {
                 return a.concat(d.data);
             }, []);
             _yMin = d3.min(fullData);
             _yMax = d3.max(fullData);
-            _data = data.map(function(d) {
+            _data = data.map(function (d) {
                 var sd = d.data.sort(d3.ascending),
                     min = d3.min(sd),
                     max = d3.max(sd),
@@ -108,8 +108,8 @@
                     q3 = d3.quantile(sd, 0.75),
                     delta = 0.2 * (max - min);
                 var kde = _kde(_epanechnikovKernel(0.05 * (max - min)),
-                    d3.range(21).map(function(d) {
-                        return (max - min + 2*delta) * d / 20 + (min - delta);
+                    d3.range(21).map(function (d) {
+                        return (max - min + 2 * delta) * d / 20 + (min - delta);
                     }));
                 var violinData = kde(d.data);
                 return {
@@ -147,20 +147,23 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.violinplot.ViolinPlot} Reference to the current ViolinPlot.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".violin", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function() {
+        _w.utils.tooltip = function () {
             return _current ? {
                 title: _current.name,
                 stripe: _w.attr.colors[_current.name],
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "min/max:", value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)},
+                        {
+                            label: "min/max:",
+                            value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)
+                        },
                         {label: "mean:", value: _current.values.mean.toPrecision(3)},
                         {label: "median:", value: _current.values.median.toPrecision(3)},
                         {label: "Q1:", value: _current.values.q1.toPrecision(3)},
@@ -171,13 +174,13 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.map(function (d) {
@@ -185,7 +188,7 @@
                 }).reverse(), [_w.attr.innerWidth, 0], "point"),
                 y: _w.utils.scale(
                     _data.map(function (d) {
-                        return [d.values.min-0.1*(d.values.max-d.values.min), d.values.max+0.1*(d.values.max-d.values.min)];
+                        return [d.values.min - 0.1 * (d.values.max - d.values.min), d.values.max + 0.1 * (d.values.max - d.values.min)];
                     }).reduce(function (array, d) {
                         return array.concat(d);
                     }, []), [_w.attr.innerHeight, 0])
@@ -200,10 +203,12 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             // Groups
             _svg.plots.groups = _svg.g.selectAll(".box-group")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             _svg.plots.groups.exit()
@@ -217,36 +222,36 @@
                 .style("opacity", 0)
                 .style("fill", "transparent");
             var union = enter.merge(_svg.plots.groups)
-                .each(function() {
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _current = d;
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 })
-                .attr("transform", function(d) {
+                .attr("transform", function (d) {
                     return "translate(" + _svg.scale.x(d.name) + ",0)";
                 });
             union.transition().duration(duration)
-                .attr("transform", function(d) {
+                .attr("transform", function (d) {
                     return "translate(" + _svg.scale.x(d.name) + ",0)";
                 })
                 .style("opacity", 1)
                 .style("fill-opacity", 0.3)
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .style("stroke", function(d) {
+                .style("stroke", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
 
@@ -255,7 +260,7 @@
                 .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")");
             union.select("path")
                 .transition().duration(duration)
-                .attr("d", function(d) {
+                .attr("d", function (d) {
                     d.scale.x.range([_w.attr.innerHeight, 0]);
                     var area = d3.area()
                         .curve(d3.curveBasis)
@@ -274,9 +279,11 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
 
             // Chart
             _svg.g
@@ -298,7 +305,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

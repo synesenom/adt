@@ -33,6 +33,7 @@ setInterval(function() {
     }).map(function (d) {
         return {name: d, value: Math.random()};
     }).concat({name: "kiwi", value: Math.random()});
+
     piechart.data(data).render();
 }, 20000);</script><script class="doc">// add interactions
 piechart

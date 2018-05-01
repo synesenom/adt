@@ -71,9 +71,9 @@
 
         /**
          * Binds data to the area plot.
-         * Expected data format: array of objects with properties {x} and {y}, where {x} is a number or time, {y}
-         * is an object containing the values for each quantity to plot.
-         * Data is sorted by the {x} values.
+         * Expected data format: array containing an object for each plot. A plot object has a {name} property with the
+         * name of the plot and a {values} property which is the array of {(x, y)} coordinates.
+         * All plots are sorted by their {x} values before plot.
          *
          * @method data
          * @memberOf du.widgets.areachart.AreaChart
@@ -81,17 +81,11 @@
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
         this.data = function(data) {
-            var sorted = data.sort(function (a, b) {
-                return a.x - b.x;
-            });
-            _data = d3.keys(data[0].y).map(function(name) {
+            _data = data.map(function(d) {
                 return {
-                    name: name,
-                    values: sorted.map(function(d) {
-                        return {
-                            x: d.x,
-                            y: d.y[name]
-                        };
+                    name: d.name,
+                    values: d.values.sort(function (a, b) {
+                        return a.x - b.x;
                     })
                 };
             });
@@ -135,14 +129,12 @@
             }
 
             // Get plots
-            var x = 0;
             var plots = _data.map(function(d, i) {
                 var j = index[i];
                 var data = d.values;
                 var left = data[j - 1] ? data[j - 1] : data[j];
                 var right = data[j] ? data[j] : data[j - 1];
                 var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
-                x = point.x;
 
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
@@ -155,7 +147,7 @@
             });
 
             return {
-                title: _w.attr.xLabel + ": " + x,
+                title: _w.attr.xLabel + ": " + _svg.scale.x.invert(mouse[0]).toFixed(2),
                 content: {
                     type: "plots",
                     data: plots

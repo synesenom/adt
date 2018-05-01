@@ -43,8 +43,8 @@
 
         /**
          * Binds data to the box plot.
-         * Expected data format: array containing objects with a {name} property with the box name and a {data}
-         * property that contains the array of values for each box.
+         * Expected data format: array containing objects with a {name} property with the box name and a {values}
+         * property that contains the array of values for the box.
          *
          * @method data
          * @memberOf du.widgets.boxplot.BoxPlot
@@ -54,7 +54,7 @@
         this.data = function(data) {
             // Calculate box statistics
             _data = data.map(function(d) {
-                var sd = d.data.sort(d3.ascending),
+                var sd = d.values.sort(d3.ascending),
                     min = d3.min(sd),
                     max = d3.max(sd),
                     q1 = d3.quantile(sd, 0.25),
@@ -62,7 +62,7 @@
                     iqr = q3 - q1;
                 var mildOutliers = [],
                     extremeOutliers = [];
-                d.data.filter(function(x) {
+                d.values.filter(function(x) {
                     return x < q1 - 1.5*iqr || x > q3 + 1.5*iqr;
                 }).forEach(function(x) {
                     if (x < q1 - 3*iqr || x > q3 + 3*iqr) {

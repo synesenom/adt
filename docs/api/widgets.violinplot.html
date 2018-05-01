@@ -5,7 +5,7 @@
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>name</i></td><td><code>string</code></td><td>Identifier of the widget.</td></tr><tr><td><i>parent</i></td><td><code>object</code></td><td>Parent element to append widget to. If not specified, widget is appended to body. <code>optional</code></td></tr></table>
 </div><br><h2 id='api-du.widgets.violinplot.ViolinPlot.data'>data</h2>
 <div class='card'><pre><code>du.widgets.violinplot.ViolinPlot.data(data)</code></pre>
-<br>Binds data to the violin plot. Expected data format: array containing objects with a <code>name</code> property with the box name and a <code>data</code> property that contains the array of values for each violin. 
+<br>Binds data to the violin plot. Expected data format: array containing the violin objects. Each violin needs to have a <code>name</code> property denoting its name and a <code>data</code> property that contains the array of corresponding values. The violins are calculated automatically. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>object</code></td><td>Data to plot.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.violinplot.ViolinPlot</code></i></td><td>Reference to the current ViolinPlot.</td></tr></table></div><br><h2 id='api-du.widgets.violinplot.ViolinPlot.highlight'>highlight</h2>
 <div class='card'><pre><code>du.widgets.violinplot.ViolinPlot.highlight(key, duration)</code></pre>
