@@ -62,7 +62,7 @@
          * @method epanechnikovKernel
          * @methodOf du.widgets.violinplot.ViolinPlot
          * @param {number} scale Scale parameter of the kernel.
-         * @returns {Function} The kernel function
+         * @returns {Function} The kernel function.
          * @private
          */
         function _epanechnikovKernel(scale) {
@@ -154,7 +154,7 @@
         _w.utils.tooltip = function () {
             return _current ? {
                 title: _current.name,
-                stripe: _w.attr.colors[_current.name],
+                stripe: _colors[_current.name],
                 content: {
                     type: "metrics",
                     data: [
@@ -253,7 +253,7 @@
                     _transition = false;
                 });
 
-            // Left inner
+            // Violin itself
             enter.append("path")
                 .attr("transform", "rotate(90) translate(0,-" + (10 + 0.5) + ")");
             union.select("path")
@@ -278,11 +278,6 @@
 
         // Style updater
         _w.render.style = function () {
-            // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function (d) {
-                return d.name;
-            }) : null);
-
             // Chart
             _svg.g
                 .style("width", _w.attr.innerWidth + "px")
@@ -296,9 +291,6 @@
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .attr("transform", "translate(0," + 1 + ")");
-            _svg.g.selectAll(".tick > line")
-                .style("shape-rendering", "geometricPrecision")
-                .style("stroke-width", "1px");
 
             // Labels
             _svg.labels.x

@@ -583,9 +583,9 @@
                 return {
                     g: g,
                     axisFn: {
-                        x: d3.axisBottom()
+                        x: d3.axisBottom(null)
                             .ticks(7),
-                        y: d3.axisLeft()
+                        y: d3.axisLeft(null)
                             .ticks(5)
                     },
                     axes: {
@@ -868,7 +868,7 @@
                 || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
                 d3.select("#" + tooltipId)
                     .style("opacity", 0)
-                    .html("");
+                    .remove();
                 _utils.tooltip();
                 return;
             }
@@ -881,7 +881,7 @@
                 tooltip = d3.select("body").append("div")
                     .attr("id", tooltipId)
                     .style("position", "absolute")
-                    .style("background-color", "rgba(255, 255, 255, 0.95)")
+                    .style("background-color", "rgba(255, 255, 255, 0.9)")
                     .style("border-radius", "2px")
                     .style("box-shadow", "0 0 3px " + color)
                     .style("padding", "5px")

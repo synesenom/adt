@@ -3,10 +3,13 @@ html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-backface-visibility: hidden;
 }
+html, body {
+    background-color: #f5f5f5;
+}
 main {
     width: 1100px;
     max-width: 1100px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 .example-container {
     position: relative;
@@ -20,21 +23,19 @@ main {
     width: 300px;
     height: 280px;
     margin: calc(50% - 152px);
-    box-shadow: 1px 1px 1px #ddd;
+    box-shadow: 1px 0 1px #aaa;
     border-radius: 3px;
-    border: 1px solid #ddd;
+    border: 1px solid #fff;
+    background-color: #fff;
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
-    transition: .3s box-shadow, .3s border, .3s filter;
-    -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
+    transition: .3s filter, .3s box-shadow;
+    -webkit-transition: .3s -webkit-filter, .3s box-shadow;
 }
 .example:hover {
-    box-shadow: 1px 1px 5px grey;
-    border: 1px solid #aaa;
+    box-shadow: 1px 0 1px #888;
     filter: grayscale(0);
     -webkit-filter: grayscale(0);
-    transition: .3s box-shadow, .3s border, .3s filter;
-    -webkit-transition: .3s box-shadow, .3s border, .3s -webkit-filter;
 }
 .example-container:last-child {
     margin-bottom: 60px;

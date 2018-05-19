@@ -1,3 +1,13 @@
+::selection {
+    background-color: royalblue;
+}
+html, body {
+    background-color: #f5f5f5;
+}
+aside {
+    background-color: #f5f5f5;
+    top: 0;
+}
 main {
     margin-bottom: 40px;
 }
@@ -15,15 +25,17 @@ main {
 }
 a,
 a:visited {
-    margin-right: 20px;
-    color: #bbb;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 2px;
+    color: #999;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1px;
     transition: .3s color, .3s border-bottom;
 }
 a:hover {
     color: black;
-    border-bottom: 2px solid dodgerblue;
+    border-bottom: 3px solid royalblue;
+}
+a.margined {
+    margin-right: 20px;
 }
 @media screen and (max-width: 800px) {
     main {
@@ -45,12 +57,12 @@ a:hover {
 }
 pre {
     width: auto;
-    border-radius: 3px;
 }
 pre code {
     min-width: 100%;
-    background-color: white !important;
-    font-size: 0.9em;
+    background-color: #f5f5f5 !important;
+    font-size: 0.8em;
+    line-height: 1.4em;
     padding: 0 !important;
 }
 #desc {
@@ -67,11 +79,11 @@ pre code {
 }
 h1 {
     margin: 40px 0 20px -20px;
-    padding: 5px 5px 5px 15px;
-    border-left: 5px solid dodgerblue;
+    padding: 5px 5px 7px 15px;
+    border-left: 5px solid royalblue;
 }
 .good {
-    color: limegreen;
+    color: forestgreen;
     font-weight: bold;
 }
 .bad {

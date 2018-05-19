@@ -679,16 +679,6 @@
                 // Zoom map
                 _layers.map.paths.style("stroke-width", 0.5 / k + "px");
                 _layers.map.paths.attr("transform", d3.event.transform);
-                /* if (_layers.map.labels) {
-                    _layers.map.labels
-                        .style("opacity", function(d) {
-                            //return k > 3 ? Math.pow(k, 4) / 1000 : 0;
-                            return 0.00001 * Math.max(1, Math.pow(Math.max(d.svg.width, d.svg.height)*k, 2));
-                        })
-                        .attr("font-size", 10 / k + "pt")
-                        .attr("dy", 5 / k + "pt")
-                        .attr("transform", d3.event.transform);
-                }*/
 
                 // Zoom tiles
                 _tilesLayer._zoom(d3.event.transform);
