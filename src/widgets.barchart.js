@@ -289,46 +289,6 @@
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.vertical ? _w.attr.xLabel : _w.attr.yLabel);
-
-            // Plot
-            /*if (_svg.bars !== undefined) {
-                _svg.bars
-                    .style("fill", function (d) {
-                        return typeof _w.attr.colors === "string" ? _w.attr.colors : _w.attr.colors[d.name];
-                    });
-
-                // Interactions (for ticks as well)
-                if (_w.attr.mouseover) {
-                    _svg.bars
-                        .on("mouseover", function (d) {
-                            _w.attr.mouseover && _w.attr.mouseover(d.name);
-                        });
-                    _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
-                        .on("mouseover", function (d, i) {
-                            _w.attr.mouseover && _w.attr.mouseover(_data[i].name);
-                        });
-                }
-                if (_w.attr.mouseleave) {
-                    _svg.bars
-                        .on("mouseleave", function (d) {
-                            _w.attr.mouseleave && _w.attr.mouseleave(d.name);
-                        });
-                    _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
-                        .on("mouseleave", function (d, i) {
-                            _w.attr.mouseleave&& _w.attr.mouseleave(_data[i].name);
-                        });
-                }
-                if (_w.attr.click) {
-                    _svg.bars
-                        .on("click", function (d) {
-                            _w.attr.click && _w.attr.click(d.name);
-                        });
-                    _svg.g.selectAll("." + (_w.attr.vertical ? "y" : "x") + ".axis .tick")
-                        .on("click", function (d, i) {
-                            _w.attr.click && _w.attr.click(_data[i].name);
-                        });
-                }
-            }*/
         };
     }
 

@@ -67,7 +67,7 @@
         var _img = null;
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             // Add widget
             _svg.g = _w.widget.append("div")
                 .style("width", _w.attr.width > 0 ? _w.attr.width : null)
@@ -77,7 +77,7 @@
 
             // Adjust aspect ratio and size once loaded
             _img = new Image();
-            _img.onload = function() {
+            _img.onload = function () {
                 var imgAspect = _img.width / _img.height;
                 var aspect = _w.attr.width / _w.attr.height;
                 var width = imgAspect > aspect ? _w.attr.width : _w.attr.height * imgAspect;
@@ -91,20 +91,20 @@
                     .style("height", height + "px")
                     .style("margin-left", (_w.attr.width - width) / 2 + "px")
                     .style("margin-top", (_w.attr.height - height) / 2 + "px")
-                    .on("mouseover", function() {
+                    .on("mouseover", function () {
                         _w.attr.mouseover && _w.attr.mouseover(_img);
                     })
-                    .on("mouseleave", function() {
+                    .on("mouseleave", function () {
                         _w.attr.mouseleave && _w.attr.mouseleave(_img);
                     })
-                    .on("click", function() {
+                    .on("click", function () {
                         _w.attr.click && _w.attr.click(_img);
                     });
             };
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set image source, it will update the widget as well
             if (_w.attr.src) {
                 _img.src = _w.attr.src;

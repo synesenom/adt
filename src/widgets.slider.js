@@ -116,7 +116,7 @@
 
                 // Update domain
                 _domain = [];
-                for (var i=_w.attr.min; i<=_w.attr.max; i+=_w.attr.step) {
+                for (var i = _w.attr.min; i <= _w.attr.max; i += _w.attr.step) {
                     _domain.push(i);
                 }
 
@@ -156,20 +156,20 @@
                         var value = null;
                         if (_ordinalScale) {
                             var ex = d3.event.x;
-                            value = _domain.reduce(function(prev, curr) {
+                            value = _domain.reduce(function (prev, curr) {
                                 return (Math.abs(_scale(curr) - ex) < Math.abs(_scale(prev) - ex) ? curr : prev);
                             });
                         } else {
                             value = _scale.invert(d3.event.x);
                         }
                         _svg.handle.attr("cx", _scale(value));
-                        _w.attr.callback &&  _w.attr.callback(value);
+                        _w.attr.callback && _w.attr.callback(value);
                     }));
 
             _svg.axis = _svg.g.insert("g", ".track-overlay")
                 .style("font-size", "10px")
                 .attr("font-family", "inherit")
-                .attr("transform", "translate(0," + 18 + ")");
+                .attr("transform", "translate(0," + 20 + ")");
             _svg.ticks = _svg.axis
                 .selectAll("text")
                 .data(_ordinalScale ? _domain : _scale.ticks(5))

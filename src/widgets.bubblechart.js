@@ -72,8 +72,8 @@
          * @param {Array} data Data to plot.
          * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
          */
-        this.data = function(data) {
-            _data = data.map(function(d) {
+        this.data = function (data) {
+            _data = data.map(function (d) {
                 return {
                     name: d.name,
                     values: {
@@ -95,13 +95,13 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".bubble", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function() {
+        _w.utils.tooltip = function () {
             return _current ? {
                 title: _current.name,
                 stripe: _w.attr.colors[_current.name],
@@ -117,22 +117,22 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.map(function (d) {
-                    return [d.values.x-1.1*_w.attr.scale*d.values.size, d.values.x+1.1*_w.attr.scale*d.values.size];
+                    return [d.values.x - 1.1 * _w.attr.scale * d.values.size, d.values.x + 1.1 * _w.attr.scale * d.values.size];
                 }).reduce(function (a, d) {
                     return a.concat(d);
                 }, []), [0, _w.attr.innerWidth]),
                 y: _w.utils.scale(_data.map(function (d) {
-                    return [d.values.y-1.1*_w.attr.scale*d.values.size, d.values.y+1.1*_w.attr.scale*d.values.size];
+                    return [d.values.y - 1.1 * _w.attr.scale * d.values.size, d.values.y + 1.1 * _w.attr.scale * d.values.size];
                 }).reduce(function (a, d) {
                     return a.concat(d);
                 }, []), [_w.attr.innerHeight, 0])
@@ -147,9 +147,11 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name;}) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             _svg.plots.bubbles = _svg.g.selectAll(".bubble")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             _svg.plots.bubbles.exit()
@@ -160,51 +162,51 @@
                 .attr("class", function (d) {
                     return "bubble " + _w.utils.encode(d.name);
                 })
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.values.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.values.y);
                 })
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none")
                 .style("fill", "transparent")
-            .merge(_svg.plots.bubbles)
-                .each(function() {
+                .merge(_svg.plots.bubbles)
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _current = d;
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 })
                 .transition().duration(duration)
-                .attr("r", function(d) {
+                .attr("r", function (d) {
                     return _w.attr.scale * d.values.size;
                 })
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.values.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.values.y);
                 })
                 .style("opacity", 1)
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Chart (using conventional margins)
             _svg.g
                 .attr("width", _w.attr.innerWidth + "px")
@@ -225,7 +227,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

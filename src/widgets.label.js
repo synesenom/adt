@@ -65,7 +65,7 @@
         var _div = {};
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _div.g = _w.widget.append("div")
                 .style("position", "absolute")
                 .style("width", "100%")
@@ -79,7 +79,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             _div.label
                 .style("color", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")

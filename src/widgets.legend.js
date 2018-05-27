@@ -86,18 +86,18 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             return _w.utils.highlight(this, _svg, ".legend-entry", key, duration);
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg.g = _w.widget.append("div")
                 .style("display", "block")
                 .style("position", "relative");
 
             _svg.legends = {};
-            _w.attr.labels.forEach(function(label) {
+            _w.attr.labels.forEach(function (label) {
                 var g = _svg.g.append("div")
                     .attr("class", "legend-entry " + _w.utils.encode(label))
                     .style("display", "inline-block")
@@ -124,7 +124,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set colors
             _w.attr.colors = _w.utils.colors(_w.attr.labels);
 
@@ -135,7 +135,7 @@
 
             for (var label in _svg.legends) {
                 if (_svg.legends.hasOwnProperty(label)) {
-                    (function(label) {
+                    (function (label) {
                         var legend = _svg.legends[label];
                         legend.g
                             .style("width", _w.attr.twoColumns ? "50%" : "100%");

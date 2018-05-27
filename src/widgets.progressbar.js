@@ -32,8 +32,27 @@
     function ProgressBar(name, parent) {
         var _w = Widget.call(this, name, "progressbar", "div", parent);
 
-        // Widget elements
-        var _div = {};
+        /**
+         * Sets the color of the progress bar track.
+         * Default is transparent.
+         *
+         * @method backgroundColor
+         * @memberOf du.widgets.progressbar.ProgressBar
+         * @param {string} color Color of the progress bar track.
+         * @returns {du.widgets.progressbar.ProgressBar} Reference to the current Progress bar.
+         */
+        _w.attr.add(this, "backgroundColor", "transparent");
+
+        /**
+         * Sets the progress bar thickness in pixels.
+         * Default is 1px.
+         *
+         * @method thickness
+         * @memberOf du.widgets.progressbar.ProgressBar
+         * @param {number} value Thickness value in pixels.
+         * @returns {du.widgets.progressbar.ProgressBar} Reference to the current Progress bar.
+         */
+        _w.attr.add(this, "thickness", 1);
 
         /**
          * Sets the percentage of the progress bar.
@@ -41,15 +60,15 @@
          * @method percentage
          * @methodOf du.widgets.progressbar.ProgressBar
          * @param {number} value Value ot percentage to set bar to.
-         * @returns {du.widgets.progressbar.ProgressBar}
+         * @returns {du.widgets.progressbar.ProgressBar} Reference to the current Progress bar.
          */
-        this.percentage = function(value) {
-            _div.bar.style("width", value + "%");
-            return this;
-        };
+        _w.attr.add(this, "percentage", 0);
+
+        // Widget elements
+        var _div = {};
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _div.g = _w.widget.append("div")
                 .style("position", "absolute")
                 .style("width", "100%")
@@ -68,19 +87,25 @@
                 .style("display", "block")
                 .style("width", "100%")
                 .style("height", "1px")
-                .style("bottom", "0");
+                .style("bottom", "0")
+                .style("background-color", _w.attr.backgroundColor);
             _div.bar = _div.barTrack.append("div")
                 .style("display", "block")
                 .style("float", "left")
                 .style("width", "43%")
-                .style("height", "100%")
-                .style("background-color", "dodgerblue");
+                .style("height", "100%");
+        };
+
+        _w.render.update = function () {
+            _div.bar.style("width", _w.attr.percentage + "%");
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             _div.label.style("color", _w.attr.fontColor)
+                .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.label);
+            _div.barTrack.style("height", _w.attr.thickness + "px");
             _div.bar.style("background-color", _w.attr.fontColor);
         };
     }

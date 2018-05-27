@@ -316,7 +316,7 @@ new du.widgets.Map("map", "#map")
 new du.widgets.Picture("widgets.picture", "#picture")
     .width(width)
     .height(height)
-    .src("data/macika.jpg")
+    .src("data/macika.png")
     .render();
 
 // Pie chart
@@ -370,6 +370,19 @@ new du.widgets.LineChart("placeholder", "#placeholder")
     ])
     .render()
     .placeholder("This chart is empty and you see a placeholder instead");
+
+// Progress bar
+new du.widgets.ProgressBar("progressbar", "#progressbar")
+    .x(0.2 * width)
+    .width(0.6 * width)
+    .height(height)
+    .label("progress: 68%")
+    .fontSize(14)
+    .backgroundColor("#ddd")
+    .fontColor("dodgerblue")
+    .thickness(2)
+    .percentage(68)
+    .render();
 
 // Scatter plot
 new du.widgets.ScatterPlot("scatterplot", "#scatterplot")

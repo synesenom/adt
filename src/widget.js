@@ -96,7 +96,7 @@
      * The base widget class, all widgets inherit this parent class.
      *
      * @class Widget
-     * @memberOf du.widgets
+     * @memberOf du.widget
      * @param {string} name Name of the widget. This is used to identify the element.
      * @param {string} type Widget type, part of the generated widget ID.
      * @param {string=} element HTML element type to use in the widget. If not specified, SVG is used.
@@ -343,7 +343,7 @@
          * Sets font size of the widget in pixels.
          * Default is 10.
          *
-         * @method fontSize.
+         * @method fontSize
          * @memberOf du.widget.Widget
          * @param {number} size Font size in pixels.
          * @returns {du.widget.Widget} Reference to the current widget.
@@ -611,7 +611,7 @@
              * Creates a scale from an array of values.
              *
              * @method scale
-             * @memberOf du.widgets.Widget._utils
+             * @memberOf du.widget.Widget._utils
              * @param {Array} data Array of values to build scale for.
              * @param {Array} range Array of the range.
              * @param {string=} type Type of the values. Can be {number}, {string}.

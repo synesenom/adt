@@ -83,7 +83,7 @@
         var _scale = null;
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             // Create scales
             _scale = {
                 x: d3.scaleLinear()
@@ -182,7 +182,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Widget
             _w.widget.style("width", _w.attr.width + "px");
             _w.widget.style("height", _w.attr.height + "px");
@@ -201,7 +201,7 @@
                 .attr("y", _scale.y.range()[0] + 0.5)
                 .attr("width", (_w.attr.width - _w.attr.margins.left - _w.attr.margins.right - 1) + "px")
                 .attr("height", (_w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 1) + "px");
-            if(_w.attr.guide) {
+            if (_w.attr.guide) {
                 _svg.guide.h.style("stroke", _w.attr.fontColor);
                 _svg.guide.v.style("stroke", _w.attr.fontColor);
             }

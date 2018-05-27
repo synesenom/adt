@@ -11,18 +11,22 @@ script.doc.
     var progressbar = new du.widgets.ProgressBar("mylabel", "#widget")
         .width(width)
         .height(height)
-        .label("Loading...")
-        .fontSize(24)
+        .label("Loading 0%")
+        .fontSize(16)
+        .backgroundColor("#ddd")
         .fontColor("dodgerblue")
+        .thickness(2)
         .render();
 script.doc.
-    // do some update
+    // update
     var t = 0;
     function run() {
-        progressbar.percentage(t)
+        progressbar
+            .percentage(t)
+            .label("Loading " + Math.round(t) + "%")
             .render();
-        t = t < 100 ? t+.1 : 0.;
-        setTimeout(run, Math.random()*20)
+        t = t < 100 ? t+Math.random() : 0.;
+        setTimeout(run, -100 * Math.log(Math.random()))
     }
     run();
 +resize()

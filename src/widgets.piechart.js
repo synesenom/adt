@@ -285,7 +285,7 @@
                 .each(function (d, i) {
                     this._current = _findNeighborArc(i, data0, data1, _key) || d;
                 })
-            .merge(labels)
+                .merge(labels)
                 .attr("dy", "0.35em")
                 .style("text-anchor", "middle")
                 .style("pointer-events", "none")

@@ -67,7 +67,7 @@
         var _svg = {};
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg.g = _w.widget.append("div")
                 .style("position", "absolute")
                 .style("width", "100%")
@@ -90,7 +90,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             _w.widget
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("pointer-events", "none");

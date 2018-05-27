@@ -79,8 +79,8 @@
          * @param {Array} data Data to plot.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
-        this.data = function(data) {
-            _data = data.map(function(d) {
+        this.data = function (data) {
+            _data = data.map(function (d) {
                 return {
                     name: d.name,
                     values: d.values.sort(function (a, b) {
@@ -100,18 +100,18 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".area", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function(mouse) {
+        _w.utils.tooltip = function (mouse) {
             // Get bisections
             var bisect = d3.bisector(function (d) {
                 return _svg.scale.x(d.x);
             }).left;
-            var index = mouse ? _data.map(function(d) {
+            var index = mouse ? _data.map(function (d) {
                 return bisect(d.values, mouse[0]);
             }) : null;
 
@@ -129,7 +129,7 @@
             }
 
             // Get plots
-            var plots = _data.map(function(d, i) {
+            var plots = _data.map(function (d, i) {
                 var j = index[i];
                 var data = d.values;
                 var left = data[j - 1] ? data[j - 1] : data[j];
@@ -139,8 +139,8 @@
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
                     .attr("r", 4)
-                    .attr("cx", _svg.scale.x(point.x)+1)
-                    .attr("cy", _svg.scale.y(point.y)+1)
+                    .attr("cx", _svg.scale.x(point.x) + 1)
+                    .attr("cy", _svg.scale.y(point.y) + 1)
                     .style("fill", _colors[d.name]);
 
                 return {name: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
@@ -156,13 +156,13 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.reduce(function (a, d) {
@@ -196,9 +196,11 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             _svg.plots.areas = _svg.g.selectAll(".area")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             _svg.plots.areas.exit()
@@ -213,17 +215,17 @@
                 .style("opacity", 0)
                 .style("stroke", "none")
                 .style("fill", "transparent")
-            .merge(_svg.plots.areas)
-                .each(function() {
+                .merge(_svg.plots.areas)
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 })
                 .transition().duration(duration)
@@ -232,16 +234,16 @@
                     return area(d.values);
                 })
                 .style("fill-opacity", _w.attr.opacity)
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Chart
             _svg.g
                 .attr("width", _w.attr.innerWidth + "px")
@@ -262,7 +264,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

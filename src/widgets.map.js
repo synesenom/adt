@@ -237,7 +237,7 @@
              */
             function _build(onReady) {
                 // Read map data
-                d3.json(_w.attr.resource, function(error, mapData) {
+                d3.json(_w.attr.resource, function (error, mapData) {
                     // Build paths
                     _paths = topojson.feature(mapData.paths, mapData.paths['objects']['countries']).features;
                     _paths.filter(function (d) {
@@ -390,7 +390,9 @@
 
             // Exposed members/methods
             return {
-                _paths: function() {return _paths; },
+                _paths: function () {
+                    return _paths;
+                },
                 _id: _getId,
                 _build: _build,
                 get: get,
@@ -1270,13 +1272,13 @@
                                 b = [_w.attr.centerX * (scaleX - 1) / scaleX,
                                     (_w.attr.height * (scaleX - scaleY) / 2 + _w.attr.centerY * (scaleX - 1)) / scaleX];
                             _content.forEach(function (d) {
-                                switch(d.type) {
+                                switch (d.type) {
                                     case "dot":
                                     case "circle":
                                         d.params.pos = _scaleCoords(d.params.pos, a, b);
                                         break;
                                     case "arrow":
-                                        for (var i=0; i<d.params.segments.length; i++) {
+                                        for (var i = 0; i < d.params.segments.length; i++) {
                                             d.params.segments[i] = new la.Vector2(
                                                 _scaleCoords(d.params.segments[i].toArray(), a, b)
                                             );
@@ -1700,7 +1702,7 @@
          * @memberOf du.widgets.map.Map
          * @private
          */
-        var _tilesLayer = (function() {
+        var _tilesLayer = (function () {
             /**
              * Container of the tiles layer.
              *
@@ -2374,8 +2376,8 @@
         };
 
         // Builder method
-        _w.render.build = function() {
-            _countries._build(function() {
+        _w.render.build = function () {
+            _countries._build(function () {
                 // Build rest of the layers
                 _mapLayer._build();
                 _tilesLayer._build();

@@ -160,7 +160,7 @@
          * @param {boolean=} on True if grid should be shown, false otherwise.
          * @returns {du.widgets.grid.Grid} Reference to the current Grid.
          */
-        this.show = function(on) {
+        this.show = function (on) {
             if (on) {
                 _show = true;
 
@@ -244,8 +244,8 @@
          */
         this.add = function (widget, column, row, width, height) {
             // Check if widget is inside grid
-            if (column < 0 || width < 1 || column+width > _columns ||
-                row < 0 || height < 1 || row+height > _rows) {
+            if (column < 0 || width < 1 || column + width > _columns ||
+                row < 0 || height < 1 || row + height > _rows) {
                 widget.remove();
                 return null;
             }
@@ -284,8 +284,8 @@
             widget
                 .x(column * _w.attr.width / _columns + _w.attr.x + _w.attr.margins.left)
                 .y(row * _w.attr.height / _rows + _w.attr.y + d3.select(parent).attr("top") + _w.attr.margins.left)
-                .width(width * _w.attr.width / _columns - 2*_w.attr.margins.left)
-                .height(height * _w.attr.height / _rows - 2*_w.attr.margins.left)
+                .width(width * _w.attr.width / _columns - 2 * _w.attr.margins.left)
+                .height(height * _w.attr.height / _rows - 2 * _w.attr.margins.left)
                 .render();
             return widget;
         };
@@ -300,7 +300,7 @@
          * @returns {?du.widget.Widget} Reference to the widget in the specified cell if cell is in grid and it is not
          * empty, null pointer otherwise.
          */
-        this.get = function(row, column) {
+        this.get = function (row, column) {
             if (_cells[column] && _cells[column][row]) {
                 return _cells[column][row].widget;
             } else {
@@ -309,7 +309,7 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             _w.widget
                 .style("position", "absolute")
                 .style(_w.attr.x > 0 ? "left" : "right", Math.abs(_w.attr.x) + _w.attr.xDim)
@@ -334,8 +334,8 @@
                 widget.widget
                     .x(widget.x * _w.attr.width / _columns + _w.attr.x + _w.attr.margins.left)
                     .y(widget.y * _w.attr.height / _rows + _w.attr.y + _w.attr.margins.left)
-                    .width(widget.width * _w.attr.width / _columns - 2*_w.attr.margins.left)
-                    .height(widget.height * _w.attr.height / _rows - 2*_w.attr.margins.left)
+                    .width(widget.width * _w.attr.width / _columns - 2 * _w.attr.margins.left)
+                    .height(widget.height * _w.attr.height / _rows - 2 * _w.attr.margins.left)
                     .render(0);
             });
         }

@@ -50,9 +50,9 @@
          * @param {object} data Data to plot.
          * @returns {du.widgets.boxplot.BoxPlot} Reference to the current BoxPlot.
          */
-        this.data = function(data) {
+        this.data = function (data) {
             // Calculate box statistics
-            _data = data.map(function(d) {
+            _data = data.map(function (d) {
                 var sd = d.values.sort(d3.ascending),
                     min = d3.min(sd),
                     max = d3.max(sd),
@@ -61,10 +61,10 @@
                     iqr = q3 - q1;
                 var mildOutliers = [],
                     extremeOutliers = [];
-                d.values.filter(function(x) {
-                    return x < q1 - 1.5*iqr || x > q3 + 1.5*iqr;
-                }).forEach(function(x) {
-                    if (x < q1 - 3*iqr || x > q3 + 3*iqr) {
+                d.values.filter(function (x) {
+                    return x < q1 - 1.5 * iqr || x > q3 + 1.5 * iqr;
+                }).forEach(function (x) {
+                    if (x < q1 - 3 * iqr || x > q3 + 3 * iqr) {
                         extremeOutliers.push(x);
                     } else {
                         mildOutliers.push(x);
@@ -102,20 +102,23 @@
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.boxplot.BoxPlot} Reference to the current BoxPlot.
          */
-        this.highlight = function(key, duration) {
+        this.highlight = function (key, duration) {
             if (!_transition) _w.utils.highlight(this, _svg, ".box", key, duration);
             return this;
         };
 
         // Tooltip builder
-        _w.utils.tooltip = function() {
+        _w.utils.tooltip = function () {
             return _current ? {
                 title: _current.name,
                 stripe: _w.attr.colors[_current.name],
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "min/max:", value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)},
+                        {
+                            label: "min/max:",
+                            value: _current.values.min.toPrecision(3) + "/" + _current.values.max.toPrecision(3)
+                        },
                         {label: "mean:", value: _current.values.mean.toPrecision(3)},
                         {label: "median:", value: _current.values.median.toPrecision(3)},
                         {label: "Q1:", value: _current.values.q1.toPrecision(3)},
@@ -128,13 +131,13 @@
         };
 
         // Builder
-        _w.render.build = function() {
+        _w.render.build = function () {
             _svg = _w.utils.standardAxis();
             _svg.plots = {};
         };
 
         // Data updater
-        _w.render.update = function(duration) {
+        _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(_data.map(function (d) {
@@ -142,7 +145,7 @@
                 }).reverse(), [_w.attr.innerWidth, 0], "point"),
                 y: _w.utils.scale(
                     _data.map(function (d) {
-                        return [d.values.min-0.1*(d.values.max-d.values.min), d.values.max+0.1*(d.values.max-d.values.min)];
+                        return [d.values.min - 0.1 * (d.values.max - d.values.min), d.values.max + 0.1 * (d.values.max - d.values.min)];
                     }).reduce(function (array, d) {
                         return array.concat(d);
                     }, []), [_w.attr.innerHeight, 0])
@@ -157,10 +160,12 @@
                 .call(_svg.axisFn.y.scale(_svg.scale.y));
 
             // Build/update plots
-            _colors = _w.utils.colors(_data ? _data.map(function(d){ return d.name; }) : null);
+            _colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
             // Groups
             _svg.plots.groups = _svg.g.selectAll(".box-group")
-                .data(_data, function(d) {
+                .data(_data, function (d) {
                     return d.name;
                 });
             _svg.plots.groups.exit()
@@ -174,44 +179,44 @@
                 .style("opacity", 0)
                 .style("fill", "transparent");
             var union = enter.merge(_svg.plots.groups)
-                .each(function() {
+                .each(function () {
                     _transition = true;
                 })
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     _current = d;
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     _current = null;
                     _w.attr.mouseleave && _w.attr.mouseleave(d.name);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 });
             union.transition().duration(duration)
                 .style("opacity", 1)
                 .style("fill-opacity", _w.attr.opacity)
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .style("stroke", function(d) {
+                .style("stroke", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function() {
+                .on("end", function () {
                     _transition = false;
                 });
 
             // Body
             enter.append("rect")
                 .attr("class", "body")
-                .attr("x", function(d) {
+                .attr("x", function (d) {
                     return _svg.scale.x(d.name) - 10;
                 })
-                .attr("y", function(d) {
+                .attr("y", function (d) {
                     return _svg.scale.y(d.values.q3);
                 })
                 .attr("width", 20)
-                .attr("height", function(d) {
+                .attr("height", function (d) {
                     return _svg.scale.y(d.values.q1) - _svg.scale.y(d.values.q3);
                 })
                 .style("rx", "2px")
@@ -220,71 +225,71 @@
                 .style("stroke-width", "1px");
             union.select(".body")
                 .transition().duration(duration)
-                .attr("x", function(d) {
+                .attr("x", function (d) {
                     return _svg.scale.x(d.name) - 10;
                 })
-                .attr("y", function(d) {
+                .attr("y", function (d) {
                     return _svg.scale.y(d.values.q3);
                 })
                 .attr("width", 20)
-                .attr("height", function(d) {
+                .attr("height", function (d) {
                     return _svg.scale.y(d.values.q1) - _svg.scale.y(d.values.q3);
                 });
 
             // Median
             enter.append("line")
                 .attr("class", "median")
-                .attr("x1", function(d){
+                .attr("x1", function (d) {
                     return _svg.scale.x(d.name) - 10;
                 })
-                .attr("x2", function(d) {
+                .attr("x2", function (d) {
                     return _svg.scale.x(d.name) + 10;
                 })
-                .attr("y1", function(d) {
+                .attr("y1", function (d) {
                     return _svg.scale.y(d.values.median);
                 })
-                .attr("y2", function(d) {
+                .attr("y2", function (d) {
                     return _svg.scale.y(d.values.median);
                 })
                 .style("stroke-width", "2px")
                 .style("fill-opacity", 0.8);
             union.select(".median")
                 .transition().duration(duration)
-                .attr("x1", function(d) {
+                .attr("x1", function (d) {
                     return _svg.scale.x(d.name) - 10;
                 })
-                .attr("x2", function(d) {
+                .attr("x2", function (d) {
                     return _svg.scale.x(d.name) + 10;
                 })
-                .attr("y1", function(d) {
+                .attr("y1", function (d) {
                     return _svg.scale.y(d.values.median);
                 })
-                .attr("y2", function(d) {
+                .attr("y2", function (d) {
                     return _svg.scale.y(d.values.median);
                 });
 
             // Upper whisker
             enter.append("path")
                 .attr("class", "lower-whisker")
-                .attr("d", function(d) {
+                .attr("d", function (d) {
                     return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.lower) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.lower) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.lower);
                 });
             union.select(".lower-whisker")
                 .transition().duration(duration)
-                .attr("d", function(d) {
+                .attr("d", function (d) {
                     return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q1) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.lower) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.lower) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.lower);
                 });
 
             // Lower whisker
             enter.append("path")
                 .attr("class", "upper-whisker")
-                .attr("d", function(d) {
-                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.values.whiskers.upper);
+                .attr("d", function (d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.upper);
                 });
             union.select(".upper-whisker")
                 .transition().duration(duration)
-                .attr("d", function(d) {
-                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name)-8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name)+8) + "," + _svg.scale.y(d.values.whiskers.upper);
+                .attr("d", function (d) {
+                    return "M" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.q3) + "L" + _svg.scale.x(d.name) + "," + _svg.scale.y(d.values.whiskers.upper) + "M" + (_svg.scale.x(d.name) - 8) + "," + _svg.scale.y(d.values.whiskers.upper) + "L" + (_svg.scale.x(d.name) + 8) + "," + _svg.scale.y(d.values.whiskers.upper);
                 });
 
             // Mild outliers
@@ -293,18 +298,18 @@
                 .style("opacity", 0)
                 .remove();
             var mildOutliers = union.selectAll(".mild-outlier")
-                .data(function(d) {
-                    return d.values.outliers.mild.map(function(dd) {
+                .data(function (d) {
+                    return d.values.outliers.mild.map(function (dd) {
                         return {x: d.name, y: dd};
                     });
                 });
             mildOutliers.enter().append("circle")
                 .attr("class", "mild-outlier")
                 .attr("r", 2.5)
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.y);
                 })
                 .attr("stroke", "none")
@@ -318,18 +323,18 @@
                 .style("opacity", 0)
                 .remove();
             var extremeOutliers = union.selectAll(".extreme-outlier")
-                .data(function(d) {
-                    return d.values.outliers.extreme.map(function(dd) {
+                .data(function (d) {
+                    return d.values.outliers.extreme.map(function (dd) {
                         return {x: d.name, y: dd};
                     });
                 });
             extremeOutliers.enter().append("circle")
                 .attr("class", "extreme-outlier")
                 .attr("r", 2)
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     return _svg.scale.x(d.x);
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     return _svg.scale.y(d.y);
                 })
                 .attr("fill", "none")
@@ -340,9 +345,11 @@
         };
 
         // Style updater
-        _w.render.style = function() {
+        _w.render.style = function () {
             // Set colors
-            _w.attr.colors = _w.utils.colors(_data ? _data.map(function(d) {return d.name; }) : null);
+            _w.attr.colors = _w.utils.colors(_data ? _data.map(function (d) {
+                return d.name;
+            }) : null);
 
             // Chart
             _svg.g
@@ -364,7 +371,7 @@
             // Labels
             _svg.labels.x
                 .attr("x", _w.attr.innerWidth + "px")
-                .attr("y", (_w.attr.innerHeight + 2.2*_w.attr.fontSize) + "px")
+                .attr("y", (_w.attr.innerHeight + 2.2 * _w.attr.fontSize) + "px")
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.xLabel);

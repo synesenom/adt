@@ -61,6 +61,7 @@
 
             /**
              * Sets the info box content.
+             * Default is an empty string.
              *
              * @method content
              * @memberOf du.widgets.infobox.InfoBox
