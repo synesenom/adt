@@ -6,19 +6,29 @@
 include pug/example
 script.doc.
     // generate some data
-    var data = Array.from(new Array(100).keys()).map(function (i) {
-        return {
-            x: i,
-            y: {
-                mango: 10 * Math.pow(i / 40, 2),
-                kiwi: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
-            },
-            dy: {
-                mango: i / 10,
-                kiwi: 6
-            }
+    var data = [
+        {
+            name: "mango",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.pow(i / 40, 2),
+                    dy: i / 100
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.log(i + 1)
+                    * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2,
+                    dy: .6
+                };
+            })
         }
-    });
+    ];
 script.doc.
     // create grid
     var width = parseFloat(d3.select("#widget").style("width"));
