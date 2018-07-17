@@ -1799,6 +1799,9 @@
                         subdomains: subdomains
                     }).addTo(_map);
                 }
+
+                // Call style again
+                _style();
             }
 
             /**

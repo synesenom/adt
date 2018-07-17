@@ -18,7 +18,7 @@ module_list=""
 for module in $(ls src); do
     echo "    $module"
     module_list=${module_list}" "${SRC_DIR}/${module}
-    uglifyjs \
+    node_modules/uglify-js/bin/uglifyjs \
         ${SRC_DIR}/${module} \
         --mangle \
         --output ${DST_DIR}/${module/.js/.min.js}
@@ -26,4 +26,4 @@ for module in $(ls src); do
 done
 
 # Build full library
-uglifyjs ${module_list} --mangle --output dashboard-utils.min.js
+node_modules/uglify-js/bin/uglifyjs ${module_list} --mangle --output dashboard-utils.min.js
