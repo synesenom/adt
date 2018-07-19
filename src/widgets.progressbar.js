@@ -55,6 +55,17 @@
         _w.attr.add(this, "thickness", 1);
 
         /**
+         * Sets the text alignment for the label.
+         * Default is center.
+         *
+         * @method align
+         * @memberOf du.widgets.progressbar.ProgressBar
+         * @param {string} alignment The alignment to set.
+         * @returns {du.widgets.progressbar.ProgressBar} Reference to the current Progress bar.
+         */
+        _w.attr.add(this, "align", "center");
+
+        /**
          * Sets the percentage of the progress bar.
          *
          * @method percentage
@@ -78,21 +89,19 @@
                 .style("display", "table-cell")
                 .style("vertical-align", "middle")
                 .style("pointer-events", "none")
-                .style("height", "50px");
+                .style("height", "100%");
             _div.label = _div.container.append("div")
                 .style("display", "block")
-                .style("text-align", "center")
                 .style("pointer-events", "none");
             _div.barTrack = _div.container.append("div")
                 .style("display", "block")
                 .style("width", "100%")
-                .style("height", "1px")
                 .style("bottom", "0")
                 .style("background-color", _w.attr.backgroundColor);
             _div.bar = _div.barTrack.append("div")
                 .style("display", "block")
                 .style("float", "left")
-                .style("width", "43%")
+                .style("width", "0%")
                 .style("height", "100%");
         };
 
@@ -102,6 +111,8 @@
 
         // Style updater
         _w.render.style = function () {
+            _div.container
+                .style("text-align", _w.attr.align);
             _div.label.style("color", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.label);

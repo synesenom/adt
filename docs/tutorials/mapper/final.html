@@ -48,6 +48,7 @@
             background-color: black;
             color: white;
             font-weight: bold;
+            font-variant: small-caps;
             cursor: pointer;
             z-index: 999;
         }
@@ -61,6 +62,8 @@
     </style>
 </head>
 <body>
+<textarea rows="20" cols="40"></textarea>
+<button>show</button>
 <script>
     var pos = [0, 0];
     var data = [];
@@ -82,11 +85,7 @@
         .tiles("cartodb-positron")
         .ready(function() {
             // Add text area and button
-            d3.select("body").append("textarea")
-                .attr("rows", 20)
-                .attr("cols", 40);
-            d3.select("body").append("button")
-                .text("SHOW")
+            d3.select("button")
                 .on("click", function() {
                     // Parse content from text area
                     data = d3.select("textarea").property("value")

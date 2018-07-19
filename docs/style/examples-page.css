@@ -6,6 +6,10 @@ html {
 html, body {
     background-color: #f5f5f5;
 }
+aside {
+    position: absolute;
+    top: 0;
+}
 main {
     width: 1100px;
     max-width: 1100px;
