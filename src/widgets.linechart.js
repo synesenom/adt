@@ -53,6 +53,26 @@
         var _w = Widget.call(this, name, "linechart", "svg", parent);
 
         /**
+         * Sets the lower boundary for the X axis.
+         *
+         * @method xMin
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {number} value The value of the lower boundary.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
+         */
+        _w.attr.add(this, "xMin", null);
+
+        /**
+         * Sets the upper boundary for the X axis.
+         *
+         * @method xMax
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {number} value The value of the upper boundary.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
+         */
+        _w.attr.add(this, "xMax", null);
+
+        /**
          * Sets the type of the X axis.
          * Supported values are: number, time, string.
          * Default is number.
@@ -188,9 +208,9 @@
                 .attr("class", "marker " + _w.utils.encode(key));
             g.append("line")
                 .attr("class", "horizontal")
-                .attr("x1", _svg.scale.x(pos.start.x) + 2)
+                .attr("x1", _svg.scale.x(Math.max(pos.start.x, _w.attr.xMin ? _w.attr.xMin : pos.start.x)) + 2)
                 .attr("y1", _svg.scale.y(pos.corner.y))
-                .attr("x2", _svg.scale.x(pos.end.x) + 2)
+                .attr("x2", _svg.scale.x(Math.min(pos.end.x, _w.attr.xMax ? _w.attr.xMax : pos.end.x)) + 2)
                 .attr("y2", _svg.scale.y(pos.corner.y))
                 .style("stroke", _colors[key])
                 .style("stroke-dasharray", "3 3")
@@ -235,9 +255,9 @@
                     var pos = _adjustMarker(key, start, end);
                     g.select(".horizontal")
                         .transition().duration(duration)
-                        .attr("x1", _svg.scale.x(pos.start.x) + 2)
+                        .attr("x1", _svg.scale.x(Math.max(pos.start.x, _w.attr.xMin ? _w.attr.xMin : pos.start.x)) + 2)
                         .attr("y1", _svg.scale.y(pos.corner.y))
-                        .attr("x2", _svg.scale.x(pos.end.x) + 2)
+                        .attr("x2", _svg.scale.x(Math.min(pos.end.x, _w.attr.xMax ? _w.attr.xMax : pos.end.x)) + 2)
                         .attr("y2", _svg.scale.y(pos.corner.y))
                         .style("stroke", _colors[this.key]);
                     g.select(".vertical")
@@ -348,14 +368,37 @@
 
         // Data updater
         _w.render.update = function (duration) {
+            // Filter data
+            var data = _data.map(function (d) {
+                return {
+                    name: d.name,
+                    values: d.values.filter(function(d) {
+                        return (_w.attr.xMax === null || d.x <= _w.attr.xMax)
+                            && (_w.attr.xMin === null || d.x >= _w.attr.xMin);
+                    })
+                };
+            });
+
+            // Get data boundaries
+            var fullData = data.reduce(function (a, d) {
+                return a.concat(d.values);
+            }, []);
+            var yMin = d3.min(fullData, function(d) {
+                return d.y;
+            });
+            var yMax = d3.max(fullData, function(d) {
+                return d.y;
+            });
+
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.reduce(function (a, d) {
+                x: _w.utils.scale(data.reduce(function (a, d) {
                     return a.concat(d.values);
-                }, []).map(function (d) {
+                }, (_w.attr.xMin ? [{x: _w.attr.xMin}] : []).concat(_w.attr.xMax ? [{x: _w.attr.xMax}] : [])
+                ).map(function (d) {
                     return d.x;
                 }), [0, _w.attr.innerWidth]),
-                y: _w.utils.scale(_data.reduce(function (a, d) {
+                y: _w.utils.scale(data.reduce(function (a, d) {
                     return a.concat(d.values);
                 }, []).map(function (d) {
                     return d.y;
@@ -374,9 +417,9 @@
                 .x(function (d) {
                     return _svg.scale.x(d.x) + 2;
                 }).y0(function (d) {
-                    return _svg.scale.y(Math.max(d.y - d.dy, 0));
+                    return _svg.scale.y(Math.max(d.y - d.dy, yMin));
                 }).y1(function (d) {
-                    return _svg.scale.y(Math.min(d.y + d.dy, _svg.scale.y.domain()[1]));
+                    return _svg.scale.y(Math.min(d.y + d.dy, yMax));
                 });
 
             // Update axes
@@ -392,7 +435,7 @@
                 return d.name;
             }) : null);
             _svg.plots.errors = _svg.g.selectAll(".error")
-                .data(_data, function (d) {
+                .data(data, function (d) {
                     return d.name;
                 });
             _svg.plots.errors.exit()
@@ -432,7 +475,7 @@
 
             // Build/update lines
             _svg.plots.lines = _svg.g.selectAll(".line")
-                .data(_data, function (d) {
+                .data(data, function (d) {
                     return d.name;
                 });
             _svg.plots.lines.exit()
