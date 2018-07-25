@@ -53,7 +53,8 @@ script.doc.
                     return {
                         x: i,
                         y: Math.pow(i / 40, tau),
-                        dy: i / 100
+                        lo: i / 100,
+                        hi: i / 150
                     };
                 })
             },
@@ -64,7 +65,8 @@ script.doc.
                         x: i,
                         y: Math.log(i + 1)
                            * Math.pow(Math.cos(Math.PI * i / phi), 2) + 2,
-                        dy: .6
+                        lo: .4,
+                        hi: .6
                     };
                 })
             }
