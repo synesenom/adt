@@ -95,8 +95,8 @@
          * Binds data to the line plot.
          * Expected data format: array containing an object for each plot. A plot object has a {name} property with the
          * name of the plot and a {values} property which is the array of {(x, y)} coordinates. Each data point can have
-         * an optional {dy} value representing the error of the {y} value. Default value of {dy} for all data points is
-         * 0.
+         * two optional values {lo, hi} representing the error of the {y} value. Default values of {lo} and {hi} for all
+         * data points are 0.
          * All plots are sorted by their {x} values before plot.
          *
          * @method data
@@ -114,7 +114,8 @@
                         return {
                             x: dd.x,
                             y: dd.y,
-                            dy: dd.dy || 0
+                            lo: dd.lo || 0,
+                            hi: dd.hi || 0
                         };
                     })
                 };
@@ -417,9 +418,9 @@
                 .x(function (d) {
                     return _svg.scale.x(d.x) + 2;
                 }).y0(function (d) {
-                    return _svg.scale.y(Math.max(d.y - d.dy, yMin));
+                    return _svg.scale.y(Math.max(d.y - d.lo, yMin));
                 }).y1(function (d) {
-                    return _svg.scale.y(Math.min(d.y + d.dy, yMax));
+                    return _svg.scale.y(Math.min(d.y + d.hi, yMax));
                 });
 
             // Update axes
