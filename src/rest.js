@@ -81,7 +81,7 @@
             .on("beforesend", function (request) {
                 if (settings) {
                     for (var key in settings) {
-                        if (request.hasOwnProperty(key))
+                        if (settings.hasOwnProperty(key))
                             request[key] = settings[key];
                     }
                 }
