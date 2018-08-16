@@ -66,6 +66,17 @@
         _w.attr.add(this, "bin", null);
 
         /**
+         * Whether the data passed is already binned.
+         * If this is set to true, {bin} does not have any effect.
+         *
+         * @method binnedData
+         * @methodOf di.widgets.histogram.Histogram
+         * @param {boolean} binned Whether the data ingested is already binned.
+         * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
+         */
+        _w.attr.add(this, "binnedData", false);
+
+        /**
          * Normalizes histogram counts to 1.
          * Default is false.
          *
@@ -85,8 +96,8 @@
 
         /**
          * Binds data to the histogram.
-         * Expected data format: array of single numbers.
-         * Data is binned by the widget.
+         * Expected data format: array of single numbers or array of {x, y} values.
+         * If {binnedData} is set to false, data will be binned automatically, otherwise it displayed as it is.
          *
          * @method data
          * @memberOf du.widgets.histogram.Histogram
@@ -94,9 +105,7 @@
          * @returns {du.widgets.histogram.Histogram} Reference to the current Histogram.
          */
         this.data = function (data) {
-            _data = data.sort(function (a, b) {
-                return a - b;
-            });
+            _data = data;
             return this;
         };
 
@@ -130,7 +139,7 @@
             // Get data entry
             var left = _bins[i - 1] ? _bins[i - 1] : _bins[i];
             var right = _bins[i] ? _bins[i] : _bins[i - 1];
-            var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+            var point = mouse[0] - left.x1 > right.x0 - mouse[0] ? right : left;
 
             // Build tooltip content
             return {
@@ -140,10 +149,10 @@
                     data: [
                         {label: "min:", value: point.values.x0.toPrecision(3)},
                         {label: "max:", value: point.values.x1.toPrecision(3)},
-                        {label: "count:", value: point.values.length},
+                        {label: "count:", value: point.values.size.toPrecision(2)},
                         {
-                            label: "fraction:", value: (100 * point.values.length / d3.sum(_bins, function (d) {
-                            return d.values.length;
+                            label: "fraction:", value: (100 * point.values.size / d3.sum(_bins, function (d) {
+                            return d.values.size;
                         })).toFixed(2) + "%"
                         }
                     ]
@@ -161,40 +170,70 @@
         _w.render.update = function (duration) {
             if (_data.length === 0) {
                 return;
+            } else {
+                // Sort data
+                var data = _w.attr.binnedData ? _data.sort(function(a, b) {
+                    return a.x - b.x;
+                }) : _data.sort(function (a, b) {
+                    return a - b;
+                });
             }
 
-            // Calculate min, max nd bins
-            var realMin = typeof _w.attr.min === "number" ? _w.attr.min : _data[0];
-            var realMax = typeof _w.attr.max === "number" ? _w.attr.max : _data[_data.length - 1];
-            var realBin = _w.attr.bin;
-            if (realBin === null) {
-                realBin = 2 * (d3.quantile(_data, 0.75) - d3.quantile(_data, 0.25)) / Math.pow(_data.length, 1 / 3);
-            }
-
-            // Compute bin thresholds
-            var thresholds = [];
-            var n = Math.ceil((realMax - realMin) / realBin);
-            for (var i = 0; i <= n; i++) {
-                thresholds.push(realMin + i * realBin);
-            }
-            var norm = _w.attr.normalize ? _data.length : 1;
-
-            // Create bins
-            _bins = d3.histogram()
-                .domain([realMin, realMin + n * realBin])
-                .thresholds(thresholds)
-                (_data).map(function (d, i) {
+            // Build bins
+            if (_w.attr.binnedData) {
+                // Data is already binned
+                var realMin = d3.min(data, function(d) {
+                    return d.x;
+                });
+                var realBin = data[1].x - data[0].x;
+                var n = data.length;
+                _bins = data.map(function(d, i) {
+                    var values = {
+                        x0: d.x,
+                        x1: d.x + realBin,
+                        size: d.y
+                    };
                     return {
                         name: "bin " + i,
-                        values: d
+                        values: values
                     };
                 });
+                var norm = _w.attr.normalize ? data.reduce(function(sum, d) {
+                    return sum + d.y;
+                }, 0) : 1;
+            } else {
+                // Need to bin data first
+                realMin = typeof _w.attr.min === "number" ? _w.attr.min : data[0];
+                var realMax = typeof _w.attr.max === "number" ? _w.attr.max : data[data.length - 1];
+                realBin = typeof _w.attr.bin === "number" ? _w.attr.bin
+                    : 2 * (d3.quantile(data, 0.75) - d3.quantile(data, 0.25)) / Math.pow(data.length, 1 / 3);
+
+                // Compute bin thresholds
+                var thresholds = [];
+                n = Math.ceil((realMax - realMin) / realBin);
+                for (var i = 0; i <= n; i++) {
+                    thresholds.push(realMin + i * realBin);
+                }
+                norm = _w.attr.normalize ? data.length : 1;
+
+                // Create bins
+                _bins = d3.histogram()
+                    .domain([realMin, realMin + n * realBin])
+                    .thresholds(thresholds)
+                    (data).map(function (d, i) {
+                        d.size = d.length;
+                        return {
+                            name: "bin " + i,
+                            values: d
+                        };
+                    });
+            }
 
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale([realMin, realMin + n * realBin], [0, _w.attr.innerWidth]),
                 y: _w.utils.scale([0, d3.max(_bins, function (d) {
-                    return d.values.length / norm;
+                    return d.values.size / norm;
                 })], [_w.attr.innerHeight, 0])
             };
 
@@ -254,13 +293,13 @@
                     return _svg.scale.x(d.values.x0) + 1;
                 })
                 .attr("y", function (d) {
-                    return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.values.length / norm);
+                    return _w.attr.margins.top - _w.attr.margins.top + _svg.scale.y(d.values.size / norm);
                 })
                 .attr("width", function (d) {
                     return Math.max(0, Math.abs(_svg.scale.x(d.values.x1) - _svg.scale.x(d.values.x0)) - 2);
                 })
                 .attr("height", function (d) {
-                    return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.values.length / norm);
+                    return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.values.size / norm);
                 })
                 .style("opacity", 1)
                 .style("fill", function () {
