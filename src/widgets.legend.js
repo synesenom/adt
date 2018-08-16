@@ -114,6 +114,7 @@
                     .style("display", "inline-block")
                     .style("position", "relative")
                     .style("float", "right")
+                    .style("text-align", "left")
                     .text(label);
                 _svg.legends[label] = {
                     g: g,
