@@ -1,5 +1,6 @@
 module.exports = {
     data: require("./src/data"),
+    math: require("./src/math.la"),
     rest: require("./src/rest"),
     signals: require("./src/signals"),
     system: {
