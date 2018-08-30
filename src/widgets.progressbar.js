@@ -114,6 +114,8 @@
             _div.container
                 .style("text-align", _w.attr.align);
             _div.label.style("color", _w.attr.fontColor)
+                .style("height", _w.attr.fontSize + "px")
+                .style("line-height", _w.attr.fontSize + "px")
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.label);
             _div.barTrack.style("height", _w.attr.thickness + "px");

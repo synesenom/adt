@@ -129,6 +129,7 @@
             }
 
             // Get plots
+            var x = _svg.scale.x.invert(mouse[0]);
             var plots = _data.map(function (d, i) {
                 var j = index[i];
                 var data = d.values;
@@ -142,12 +143,13 @@
                     .attr("cx", _svg.scale.x(point.x) + 1)
                     .attr("cy", _svg.scale.y(point.y) + 1)
                     .style("fill", _colors[d.name]);
+                x = point.x;
 
-                return {name: d.name, color: _colors[d.name], value: point.y.toPrecision(6)};
+                return {name: d.name, color: _colors[d.name], value: _w.attr.tooltipYFormat(point.y)};
             });
 
             return {
-                title: _w.attr.xLabel + ": " + _svg.scale.x.invert(mouse[0]).toFixed(2),
+                title: _w.attr.xLabel + ": " + _w.attr.tooltipXFormat(x),
                 content: {
                     type: "plots",
                     data: plots

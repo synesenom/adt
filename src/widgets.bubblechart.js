@@ -108,8 +108,8 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: _w.attr.xLabel + ":", value: _current.values.x.toPrecision(4)},
-                        {label: _w.attr.yLabel + ":", value: _current.values.y.toPrecision(4)},
+                        {label: _w.attr.xLabel + ":", value: _w.attr.tooltipXFormat(_current.values.x)},
+                        {label: _w.attr.yLabel + ":", value: _w.attr.tooltipYFormat(_current.values.y)},
                         {label: _w.attr.sizeLabel + ":", value: _current.values.size.toFixed(1)}
                     ]
                 }

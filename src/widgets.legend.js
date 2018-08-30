@@ -171,6 +171,7 @@
                             .style("width", "calc(100% - " + 1.2 * _w.attr.fontSize + "px)")
                             .style("line-height", _w.attr.fontSize + "px")
                             .style("cursor", _w.attr.mouseover || _w.attr.click ? "pointer" : null)
+                            .style("font-size", _w.attr.fontSize + "px")
                             .on("mouseover", function () {
                                 _w.attr.mouseover && _w.attr.mouseover(label);
                             })

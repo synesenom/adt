@@ -517,6 +517,32 @@
         _attr.add(this, "tooltip", false);
 
         /**
+         * Sets the number format for Y values in the tooltip.
+         * Default is just the number itself.
+         *
+         * @method tooltipYFormat
+         * @memberOf du.widget.Widget
+         * @param {Function} format The formatting function that takes a number and returns a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "tooltipYFormat", function(x) {
+            return x;
+        });
+
+        /**
+         * Sets the number format for X values in the tooltip.
+         * Default is just the number itself.
+         *
+         * @method tooltipXFormat
+         * @memberOf du.widget.Widget
+         * @param {Function} format The formatting function that takes a number and returns a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "tooltipXFormat", function(x) {
+            return x;
+        });
+
+        /**
          * Namespace containing and managing data related information.
          *
          * @namespace _data
@@ -804,7 +830,7 @@
         this.placeholder = function(content) {
             var duration = 300;
             var placeHolderId = "du-widget-placeholder-" + name;
-            if (content) {
+            if (typeof content === "string") {
                 // Hide widget
                 _widget
                     .transition().duration(duration)
@@ -855,20 +881,28 @@
          * @memberOf du.widget.Widget
          * @private
          */
-        function _showTooltip() {
+        function _showTooltip(on) {
+            // Get tooltip ID and mouse position
             var tooltipId = "du-widgets-plot-tooltip";
             var m = d3.mouse(_widget.node());
             var mx = d3.event.pageX;
             var my = d3.event.pageY;
             var container = _widget.node().getBoundingClientRect();
 
+            // If tooltip is hidden
+            if (!on) {
+                d3.select("#" + tooltipId)
+                    .style("display", "none");
+                _utils.tooltip();
+                return;
+            }
+
             // If content is null or we are outside the charting area
             // just remove tooltip
             if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
                 || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
                 d3.select("#" + tooltipId)
-                    .style("opacity", 0)
-                    .remove();
+                    .style("display", "none");
                 _utils.tooltip();
                 return;
             }
@@ -898,7 +932,7 @@
             var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
             if (!content) {
                 d3.select("#" + tooltipId)
-                    .style("opacity", 0)
+                    .style("display", "none")
                     .html("");
                 _utils.tooltip();
                 return;
@@ -984,7 +1018,7 @@
 
             // Set position
             tooltip
-                .style("opacity", 1)
+                .style("display", "block")
                 .transition();
             tooltip
                 .transition().duration(200).ease(d3.easeLinear)
@@ -1097,7 +1131,10 @@
             _widget
                 .style("pointer-events", _attr.tooltip && _utils.tooltip ? "all" : null)
                 .on("mousemove", function () {
-                    _attr.tooltip && _utils.tooltip && _showTooltip();
+                    _attr.tooltip && _utils.tooltip && _showTooltip(true);
+                })
+                .on("mouseleave", function() {
+                    _attr.tooltip && _utils.tooltip && _showTooltip(false);
                 });
 
             // Axis and font styles

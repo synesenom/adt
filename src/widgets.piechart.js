@@ -178,11 +178,14 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: "value:", value: _current.value.toFixed(6)},
+                        {
+                            label: "value:",
+                            value: _w.attr.tooltipYFormat(_current.value)
+                        },
                         {
                             label: "fraction:", value: (100 * _current.value / d3.sum(_data, function (d) {
-                            return d.value;
-                        })).toFixed(1) + "%"
+                                return d.value;
+                            })).toFixed(1) + "%"
                         }
                     ]
                 }

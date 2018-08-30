@@ -113,8 +113,8 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: _w.attr.xLabel + ":", value: site.data[0].toPrecision(4)},
-                        {label: _w.attr.yLabel + ":", value: site.data[1].toPrecision(4)}
+                        {label: _w.attr.xLabel + ":", value: _w.attr.tooltipXFormat(site.data[0])},
+                        {label: _w.attr.yLabel + ":", value: _w.attr.tooltipXFormat(site.data[1])}
                     ]
                 }
             };

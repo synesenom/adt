@@ -122,7 +122,7 @@
                 content: {
                     type: "metrics",
                     data: [
-                        {label: _w.attr.yLabel + ":", value: point.value.toPrecision(6)}
+                        {label: _w.attr.yLabel + ":", value: _w.attr.tooltipYFormat(point.value)}
                     ]
                 }
             };
