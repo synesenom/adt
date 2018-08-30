@@ -28,9 +28,9 @@
 // TODO add log axes
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('@dashboard-utils/widget'), exports);
+        module.exports = factory(require('d3'), require('./widget'), exports);
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '@dashboard-utils/widget', 'exports'], factory);
+        define(['d3', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
