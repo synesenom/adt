@@ -6,6 +6,10 @@
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@dashboard-utils/math/-/math-0.0.1.tgz#ec6cc70547d21c0cdc7a5904b6bfd97d67c94081"
 
+"@dashboard-utils/widget@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@dashboard-utils/widget/-/widget-0.0.1.tgz#82a3963a86f205b9e130a3f55b032c8eee2cf24b"
+
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@types/babel-types/-/babel-types-7.0.4.tgz#bfd5b0d0d1ba13e351dff65b6e52783b816826c8"

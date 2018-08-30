@@ -6,6 +6,7 @@
   "repository": "https://github.com/synesenom/dashboard-utils",
   "dependencies": {
     "@dashboard-utils/math": "^0.0.1",
+    "@dashboard-utils/widget": "^0.0.1",
     "d3": "^5.7.0",
     "leaflet": "^1.3.1",
     "lodash": "^4.17.10",
