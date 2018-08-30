@@ -1,6 +1,6 @@
 module.exports = {
     data: require("./src/data"),
-    math: require("./src/math.la"),
+    math: require("@dashboard-utils/math"),
     rest: require("./src/rest"),
     signals: require("./src/signals"),
     system: {

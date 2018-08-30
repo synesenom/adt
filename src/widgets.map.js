@@ -53,9 +53,9 @@
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('leaflet'),
-            require('./math/math.la'), require('./widget'));
+            require('./math.la'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'leaflet', 'src/math/math.la', 'src/widget', 'exports'], factory);
+        define(['d3', '_', 'topojson', 'leaflet', 'src/math.la', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
