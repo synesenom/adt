@@ -408,7 +408,20 @@
         });
 
         /**
-         * Sets the format function for the vertical ticks.
+         * Sets the format function for the X axis.
+         * Default is an SI prefixed number.
+         *
+         * @method xTickFormat
+         * @memberOf du.widget.Widget
+         * @param {function} format Function that converts a number to a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "xTickFormat", function(x) {
+            return x > 1 ? d3.format(".2s")(x) : x;
+        });
+
+        /**
+         * Sets the format function for the Y axis.
          * Default is an SI prefixed number.
          *
          * @method yTickFormat

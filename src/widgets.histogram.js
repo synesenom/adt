@@ -320,6 +320,7 @@
                 .style("pointer-events", "all");
 
             // Axes
+            _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.x
                 .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
