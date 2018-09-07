@@ -669,7 +669,11 @@
                     case undefined:
                     case "linear":
                         scale = d3.scaleLinear()
-                            .domain([d3.min(data), d3.max(data)]);
+                            .domain(d3.extent(data));
+                        break;
+                    case "time":
+                        scale = d3.scaleTime()
+                            .domain(d3.extent(data));
                         break;
                     case "band":
                         scale = d3.scaleBand()
