@@ -995,25 +995,27 @@
                     content.content.data.sort(function(a, b) {
                         return a.name.localeCompare(b.name);
                     }).forEach(function(plot) {
-                        var entry = tooltip.append("div")
-                            .style("position", "relative")
-                            .style("max-width", "150px")
-                            .style("height", "10px")
-                            .style("margin", "5px")
-                            .style("padding-right", "10px");
-                        entry.append("div")
-                            .style("position", "relative")
-                            .style("width", "9px")
-                            .style("height", "9px")
-                            .style("float", "left")
-                            .style("background-color", plot.color);
-                        entry.append("span")
-                            .style("position", "relative")
-                            .style("width", "calc(100% - 20px)")
-                            .style("height", "10px")
-                            .style("float", "right")
-                            .style("line-height", "11px")
-                            .html(plot.value);
+                        if (plot.color && plot.color !== 'transparent') {
+                            var entry = tooltip.append("div")
+                                .style("position", "relative")
+                                .style("max-width", "150px")
+                                .style("height", "10px")
+                                .style("margin", "5px")
+                                .style("padding-right", "10px");
+                            entry.append("div")
+                                .style("position", "relative")
+                                .style("width", "9px")
+                                .style("height", "9px")
+                                .style("float", "left")
+                                .style("background-color", plot.color);
+                            entry.append("span")
+                                .style("position", "relative")
+                                .style("width", "calc(100% - 20px)")
+                                .style("height", "10px")
+                                .style("float", "right")
+                                .style("line-height", "11px")
+                                .html(plot.value);
+                        }
                     });
                     break;
             }
