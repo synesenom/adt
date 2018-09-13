@@ -22,6 +22,7 @@ module.exports = {
         Legend: require("./src/widgets.legend"),
         LineChart: require("./src/widgets.linechart"),
         Map: require("./src/widgets.map"),
+        MultiBarChart: require("./src/widgets.multibarchart"),
         Picture: require("./src/widgets.picture"),
         PieChart: require("./src/widgets.piechart"),
         ProgressBar: require("./src/widgets.progressbar"),

@@ -375,9 +375,9 @@
             var data = _data.map(function (d) {
                 return {
                     name: d.name,
-                    values: d.values.filter(function(d) {
-                        return (_w.attr.xMax === null || d.x <= _w.attr.xMax)
-                            && (_w.attr.xMin === null || d.x >= _w.attr.xMin);
+                    values: d.values.filter(function(dd) {
+                        return (_w.attr.xMax === null || dd.x <= _w.attr.xMax)
+                            && (_w.attr.xMin === null || dd.x >= _w.attr.xMin);
                     })
                 };
             });

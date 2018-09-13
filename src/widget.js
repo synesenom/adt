@@ -992,9 +992,7 @@
                     break;
                 case "plots":
                     // List of plots
-                    content.content.data.sort(function(a, b) {
-                        return a.name.localeCompare(b.name);
-                    }).forEach(function(plot) {
+                    content.content.data.forEach(function(plot) {
                         if (plot.color && plot.color !== 'transparent') {
                             var entry = tooltip.append("div")
                                 .style("position", "relative")

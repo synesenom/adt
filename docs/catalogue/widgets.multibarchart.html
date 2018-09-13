@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script type="text/javascript" src="../dependencies/d3.v4.min.js"></script><script type="text/javascript" src="../dependencies/lodash.4.17.4.min.js"></script><script type="text/javascript" src="../dl/widget.min.js"></script><script type="text/javascript" src="../dl/widgets.multibarchart.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+    .callback(function() {
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+});</script><title>multibarchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Multi bar charts are useful to show <span class='good'>aggregated</span> and <span class='good'>unsorted</span> data with no connection between consecutive values, such as volumes for different quantities</div><div id="code-doc"></div><div id="doc-link"><a class="margined" href="../dl/widgets.multibarchart.min.js">min.js</a><a class="margined" href="../api/widgets.multibarchart.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.multibarchart.js">source</a></div></main></body></html><script class="doc">// create chart
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var rooms = "ABCDEFGH";
+var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
+    .data([
+        {
+            name: "mango",
+            values: new Array(8).fill(0).map(function (d, i) {
+                return {
+                    x: rooms.charAt(i),
+                    y: Math.floor(Math.random() * 10)
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(5).fill(0).map(function (d, i) {
+                return {
+                    x: rooms.charAt(i),
+                    y: 1 + Math.floor(Math.random() * i)
+                };
+            })
+        }
+    ])
+    .width(width)
+    .height(height)
+    .xLabel("room")
+    .yLabel("number")
+    .margins(40)
+    .fontSize(14)
+    .barWidth(0.6)
+    .tooltip(true)
+    .render();</script><script class="doc">// update data
+setInterval(function () {
+    multibarchart.data([
+        {
+            name: "mango",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: rooms.charAt(i),
+                    y: Math.floor(Math.random() * 10)
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: rooms.charAt(i),
+                    y: 1 + Math.floor(Math.random() * i * 4)
+                };
+            })
+        },
+        {
+            name: "melon",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: rooms.charAt(i),
+                    y: 1 + Math.floor(Math.random() * i)
+                };
+            })
+        }
+    ]).render();
+}, 20000);</script><script class="doc">// add interactions
+multibarchart
+    .click(function (k) {
+        alert("Fruit selected: '" + k + "'");
+    })
+    .render();</script><script>window.onresize = function () {
+    multibarchart
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

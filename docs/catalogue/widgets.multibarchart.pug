@@ -1,0 +1,82 @@
+- var name = "multibarchart"
+- var links = {minjs: "widgets.multibarchart", source: "widgets.multibarchart", docs: "widgets.multibarchart"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.multibarchart"]
+- var description = "Multi bar charts are useful to show <span class='good'>aggregated</span> and <span class='good'>unsorted</span> data with no connection between consecutive values, such as volumes for different quantities"
+include pug/example
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var rooms = "ABCDEFGH";
+    var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
+        .data([
+            {
+                name: "mango",
+                values: new Array(8).fill(0).map(function (d, i) {
+                    return {
+                        x: rooms.charAt(i),
+                        y: Math.floor(Math.random() * 10)
+                    };
+                })
+            },
+            {
+                name: "kiwi",
+                values: new Array(5).fill(0).map(function (d, i) {
+                    return {
+                        x: rooms.charAt(i),
+                        y: 1 + Math.floor(Math.random() * i)
+                    };
+                })
+            }
+        ])
+        .width(width)
+        .height(height)
+        .xLabel("room")
+        .yLabel("number")
+        .margins(40)
+        .fontSize(14)
+        .barWidth(0.6)
+        .tooltip(true)
+        .render();
+script.doc.
+    // update data
+    setInterval(function () {
+        multibarchart.data([
+            {
+                name: "mango",
+                values: new Array(4).fill(0).map(function (d, i) {
+                    return {
+                        x: rooms.charAt(i),
+                        y: Math.floor(Math.random() * 10)
+                    };
+                })
+            },
+            {
+                name: "kiwi",
+                values: new Array(4).fill(0).map(function (d, i) {
+                    return {
+                        x: rooms.charAt(i),
+                        y: 1 + Math.floor(Math.random() * i * 4)
+                    };
+                })
+            },
+            {
+                name: "melon",
+                values: new Array(4).fill(0).map(function (d, i) {
+                    return {
+                        x: rooms.charAt(i),
+                        y: 1 + Math.floor(Math.random() * i)
+                    };
+                })
+            }
+        ]).render();
+    }, 20000);
+script.doc.
+    // add interactions
+    multibarchart
+        .click(function (k) {
+            alert("Fruit selected: '" + k + "'");
+        })
+        .render();
++resize()
