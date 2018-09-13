@@ -207,8 +207,9 @@
                 });
 
             // Bars
-            var width = _svg.scale.x.bandwidth() * _w.attr.barWidth,
-                dx = _svg.scale.x.bandwidth() * (1 - _w.attr.barWidth) / 2;
+            var bandWidth = _data.length > 0 ? _svg.scale.x.bandwidth() : 1,
+                width = bandWidth * _w.attr.barWidth,
+                dx = bandWidth * (1 - _w.attr.barWidth) / 2;
             _svg.plots.bars = _svg.plots.groups.selectAll(".bar")
                 .data(function (d, i) {
                     return d.values.map(function (v) {
