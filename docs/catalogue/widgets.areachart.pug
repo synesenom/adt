@@ -24,7 +24,8 @@ script.doc.
                 values: new Array(100).fill(0).map(function (d, i) {
                     return {
                         x: i,
-                        y: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
+                        y: 10 * Math.log(i + 1)
+                              * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2
                     };
                 })
             }
@@ -57,7 +58,8 @@ script.doc.
                 values: new Array(100).fill(0).map(function (d, i) {
                     return {
                         x: i,
-                        y: 10 * Math.log(i + 1) * Math.pow(Math.cos(Math.PI * i / phi), 2) + 2
+                        y: 10 * Math.log(i + 1)
+                              * Math.pow(Math.cos(Math.PI * i / phi), 2) + 2
                     };
                 })
             }

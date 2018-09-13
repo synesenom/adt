@@ -13,7 +13,9 @@ var picture = new du.widgets.Picture("mypicture", "#widget")
 picture
     .mouseover(function (img) {
         // Show placeholder when hovered
-        picture.placeholder("The image '" + img.src.split('/').pop() + "' is not available");
+        picture.placeholder(
+            "The image '" + img.src.split('/').pop()
+            + "' is not available");
     })
     .mouseleave(function () {
         // Remove placeholder

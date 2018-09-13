@@ -312,6 +312,46 @@ new du.widgets.Map("map", "#map")
     .foregroundColor("#dc9a2f")
     .render();
 
+// Multi bar chart
+new du.widgets.MultiBarChart("widgets.multibarchart", "#multibarchart")
+    .width(width)
+    .height(height)
+    .xLabel("room")
+    .yLabel("number")
+    .margins({left: 40, top: 20, right: 20, bottom: 40})
+    .fontSize(14)
+    .barWidth(0.7)
+    .data([
+        {
+            name: "mango",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: "ABCD".charAt(i),
+                    y: Math.floor(Math.random() * 10)
+                };
+            })
+        },
+        {
+            name: "kiwi",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: "ABCD".charAt(i),
+                    y: 1 + Math.floor(Math.random() * i * 4)
+                };
+            })
+        },
+        {
+            name: "melon",
+            values: new Array(4).fill(0).map(function (d, i) {
+                return {
+                    x: "ABCD".charAt(i),
+                    y: 1 + Math.floor(Math.random() * i)
+                };
+            })
+        }
+    ])
+    .render();
+
 // Picture
 new du.widgets.Picture("widgets.picture", "#picture")
     .width(width)

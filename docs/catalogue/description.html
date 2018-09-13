@@ -6,7 +6,9 @@
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
 var piechart = new du.widgets.PieChart("mychart", "#widget")
-    .describe("A pie chart showing the available delicious fruit in a basket")
+    .describe(
+        "A pie chart showing the available delicious fruit in a basket"
+    )
     .data([
         {name: "orange", value: 4},
         {name: "mango", value: 3},

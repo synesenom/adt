@@ -3,6 +3,7 @@ html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-backface-visibility: hidden;
 }
+
 html, body {
     background-color: #f5f5f5;
 }

@@ -22,6 +22,8 @@ script.doc.
     // add info
     button.on("click", function() {
         new du.widgets.InfoBox()
-            .content("This is an example of an info widget with not so much information. Click anywhere to dismiss this window.")
+            .content(
+                "This is an example of an info widget with not so much " +
+                "information. Click anywhere to dismiss this window.")
             .render();
     });

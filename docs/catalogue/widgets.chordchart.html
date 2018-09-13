@@ -53,22 +53,23 @@ chordchart
         alert("Plot clicked: '" + k + "'");
     })
     .render();</script><script class="doc">// update data
+function ran() { return Math.floor(Math.random() * 10) }
 setInterval(function() {
     chordchart.data([
-        {source: "melon", target: "plum", value: parseInt(Math.random() * 10)},
-        {source: "melon", target: "pear", value: parseInt(Math.random() * 10)},
-        {source: "melon", target: "kiwi", value: parseInt(Math.random() * 10)},
-        {source: "plum", target: "melon", value: parseInt(Math.random() * 10)},
-        {source: "plum", target: "pear", value: parseInt(Math.random() * 10)},
-        {source: "plum", target: "kiwi", value: parseInt(Math.random() * 10)},
-        {source: "pear", target: "melon", value: parseInt(Math.random() * 10)},
-        {source: "pear", target: "plum", value: parseInt(Math.random() * 10)},
-        {source: "pear", target: "kiwi", value: parseInt(Math.random() * 10)},
-        {source: "kiwi", target: "melon", value: parseInt(Math.random() * 10)},
-        {source: "kiwi", target: "plum", value: parseInt(Math.random() * 10)},
-        {source: "kiwi", target: "pear", value: parseInt(Math.random() * 10)},
-        {source: "orange", target: "plum", value: parseInt(Math.random() * 10)},
-        {source: "plum", target: "orange", value: parseInt(Math.random() * 10)}
+        {source: "melon", target: "plum", value: ran()},
+        {source: "melon", target: "pear", value: ran()},
+        {source: "melon", target: "kiwi", value: ran()},
+        {source: "plum", target: "melon", value: ran()},
+        {source: "plum", target: "pear", value: ran()},
+        {source: "plum", target: "kiwi", value: ran()},
+        {source: "pear", target: "melon", value: ran()},
+        {source: "pear", target: "plum", value: ran()},
+        {source: "pear", target: "kiwi", value: ran()},
+        {source: "kiwi", target: "melon", value: ran()},
+        {source: "kiwi", target: "plum", value: ran()},
+        {source: "kiwi", target: "pear", value: ran()},
+        {source: "orange", target: "plum", value: ran()},
+        {source: "plum", target: "orange", value: ran()}
     ]).render();
 }, 20000);</script><script>window.onresize = function () {
     width = parseFloat(d3.select("#widget").style("width"));

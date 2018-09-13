@@ -15,7 +15,7 @@ script.doc.
                 values: new Array(100).fill(0).map(function(d, i) {
                     return {
                         x: i + Math.random() - 0.5,
-                        y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                        y: 10 * Math.pow(i / 40, 2) + Math.random() * 10
                     }
                 })
             },
@@ -24,7 +24,7 @@ script.doc.
                 values: new Array(100).fill(0).map(function (d, i) {
                     return {
                         x: i + Math.random() * 8 - 4,
-                        y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                        y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10
                     }
                 })
             }
@@ -40,22 +40,24 @@ script.doc.
 script.doc.
     // update data
     setInterval(function() {
+        var n1 = 80 + Math.floor(40*Math.random()),
+            n2 = 80 + Math.floor(40*Math.random());
         scatterplot.data([
             {
                 name: "mango",
-                values: new Array(80 + parseInt(40*Math.random())).fill(0).map(function (d, i) {
+                values: new Array(n1).fill(0).map(function (d, i) {
                     return {
                         x: i + Math.random() - 0.5,
-                        y: 10 * Math.pow(i / 40, 2) + Math.random() * 10 - 5
+                        y: 10 * Math.pow(i / 40, 2) + Math.random() * 10
                     }
                 })
             },
             {
                 name: "kiwi",
-                values: new Array(80 + parseInt(40*Math.random())).fill(0).map(function (d, i) {
+                values: new Array(n2).fill(0).map(function (d, i) {
                     return {
                         x: i + Math.random() * 8 - 4,
-                        y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10 - 5
+                        y: 80 * (1 - Math.exp(-i / 30)) + Math.random() * 10
                     }
                 })
             }
