@@ -34,6 +34,7 @@ script.doc.
         .height(height)
         .xLabel("value")
         .yLabel("probability density")
+        .tooltipYFormat(function(x) { return x.toFixed(4)})
         .margins(40)
         .fontSize(14)
         .tooltip(true)

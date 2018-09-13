@@ -355,7 +355,7 @@
             });
 
             return {
-                title: _w.attr.xLabel + ": " + _w.attr.tooltipXFormat(x),
+                title: _w.attr.tooltipXFormat(x),
                 content: {
                     type: "plots",
                     data: plots
