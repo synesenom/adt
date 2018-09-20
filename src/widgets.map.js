@@ -555,7 +555,7 @@
              * @memberOf du.widgets.map.Map._zoom
              * @private
              */
-            var _SCALE_MAX = 128;
+            var _SCALE_MAX = 4096;
 
             /**
              * Zoom translate boundary factor. This is the extent we allow translations outside the map.
