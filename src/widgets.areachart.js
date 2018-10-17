@@ -145,7 +145,11 @@
                     .style("fill", _colors[d.name]);
                 x = point.x;
 
-                return {name: d.name, color: _colors[d.name], value: _w.attr.tooltipYFormat(point.y)};
+                return {
+                    name: d.name,
+                    color: _colors[d.name],
+                    value: _w.attr.tooltipYFormat(point.y)
+                };
             });
 
             return {

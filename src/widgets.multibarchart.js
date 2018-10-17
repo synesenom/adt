@@ -126,7 +126,7 @@
                 return {
                     name: d.name,
                     color: _colors[d.name],
-                    value: value.length > 0 ? value[0].y : 'n/a'
+                    value: _w.attr.tooltipYFormat(value.length > 0 ? value[0].y : 'n/a')
                 };
             });
 
