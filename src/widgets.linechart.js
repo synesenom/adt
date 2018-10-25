@@ -362,7 +362,12 @@
                     .style("fill", _colors[d.name]);
                 x = point.x;
 
-                return {name: d.name, color: _colors[d.name], value: _w.attr.tooltipYFormat(point.y)};
+                return {
+                    name: d.name,
+                    color: _colors[d.name],
+                    dashed: _w.attr.lineStyles && _w.attr.lineStyles[d.name] ? true : undefined,
+                    value: _w.attr.tooltipYFormat(point.y)
+                };
             });
 
             return {
