@@ -84,6 +84,17 @@
          */
         _w.attr.add(this, "xType", "number");
 
+        /**
+         * Sets line styles for each plot.
+         *
+         * @method lineStyles
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {Object} style Object containing the style for each plot. A style is an object with SVG styles to set.
+         * Currently only stroke-dasharray is supported.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
+         */
+        _w.attr.add(this, "lineStyles", null);
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -512,6 +523,9 @@
                     return line(d.values);
                 })
                 .style("stroke-width", "2px")
+                .style("stroke-dasharray", function(d) {
+                    return _w.attr.lineStyles && _w.attr.lineStyles[d.name] ? _w.attr.lineStyles[d.name] : null;
+                })
                 .style("stroke", function (d) {
                     return _colors[d.name];
                 })
