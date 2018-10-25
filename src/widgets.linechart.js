@@ -387,10 +387,10 @@
                 return a.concat(d.values);
             }, []);
             var yMin = d3.min(fullData, function(d) {
-                return d.y;
+                return d.y - (d.lo ? d.lo : 0);
             });
             var yMax = d3.max(fullData, function(d) {
-                return d.y;
+                return d.y + (d.hi ? d.hi : 0);
             });
 
             // Calculate scale
@@ -405,7 +405,7 @@
                     return a.concat(d.values);
                 }, []).map(function (d) {
                     return d.y;
-                }), [_w.attr.innerHeight, 0])
+                }).concat([yMin, yMax]), [_w.attr.innerHeight, 0])
             };
 
             // Calculate line/error function
