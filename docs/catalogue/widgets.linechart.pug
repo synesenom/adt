@@ -44,6 +44,7 @@ script.doc.
             mango: "4 4"
         })
         .tooltip(true)
+        .tooltipYFormat(function(d) { return d.toFixed(2) })
         .render();
 script.doc.
     // update data

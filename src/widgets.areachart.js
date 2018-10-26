@@ -131,19 +131,24 @@
             // Get plots
             var x = _svg.scale.x.invert(mouse[0]);
             var plots = _data.map(function (d, i) {
-                var j = index[i];
-                var data = d.values;
-                var left = data[j - 1] ? data[j - 1] : data[j];
-                var right = data[j] ? data[j] : data[j - 1];
-                var point = mouse[0] - left.x > right.x - mouse[0] ? right : left;
+                // Data point
+                var j = index[i],
+                    data = d.values,
+                    left = data[j - 1] ? data[j - 1] : data[j],
+                    right = data[j] ? data[j] : data[j - 1],
+                    point = x - left.x > right.x - x ? right : left;
+                x = point.x;
 
+                // Marker
+                var mx = _svg.scale.x.invert(mouse[0]),
+                    ip = d3.interpolateNumber(left.y, right.y),
+                    y = ip((mx - left.x) / (right.x - left.x));
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
+                    .attr("cx", mouse[0] + 2)
+                    .attr("cy", _svg.scale.y(!isNaN(y) ? y : left.y))
                     .attr("r", 4)
-                    .attr("cx", _svg.scale.x(point.x) + 1)
-                    .attr("cy", _svg.scale.y(point.y) + 1)
                     .style("fill", _colors[d.name]);
-                x = point.x;
 
                 return {
                     name: d.name,

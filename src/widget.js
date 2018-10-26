@@ -892,6 +892,23 @@
         };
 
         /**
+         * Hides tooltip.
+         *
+         * @method _hideTooltip
+         * @memberOf du.widget.Widget
+         * @private
+         */
+        function _hideTooltip() {
+            var tooltipId = "du-widgets-plot-tooltip";
+            d3.select("#" + tooltipId)
+                .transition().duration(200)
+                .style("opacity", 0)
+                .on("end", function() {
+                    d3.select(this).style("display", "none");
+                });
+        }
+
+        /**
          * Shows/hides the within-widget tooltip.
          *
          * @method _showTooltip
@@ -908,8 +925,7 @@
 
             // If tooltip is hidden
             if (!on) {
-                d3.select("#" + tooltipId)
-                    .style("display", "none");
+                _hideTooltip();
                 _utils.tooltip();
                 return;
             }
@@ -918,8 +934,16 @@
             // just remove tooltip
             if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
                 || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
-                d3.select("#" + tooltipId)
-                    .style("display", "none");
+                _hideTooltip();
+                _utils.tooltip();
+                return;
+            }
+
+            // Get content
+            // If content is invalid, remove tooltip
+            var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
+            if (!content) {
+                _hideTooltip();
                 _utils.tooltip();
                 return;
             }
@@ -943,17 +967,6 @@
                     .style("pointer-events", "none")
                     .style("left", (container.left + container.right) / 2 + 'px')
                     .style("top", (container.top + container.bottom) / 2 + 'px');
-            }
-
-            // Get content
-            // If content is invalid, remove tooltip
-            var content = _utils.tooltip([m[0] - _attr.margins.left, m[1] - _attr.margins.top]);
-            if (!content) {
-                d3.select("#" + tooltipId)
-                    .style("display", "none")
-                    .html("");
-                _utils.tooltip();
-                return;
             }
 
             // Erase tooltip content and add title
@@ -1041,7 +1054,8 @@
             // Set position
             tooltip
                 .style("display", "block")
-                .transition();
+                .transition().duration(0)
+                .style("opacity", 1);
             tooltip
                 .transition().duration(200).ease(d3.easeLinear)
                 .style("left", tx + 'px')
