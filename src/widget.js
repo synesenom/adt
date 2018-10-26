@@ -697,23 +697,37 @@
              * @param {du.widget.Widget} widget The current widget that called the method.
              * @param {object} svg The inner SVG of the widget.
              * @param {string} selector Selector of the widget elements.
-             * @param {string} key Key of the element to highlight.
+             * @param {(string|string[])} key Single key or an array of keys of the element(s) to highlight.
              * @param {number} duration Duration of the highlight animation.
              * @returns {du.widget.Widget} The widget calling the method.
              */
             function highlight(widget, svg, selector, key, duration) {
+                // Get plots
+                var plots = svg.g.selectAll(selector);
+                plots.transition();
+
+                // Perform highlight
                 if (svg !== null) {
                     if (typeof key === "string") {
-                        svg.g.selectAll(selector).transition();
-                        svg.g.selectAll(selector)
-                            .transition().duration(duration ? duration : 0)
+                        // Single key
+                        plots.transition().duration(duration ? duration : 0)
                             .style("opacity", function () {
                                 return d3.select(this).classed(encode(key)) ? 1 : 0.1;
                             });
+                    } else if (Array.isArray(key)) {
+                        // Multiple keys
+                        var keys = key.map(function(d) {
+                            return encode(d);
+                        });
+                        plots.transition().duration(duration ? duration : 0)
+                            .style("opacity", function () {
+                                var elem = d3.select(this);
+                                return keys.reduce(function(s, d) {
+                                    return s || elem.classed(d);
+                                }, false) ? 1 : 0.1;
+                            });
                     } else {
-                        svg.g.selectAll(selector).transition();
-                        svg.g.selectAll(selector)
-                            .transition().duration(duration ? duration : 0)
+                        plots.transition().duration(duration ? duration : 0)
                             .style("opacity", 1);
                     }
                 }
@@ -979,7 +993,7 @@
                 .text(content.title);
 
             // Add color
-            tooltip.style("border-left", content.stripe ? "solid 2px " + content.stripe : null);
+            tooltip.style("border-left", content.stripe ? "solid 3px " + content.stripe : null);
 
             // Add content
             switch (content.content.type) {
