@@ -214,7 +214,6 @@
                         _svg.valueTrack.attr("x2", _scale(value));
 
                         // Trigger callback
-                        console.log(value);
                         _w.attr.callback && _w.attr.callback(value);
                     })
                     .on("end", function() {
