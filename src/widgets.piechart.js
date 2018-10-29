@@ -158,7 +158,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.piechart.PieChart
-         * @param {string} key Key of the segment to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the segment(s) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.piechart.PieChart} Reference to the current PieChart.
          */

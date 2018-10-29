@@ -98,7 +98,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.boxplot.BoxPlot
-         * @param {string} key Key of the box to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the box(es) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.boxplot.BoxPlot} Reference to the current BoxPlot.
          */

@@ -462,6 +462,7 @@ new du.widgets.Slider("slider", "#slider")
     .width(width - 20)
     .margins({left: 40, top: 20, right: 20, bottom: 40})
     .fontSize(14)
+    .position(0.57)
     .render();
 
 // Status

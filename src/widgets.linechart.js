@@ -139,7 +139,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.linechart.LineChart
-         * @param {string} key Key of the line to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the line(s) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
          */

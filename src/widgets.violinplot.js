@@ -141,7 +141,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.violinplot.ViolinPlot
-         * @param {string} key Key of the violin to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the violin(s) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.violinplot.ViolinPlot} Reference to the current ViolinPlot.
          */

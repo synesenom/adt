@@ -96,7 +96,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.areachart.AreaChart
-         * @param {string} key Key of the area to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the area(s) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.areachart.AreaChart} Reference to the current AreaChart.
          */

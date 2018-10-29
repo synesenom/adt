@@ -91,7 +91,7 @@
          *
          * @method highlight
          * @memberOf du.widgets.bubblechart.BubbleChart
-         * @param {string} key Name of the bubble to highlight.
+         * @param {(string|string[])} key Single key or an array of keys of the bubble(s) to highlight.
          * @param {number} duration Duration of the highlight animation.
          * @returns {du.widgets.bubblechart.BubbleChart} Reference to the current BubbleChart.
          */
