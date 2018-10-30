@@ -1195,6 +1195,7 @@
                 .attr("id", _id + "-static-layers")
                 .style("position", "absolute")
                 .style("pointer-events", "none")
+                .style("z-index", 999)
                 .style("width", _w.attr.width + "px")
                 .style("height", _w.attr.height + "px");
 
@@ -1715,7 +1716,7 @@
                 .style("position", "absolute")
                 .style("pointer-events", "none")
                 .style("z-index", 99)
-                .style("opacity", 0.5)
+                .style("mix-blend-mode", "multiply")
                 .style("width", _w.attr.width + "px")
                 .style("height", _w.attr.height + "px");
 
@@ -1864,6 +1865,7 @@
              */
             var _container = _w.widget.append("div")
                 .attr("id", _id + "-dynamic-layers")
+                .style("z-index", 99)
                 .style("position", "absolute")
                 .style("pointer-events", "none");
 
@@ -2406,9 +2408,9 @@
 
             // Style layers
             _mapLayer._style();
+            _tilesLayer._style();
             _staticLayer._style();
             _dynamicLayer._style();
-            _tilesLayer._style();
             _touchLayer._style();
 
             // Mark clusters
