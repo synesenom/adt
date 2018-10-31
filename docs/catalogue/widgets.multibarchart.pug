@@ -8,7 +8,7 @@ script.doc.
     // create chart
     var width = parseFloat(d3.select("#widget").style("width"));
     var height = parseFloat(d3.select("#widget").style("height"));
-    var rooms = "ABCDEFGH";
+    var rooms = "EFGHABCD";
     var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
         .data([
             {
@@ -16,7 +16,7 @@ script.doc.
                 values: new Array(8).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
-                        y: Math.floor(Math.random() * 10)
+                        y: i
                     };
                 })
             },
@@ -45,7 +45,7 @@ script.doc.
         multibarchart.data([
             {
                 name: "mango",
-                values: new Array(4).fill(0).map(function (d, i) {
+                values: new Array(5).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: Math.floor(Math.random() * 10)
@@ -54,7 +54,7 @@ script.doc.
             },
             {
                 name: "kiwi",
-                values: new Array(4).fill(0).map(function (d, i) {
+                values: new Array(6).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: 1 + Math.floor(Math.random() * i * 4)
@@ -63,7 +63,7 @@ script.doc.
             },
             {
                 name: "melon",
-                values: new Array(4).fill(0).map(function (d, i) {
+                values: new Array(7).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: 1 + Math.floor(Math.random() * i)

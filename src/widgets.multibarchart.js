@@ -74,6 +74,7 @@
          * name of the plot and a {values} property which is the array of {(x, y)} coordinates. Each data point can have
          * two optional values {lo, hi} representing the error of the {y} value. Default values of {lo} and {hi} for all
          * data points are 0.
+         * Note that the data is sorted by the X values assuming they are strings.
          *
          * @method data
          * @memberOf du.widgets.multibarchart.MultiBarChart
@@ -84,7 +85,9 @@
             _data = data.map(function (d) {
                 return {
                     name: d.name,
-                    values: d.values.map(function (dd) {
+                    values: d.values.sort(function(a, b) {
+                        return a.x.localeCompare(b.x);
+                    }).map(function (dd) {
                         return {
                             x: dd.x,
                             y: dd.y,

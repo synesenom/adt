@@ -1195,7 +1195,7 @@
                 .attr("id", _id + "-static-layers")
                 .style("position", "absolute")
                 .style("pointer-events", "none")
-                .style("z-index", 999)
+                .style("z-index", 9)
                 .style("width", _w.attr.width + "px")
                 .style("height", _w.attr.height + "px");
 

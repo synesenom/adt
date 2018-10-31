@@ -5,7 +5,7 @@
 });</script><title>multibarchart | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">Multi bar charts are useful to show <span class='good'>aggregated</span> and <span class='good'>unsorted</span> data with no connection between consecutive values, such as volumes for different quantities</div><div id="code-doc"></div><div id="doc-link"><a class="margined" href="../dl/widgets.multibarchart.min.js">min.js</a><a class="margined" href="../api/widgets.multibarchart.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.multibarchart.js">source</a></div></main></body></html><script class="doc">// create chart
 var width = parseFloat(d3.select("#widget").style("width"));
 var height = parseFloat(d3.select("#widget").style("height"));
-var rooms = "ABCDEFGH";
+var rooms = "EFGHABCD";
 var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
     .data([
         {
@@ -13,7 +13,7 @@ var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
             values: new Array(8).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
-                    y: Math.floor(Math.random() * 10)
+                    y: i
                 };
             })
         },
@@ -40,7 +40,7 @@ setInterval(function () {
     multibarchart.data([
         {
             name: "mango",
-            values: new Array(4).fill(0).map(function (d, i) {
+            values: new Array(5).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: Math.floor(Math.random() * 10)
@@ -49,7 +49,7 @@ setInterval(function () {
         },
         {
             name: "kiwi",
-            values: new Array(4).fill(0).map(function (d, i) {
+            values: new Array(6).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: 1 + Math.floor(Math.random() * i * 4)
@@ -58,7 +58,7 @@ setInterval(function () {
         },
         {
             name: "melon",
-            values: new Array(4).fill(0).map(function (d, i) {
+            values: new Array(7).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: 1 + Math.floor(Math.random() * i)
