@@ -16,7 +16,7 @@ script.doc.
                 values: new Array(8).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
-                        y: i
+                        y: Math.floor(Math.random() * 10)
                     };
                 })
             },
@@ -37,6 +37,7 @@ script.doc.
         .margins(40)
         .fontSize(14)
         .barWidth(0.6)
+        .sortByX(true)
         .tooltip(true)
         .render();
 script.doc.
@@ -45,7 +46,7 @@ script.doc.
         multibarchart.data([
             {
                 name: "mango",
-                values: new Array(5).fill(0).map(function (d, i) {
+                values: new Array(4).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: Math.floor(Math.random() * 10)
@@ -54,7 +55,7 @@ script.doc.
             },
             {
                 name: "kiwi",
-                values: new Array(6).fill(0).map(function (d, i) {
+                values: new Array(4).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: 1 + Math.floor(Math.random() * i * 4)
@@ -63,7 +64,7 @@ script.doc.
             },
             {
                 name: "melon",
-                values: new Array(7).fill(0).map(function (d, i) {
+                values: new Array(4).fill(0).map(function (d, i) {
                     return {
                         x: rooms.charAt(i),
                         y: 1 + Math.floor(Math.random() * i)

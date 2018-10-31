@@ -13,7 +13,7 @@ var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
             values: new Array(8).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
-                    y: i
+                    y: Math.floor(Math.random() * 10)
                 };
             })
         },
@@ -34,13 +34,14 @@ var multibarchart = new du.widgets.MultiBarChart("mychart", "#widget")
     .margins(40)
     .fontSize(14)
     .barWidth(0.6)
+    .sortByX(true)
     .tooltip(true)
     .render();</script><script class="doc">// update data
 setInterval(function () {
     multibarchart.data([
         {
             name: "mango",
-            values: new Array(5).fill(0).map(function (d, i) {
+            values: new Array(4).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: Math.floor(Math.random() * 10)
@@ -49,7 +50,7 @@ setInterval(function () {
         },
         {
             name: "kiwi",
-            values: new Array(6).fill(0).map(function (d, i) {
+            values: new Array(4).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: 1 + Math.floor(Math.random() * i * 4)
@@ -58,7 +59,7 @@ setInterval(function () {
         },
         {
             name: "melon",
-            values: new Array(7).fill(0).map(function (d, i) {
+            values: new Array(4).fill(0).map(function (d, i) {
                 return {
                     x: rooms.charAt(i),
                     y: 1 + Math.floor(Math.random() * i)

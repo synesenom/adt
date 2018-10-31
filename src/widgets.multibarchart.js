@@ -61,6 +61,17 @@
          */
         _w.attr.add(this, "barWidth", false);
 
+        /**
+         * Enables sorting of data by the X axis.
+         * Default is false.
+         *
+         * @method sortByX
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {boolean} sort Whether to sort data by the X values.
+         * @returns {du.widgets.multibarchart.MultiBarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, "sortByX", false);
+
         // Widget elements
         var _svg = {};
         var _data = [];
@@ -85,9 +96,7 @@
             _data = data.map(function (d) {
                 return {
                     name: d.name,
-                    values: d.values.sort(function(a, b) {
-                        return a.x.localeCompare(b.x);
-                    }).map(function (dd) {
+                    values: d.values.map(function (dd) {
                         return {
                             x: dd.x,
                             y: dd.y,
@@ -154,12 +163,18 @@
             var data = _data.slice();
 
             // Calculate scale
+            var xData = data.reduce(function (a, d) {
+                return a.concat(d.values);
+            }, []).map(function (d) {
+                return d.x;
+            });
+            if (_w.attr.sortByX) {
+                xData.sort(function(a, b) {
+                    return a.localeCompare(b);
+                });
+            }
             _svg.scale = {
-                x: _w.utils.scale(data.reduce(function (a, d) {
-                    return a.concat(d.values);
-                }, []).map(function (d) {
-                    return d.x;
-                }), [0, _w.attr.innerWidth], "band"),
+                x: _w.utils.scale(xData, [0, _w.attr.innerWidth], "band"),
                 y: _w.utils.scale(data.reduce(function (a, d) {
                     return a.concat(d.values);
                 }, []).map(function (d) {
