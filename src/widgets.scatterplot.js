@@ -81,6 +81,20 @@
             return this;
         };
 
+        /**
+         * Highlights the sepcified range.
+         *
+         * @method highlightRange
+         * @memberOf du.widgets.scatterplot.ScatterPlot
+         * @param {number[]} range Array containing the lower and upper boundary of the range to highlight.
+         * @param {?number} duration Duration of the highlight animation.
+         * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
+         */
+        this.highlightRange = function(range, duration) {
+            if (!_transition) _w.utils.highlightRange(this, _svg, ".dot", range, duration);
+            return this;
+        };
+
         // Tooltip builder
         _w.utils.tooltip = function (mouse) {
             if (!mouse) {

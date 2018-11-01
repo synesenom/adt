@@ -735,6 +735,39 @@
             }
 
             /**
+             * Highlights a range in the widget.
+             *
+             * @method highlightRange
+             * @memberOf du.widget.Widget._utils
+             * @param {du.widget.Widget} widget The current widget that called the method.
+             * @param {object} svg The inner SVG of the widget.
+             * @param {string} selector Selector of the widget elements.
+             * @param {number[]} range Array containing the lower and upper boundary of the range to highlight.
+             * @param {number} duration Duration of the highlight animation.
+             * @returns {du.widget.Widget} The widget calling the method.
+             */
+            function highlightRange(widget, svg, selector, range, duration) {
+                // Get chart elements
+                var elems = svg.g.selectAll(selector);
+                elems.transition();
+
+                // Do highlight
+                if (svg !== null) {
+                    if (range) {
+                        elems.transition().duration(duration ? duration : 0)
+                            .style("opacity", function (d) {
+                                console.log(d);
+                                return d.x >= range[0] && d.x <= range[1] ? 1 : 0.1;
+                            });
+                    } else {
+                        elems.transition().duration(duration ? duration : 0)
+                            .style("opacity", 1);
+                    }
+                }
+                return widget;
+            }
+
+            /**
              * Builds color mapping for an array of keys based on the {colors} attribute.
              * If no color is specified, the default color scheme is used (color brewer).
              * If single color is defined, a sequential color scheme is generated for 10 categories.
@@ -790,6 +823,7 @@
                 standardAxis: standardAxis,
                 scale: scale,
                 highlight: highlight,
+                highlightRange: highlightRange,
                 colors: colors
             };
         })();

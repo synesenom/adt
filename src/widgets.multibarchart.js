@@ -123,6 +123,20 @@
             return this;
         };
 
+        /**
+         * Highlights the sepcified range.
+         *
+         * @method highlightRange
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {number[]} range Array containing the lower and upper boundary of the range to highlight.
+         * @param {?number} duration Duration of the highlight animation.
+         * @returns {du.widgets.multibarchart.MultiBarChart} Reference to the current BarChart.
+         */
+        this.highlightRange = function(range, duration) {
+            if (!_transition) _w.utils.highlightRange(this, _svg, ".bar", range, duration);
+            return this;
+        };
+
         // Tooltip builder
         _w.utils.tooltip = function () {
             if (!_current) {
