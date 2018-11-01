@@ -756,7 +756,6 @@
                     if (range) {
                         elems.transition().duration(duration ? duration : 0)
                             .style("opacity", function (d) {
-                                console.log(d);
                                 return d.x >= range[0] && d.x <= range[1] ? 1 : 0.1;
                             });
                     } else {
