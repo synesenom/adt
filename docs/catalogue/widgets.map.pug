@@ -33,7 +33,12 @@ script.doc.
         map.colors(colors)
             .render();
     }
-script.doc.
+
+    setTimeout(function() {
+        map.width(0.6*width)
+            .render();
+    }, 1000);
+}script.doc.
     // show capitals
     function showCapitals() {
         // scale log of population

@@ -1819,7 +1819,12 @@
                 _container
                     .style("width", _w.attr.width + "px")
                     .style("height", _w.attr.height + "px");
-                _map.invalidateSize();
+                setTimeout(function(){
+                    _map.invalidateSize();
+                    _map.setView(_getLatLon([0, 0]), _getZoom(_zoom.level()), {
+                        "animate": false
+                    });
+                }, 400);
             }
 
             function _zoomLayer(transform) {
