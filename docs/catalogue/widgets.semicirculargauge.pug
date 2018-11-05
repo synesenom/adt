@@ -1,15 +1,15 @@
-- var name = "hydraulicgauge"
-- var links = {minjs: "widgets.hydraulicgauge", source: "widgets.hydraulicgauge", docs: "widgets.hydraulicgauge"}
+- var name = "semicirculargauge"
+- var links = {minjs: "widgets.semicirculargauge", source: "widgets.semicirculargauge", docs: "widgets.semicirculargauge"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
-- var modules = ["widget", "widgets.hydraulicgauge"]
-- var description = "A hydraulic gauge bar that can be used to indicate <span class='good'>advantageous</span> or <span class='bad'>disadvantageous</span> values of a parameter or variable."
+- var modules = ["widget", "widgets.semicirculargauge"]
+- var description = "A semi-circular gauge bar that can be used to indicate <span class='good'>advantageous</span> or <span class='bad'>disadvantageous</span> values of a parameter or variable."
 include pug/example
 script.doc.
     // create gauge
-    var gauge = new du.widgets.HydraulicGauge("hydraulicgauge", "#widget")
+    var gauge = new du.widgets.SemiCircularGauge("semicirculargauge", "#widget")
         .width(parseInt(d3.select("#widget").style("width")))
         .height(parseInt(d3.select("#widget").style("height")))
-        .margins(100)
+        .margins(150)
         .segments(4)
         .min(0)
         .max(100)
@@ -17,7 +17,7 @@ script.doc.
         .render();
 script.doc.
     // update
-    setTimeout(function() {
+    setInterval(function() {
         gauge.position(Math.random() * 100)
             .render(1000);
     }, 5000);

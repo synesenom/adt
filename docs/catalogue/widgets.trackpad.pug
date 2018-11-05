@@ -17,10 +17,11 @@ script.doc.
         .xRange([0, 255])
         .yRange([0, 255])
         .guide(true)
+        .fontColor("rgba(0, 100, 0)")
         .callback(function (x, y) {
             // Change own color
             trackpad
-                .fontColor("rgb(" + parseInt(x) + ",150," + parseInt(y) + ")")
+                .fontColor("rgb(" + parseInt(x) + ",100," + parseInt(y) + ")")
                 .render();
         })
         .render();

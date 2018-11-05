@@ -211,14 +211,6 @@ grid.add(new du.widgets.AreaChart("subchart2")
         }
     ]), 1, 0, 1, 1);
 
-// Hydraulic gauge
-new du.widgets.HydraulicGauge("hydraulicgauge", "#hydraulicgauge")
-    .width(width)
-    .height(height)
-    .margins(60)
-    .position(0.57)
-    .render();
-
 // Hint
 new du.widgets.Hint("hint", "#hint")
     .x(70)
@@ -461,6 +453,14 @@ new du.widgets.ScatterPlot("scatterplot", "#scatterplot")
             })
         }
     ])
+    .render();
+
+// Semi-circular gauge
+new du.widgets.SemiCircularGauge("semicirculargauge", "#semicirculargauge")
+    .width(width)
+    .height(height)
+    .margins(60)
+    .position(0.57)
     .render();
 
 // Slider

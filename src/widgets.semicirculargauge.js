@@ -6,30 +6,30 @@
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.HydraulicGauge = factory(global.d3, global.du.Widget);
+        global.du.widgets.SemiCircularGauge = factory(global.d3, global.du.Widget);
     }
 } (this, function (d3, Widget) {
     "use strict";
 
     /**
-     * The hydraulic gauge widget class.
+     * The semi-circular gauge widget class.
      *
-     * @class HydraulicGauge
-     * @memberOf du.widgets.hydraulicgauge
+     * @class SemiCircularGauge
+     * @memberOf du.widgets.semicirculargauge
      * @param {string} name Identifier of the widget.
      * @param {object=} parent Parent element to append widget to. If not specified, widget is appended to body.
      * @constructor
      */
-    function HydraulicGauge(name, parent) {
-        var _w = Widget.call(this, name, "hydraulicgauge", "svg", parent);
+    function SemiCircularGauge(name, parent) {
+        var _w = Widget.call(this, name, "semicirculargauge", "svg", parent);
 
         /**
          * Sets the lower boundary of the gauge.
          *
          * @method min
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} value Lower boundary.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         _w.attr.add(this, "min", 0);
 
@@ -37,9 +37,9 @@
          * Sets the upper boundary of the gauge.
          *
          * @method max
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} value Upper boundary.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         _w.attr.add(this, "max", 1);
 
@@ -48,9 +48,9 @@
          * Default value is 4.
          *
          * @method segments
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} num Number of segments.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         _w.attr.add(this, 'segments', 4);
 
@@ -59,9 +59,9 @@
          * Default value is 6 degrees.
          *
          * @method gap
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} num Gap angle between segments in degrees.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         _w.attr.add(this, "gap", 6);
 
@@ -70,9 +70,9 @@
          * Default is 0.2.
          *
          * @method thickness
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} size Size of the thickness relative to the gauge radius.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         _w.attr.add(this, "thickness", 0.2);
 
@@ -82,9 +82,9 @@
          * Default values are the first red and green colors from Color Brewer (['#e41a1c', '#4daf4a']).
          *
          * @method colors
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {string[]} colors Start and end colors of the gauge.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          * @override {du.widgets.Widget.colors}
          */
 
@@ -124,7 +124,7 @@
          * Calculates needle path based on the geometry and the new angle.
          *
          * @method _getNeedlePath
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {Object} geo Object containing the current geometry of the gauge.
          * @param {number} angle New angle to turn needle to.
          * @returns {string} The needle geometry to be passed for attribute {d}.
@@ -143,7 +143,7 @@
          * Sets the position of the['red', 'orange', 'yellow', 'green'] gauge.
          *
          * @method _setPosition
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} value The value to set position to.
          * @param {number} duration Duration of the transition.
          * @private
@@ -171,9 +171,9 @@
          * Sets the position of the needle to the specified value.
          *
          * @method position
-         * @memberOf du.widgets.hydraulicgauge.HydraulicGauge
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
          * @param {number} value The value to set the needle's position to.
-         * @returns {du.widgets.hydraulicgauge.HydraulicGauge} Reference to the current HydraulicGauge.
+         * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         this.position = function(value) {
             _pos = value;
@@ -208,7 +208,6 @@
                 // Add element
                 _svg.segments.push(
                     _svg.g.append("path")
-                        .attr("class", "gauge-segment")
                         .attr("d", arc)
                         .style("fill", colors(i / (_w.attr.segments - 1)))
                 );
@@ -216,15 +215,12 @@
 
             // Add needle
             _svg.needle = _svg.g.append("g")
-                .attr("class", "gauge-needle")
                 .style("fill", _w.attr.fontSize);
             _svg.needleCenter = _svg.needle.append("circle")
-                .attr("class", "gauge-needle-center")
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", geo.needle.width + "px");
-            _svg.needlePointer = _svg.needle.append("path")
-                .attr("class", "gauge-needle-pointer");
+            _svg.needlePointer = _svg.needle.append("path");
 
             // Set position
             _setPosition(0, 0);
@@ -252,6 +248,6 @@
     }
 
     // Export
-    HydraulicGauge.prototype = Object.create(Widget.prototype);
-    return HydraulicGauge;
+    SemiCircularGauge.prototype = Object.create(Widget.prototype);
+    return SemiCircularGauge;
 }));

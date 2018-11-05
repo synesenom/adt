@@ -146,6 +146,13 @@
                 .style("fill", "transparent")
                 .call(d3.drag()
                     .on("start drag", function () {
+                        // Highlight handle
+                        _svg.handle
+                            .style("fill", _w.attr.fontColor)
+                            .style("stroke-width", "2px")
+                            .style("stroke", "white");
+
+                        // Update value
                         var x = _scale.x.invert(d3.event.x),
                             y = _scale.y.invert(d3.event.y);
                         _svg.handle
@@ -164,7 +171,15 @@
                                 .attr("y2", _scale.y.range()[1]);
                         }
                         _w.attr.callback && _w.attr.callback(x, y);
-                    }));
+                    })
+                    .on("end", function() {
+                        // Remove  handle highlight
+                        _svg.handle
+                            .style("fill", "white")
+                            .style("stroke-width", "1px")
+                            .style("stroke", _w.attr.fontColor);
+                    })
+                );
             _svg.axis = {
                 x: _svg.g.append("g")
                     .attr("class", "x axis")
