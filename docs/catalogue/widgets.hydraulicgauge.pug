@@ -1,0 +1,30 @@
+- var name = "hydraulicgauge"
+- var links = {minjs: "widgets.hydraulicgauge", source: "widgets.hydraulicgauge", docs: "widgets.hydraulicgauge"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.hydraulicgauge"]
+- var description = "A hydraulic gauge bar that can be used to indicate <span class='good'>advantageous</span> or <span class='bad'>disadvantageous</span> values of a parameter or variable."
+include pug/example
+script.doc.
+    // create gauge
+    var gauge = new du.widgets.HydraulicGauge("hydraulicgauge", "#widget")
+        .width(parseInt(d3.select("#widget").style("width")))
+        .height(parseInt(d3.select("#widget").style("height")))
+        .margins(100)
+        .segments(4)
+        .min(0)
+        .max(100)
+        .position(36)
+        .render();
+script.doc.
+    // update
+    setTimeout(function() {
+        gauge.position(Math.random() * 100)
+            .render(1000);
+    }, 5000);
+script.
+    window.onresize = function () {
+        gauge
+            .width(parseInt(d3.select("#widget").style("width")))
+            .height(parseInt(d3.select("#widget").style("height")))
+            .render();
+    };

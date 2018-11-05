@@ -25,7 +25,6 @@
  * @requires d3@v4
  * @requires du.Widget
  */
-// TODO add label
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'), exports);
@@ -262,6 +261,7 @@
         };
 
         // Style updater
+        // TODO Update domain
         _w.render.style = function () {
             // Widget
             _w.widget.style("width", _w.attr.width + "px");

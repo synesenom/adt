@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link href='https://fonts.googleapis.com/css?family=Montserrat:200,300,700' rel='stylesheet'><link rel='stylesheet' type='text/css' href='https://cdn.rawgit.com/synesenom/whiteprint/master/wp.min.css'><style>img#logo{position:fixed;top:20px;right:20px;width:100px;}pre code{width: 100%;}</style><title>du.widgets.hydraulicgauge.HydraulicGauge</title></head><body><input type='checkbox' id='menu'><label for='menu' id='open'>☰</label><aside><div class='logo'>du.widgets.hydraulicgauge.HydraulicGauge</div><nav><div></div></nav></aside><main><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge'>HydraulicGauge</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge(name[, parent])</code></pre>
+<br>The hydraulic gauge widget class. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>name</i></td><td><code>string</code></td><td>Identifier of the widget.</td></tr><tr><td><i>parent</i></td><td><code>object</code></td><td>Parent element to append widget to. If not specified, widget is appended to body. <code>optional</code></td></tr></table>
+</div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.min'>min</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.min(value)</code></pre>
+<br>Sets the lower boundary of the gauge. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>Lower boundary.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.max'>max</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.max(value)</code></pre>
+<br>Sets the upper boundary of the gauge. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>Upper boundary.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.segments'>segments</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.segments(num)</code></pre>
+<br>Sets the number of segments of the gauge bar. Default value is 4. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>num</i></td><td><code>number</code></td><td>Number of segments.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.gap'>gap</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.gap(num)</code></pre>
+<br>Sets the angle of the gap between segments. Default value is 6 degrees. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>num</i></td><td><code>number</code></td><td>Gap angle between segments in degrees.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.thickness'>thickness</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.thickness(size)</code></pre>
+<br>Sets the thickness of the segments in units of the radius. Default is 0.2. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>size</i></td><td><code>number</code></td><td>Size of the thickness relative to the gauge radius.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.colors'>colors</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.colors(colors)</code></pre>
+<br>Sets the min and max color of the gauge. Must be an array with two colors. The color of intermediate segments is interpolated with HSL interpolation. Default values are the first red and green colors from Color Brewer (['#e41a1c', '#4daf4a']). 
+<br>Overrides: <code>du.widgets.Widget.colors</code><br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>colors</i></td><td><code>string[]</code></td><td>Start and end colors of the gauge.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><h2 id='api-du.widgets.hydraulicgauge.HydraulicGauge.position'>position</h2>
+<div class='card'><pre><code>du.widgets.hydraulicgauge.HydraulicGauge.position(value)</code></pre>
+<br>Sets the position of the needle to the specified value. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>The value to set the needle's position to.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.hydraulicgauge.HydraulicGauge</code></i></td><td>Reference to the current HydraulicGauge.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>
