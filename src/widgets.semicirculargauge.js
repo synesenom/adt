@@ -1,3 +1,12 @@
+/**
+ * Module implementing a semi-circular gauge widget.
+ *
+ * @author Enys Mones
+ * @module semicirculargauge
+ * @memberOf du.widgets
+ * @requires d3@v4
+ * @requires du.Widget
+ */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'), exports);
@@ -94,6 +103,14 @@
         var _oldPos = 0;
         var _pos = null;
 
+        /**
+         * Computes the current geometry of the gauge.
+         *
+         * @method _geometry
+         * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
+         * @returns {Object} Object describing the gauge geometry.
+         * @private
+         */
         function _geometry() {
             var gapAngle = _w.attr.gap * Math.PI / 180,
                 totalAngle = Math.PI - (_w.attr.segments - 1) * gapAngle,
@@ -140,7 +157,7 @@
         }
 
         /**
-         * Sets the position of the['red', 'orange', 'yellow', 'green'] gauge.
+         * Sets the position of the gauge.
          *
          * @method _setPosition
          * @memberOf du.widgets.semicirculargauge.SemiCircularGauge

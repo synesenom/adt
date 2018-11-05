@@ -1,0 +1,30 @@
+- var name = "lineargauge"
+- var links = {minjs: "widgets.lineargauge", source: "widgets.lineargauge", docs: "widgets.lineargauge"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.semicirculargauge"]
+- var description = "A linear gauge bar that can be used to indicate <span class='good'>advantageous</span> or <span class='bad'>disadvantageous</span> values of a parameter or variable."
+include pug/example
+script.doc.
+    // create gauge
+    var gauge = new du.widgets.LinearGauge("lineargauge", "#widget")
+        .width(parseInt(d3.select("#widget").style("width")))
+        .height(parseInt(d3.select("#widget").style("height")))
+        .margins(150)
+        .segments(4)
+        .min(0)
+        .max(100)
+        .position(36)
+        .render();
+script.doc.
+    // update
+    setInterval(function() {
+        gauge.position(Math.random() * 100)
+            .render(1000);
+    }, 5000);
+script.
+    window.onresize = function () {
+        gauge
+            .width(parseInt(d3.select("#widget").style("width")))
+            .height(parseInt(d3.select("#widget").style("height")))
+            .render();
+    };

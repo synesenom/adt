@@ -900,10 +900,11 @@
                     .transition().duration(duration)
                     .style("opacity", 0);
 
-                // Show placeholder text
-                if (d3.select("#" + placeHolderId).empty()) {
+                // Update placeholder (and add if needed)
+                var ph = d3.select("#" + placeHolderId);
+                if (ph.empty()) {
                     var realParent = parent ? parent : "body";
-                    d3.select(realParent).append("div")
+                    ph = d3.select(realParent).append("div")
                         .attr("id", placeHolderId)
                         .style("position", "absolute")
                         .style("width", _attr.width + "px")
@@ -924,6 +925,8 @@
                         .html(content)
                         .transition().duration(duration)
                         .style("opacity", 1);
+                } else {
+                    ph.html(content);
                 }
             } else {
                 _widget.transition().duration();
