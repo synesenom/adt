@@ -74,6 +74,16 @@
         _w.attr.add(this, "tick", false);
 
         /**
+         * Sets the track color for the gauge bar. Default is rgba(0, 0, 0, 0.1).
+         *
+         * @method trackColor
+         * @memberOf du.widgets.lineargauge.LinearGauge
+         * @param {string} color Color of the track.
+         * @returns {du.widgets.lineargauge.LinearGauge} Reference to the current LinearGauge.
+         */
+        _w.attr.add(this, "trackColor", "rgba(0, 0, 0, 0.1)");
+
+        /**
          * Sets the min and max color of the gauge. Must be an array with two colors. The color of intermediate segments
          * is interpolated with HSL interpolation.
          * Default values are the first red and green colors from Color Brewer (['#e41a1c', '#4daf4a']).
@@ -157,7 +167,7 @@
                 .attr("y", 0)
                 .attr("width", _w.attr.innerWidth)
                 .attr("height", _w.attr.thickness)
-                .style("fill", "#ddd");
+                .style("fill", _w.attr.trackColor);
             _svg.bar = _svg.g.append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
