@@ -173,8 +173,8 @@
             var angle = _scale(value);
             _svg.needlePointer.transition().duration(duration)
                 .tween('progress', function () {
-                    return function (percentOfPercent) {
-                        var progress = oldAngle + (angle - oldAngle) * percentOfPercent;
+                    return function (t) {
+                        var progress = oldAngle + (angle - oldAngle) * t;
                         return _svg.needlePointer
                             .attr("d", _getNeedlePath.call(self, geo, progress));
                     };
@@ -252,7 +252,7 @@
         };
 
         // Style updater
-        // TODO add paramters that can be modified
+        // TODO Add parameters that can be modified
         _w.render.style = function () {
             // Widget
             _w.widget.style("width", _w.attr.width + "px");

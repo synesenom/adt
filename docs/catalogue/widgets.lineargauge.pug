@@ -1,7 +1,7 @@
 - var name = "lineargauge"
 - var links = {minjs: "widgets.lineargauge", source: "widgets.lineargauge", docs: "widgets.lineargauge"}
 - var libs = ["d3.v4", "lodash.4.17.4"]
-- var modules = ["widget", "widgets.semicirculargauge"]
+- var modules = ["widget", "widgets.lineargauge"]
 - var description = "A linear gauge bar that can be used to indicate <span class='good'>advantageous</span> or <span class='bad'>disadvantageous</span> values of a parameter or variable."
 include pug/example
 script.doc.
@@ -10,10 +10,14 @@ script.doc.
         .width(parseInt(d3.select("#widget").style("width")))
         .height(parseInt(d3.select("#widget").style("height")))
         .margins(150)
-        .segments(4)
         .min(0)
         .max(100)
-        .position(36)
+        .position(Math.floor(Math.random() * 100))
+        .fontSize(16)
+        .tickFormat(function(x) {
+            return x.toFixed(0);
+        })
+        .tick(true)
         .render();
 script.doc.
     // update

@@ -10,7 +10,7 @@ var gauge = new du.widgets.SemiCircularGauge("semicirculargauge", "#widget")
     .segments(4)
     .min(0)
     .max(100)
-    .position(36)
+    .position(Math.floor(Math.random() * 100))
     .render();</script><script class="doc">// update
 setInterval(function() {
     gauge.position(Math.random() * 100)

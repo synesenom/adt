@@ -267,6 +267,22 @@ new du.widgets.Legend("widgets.legend", "#legend")
     .twoColumns(true)
     .render();
 
+// Linear gauge
+new du.widgets.LinearGauge("lineargauge", "#lineargauge")
+    .width(width)
+    .height(height)
+    .margins(60)
+    .tick(true)
+    .fontSize(12)
+    .min(0)
+    .max(100)
+    .tickFormat(function(x) {
+        return x.toFixed(0);
+    })
+    .position(Math.floor(Math.random() * 100))
+    .render();
+
+
 // Line chart
 new du.widgets.LineChart("linechart", "#linechart")
     .width(width)
