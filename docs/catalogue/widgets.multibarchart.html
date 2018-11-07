@@ -68,13 +68,12 @@ setInterval(function () {
             })
         }
     ]).render();
-}, 2000);</script><script class="doc">// add interactions
+}, 20000);</script><script class="doc">// add interactions
 multibarchart
     .click(function (k) {
         alert("Fruit selected: '" + k + "'");
     })
-    .render();</script><script class="doc">// add marker
-multibarchart.addMarker("mymarker", 3, "optimal", 0.76);</script><script>window.onresize = function () {
+    .render();</script><script>window.onresize = function () {
     multibarchart
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))
