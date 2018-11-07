@@ -40,6 +40,7 @@ script.doc.
         .sortByX(true)
         .tooltip(true)
         .render();
+
 script.doc.
     // update data
     setInterval(function () {
@@ -72,7 +73,7 @@ script.doc.
                 })
             }
         ]).render();
-    }, 20000);
+    }, 2000);
 script.doc.
     // add interactions
     multibarchart
@@ -80,4 +81,7 @@ script.doc.
             alert("Fruit selected: '" + k + "'");
         })
         .render();
+script.doc.
+    // add marker
+    multibarchart.addMarker("mymarker", 3, "optimal", 0.76);
 +resize()

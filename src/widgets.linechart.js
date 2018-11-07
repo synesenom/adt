@@ -152,6 +152,17 @@
             return this;
         };
 
+        /**
+         * Adjusts marker position.
+         *
+         * @method _adjustMarker
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {string} key Identifier of the marker.
+         * @param {(number|string)} start Start X position of the marker.
+         * @param {(number|string)} end End X position of the marker.
+         * @returns {?Object} New marker descriptor if marker exists and could be adjusted, null otherwise.
+         * @private
+         */
         function _adjustMarker(key, start, end) {
             // Get data
             var data = _data.filter(function (d) {

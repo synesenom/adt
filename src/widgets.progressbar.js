@@ -36,12 +36,12 @@
          * Sets the color of the progress bar track.
          * Default is transparent.
          *
-         * @method backgroundColor
+         * @method trackColor
          * @memberOf du.widgets.progressbar.ProgressBar
          * @param {string} color Color of the progress bar track.
          * @returns {du.widgets.progressbar.ProgressBar} Reference to the current Progress bar.
          */
-        _w.attr.add(this, "backgroundColor", "transparent");
+        _w.attr.add(this, "trackColor", "transparent");
 
         /**
          * Sets the progress bar thickness in pixels.
@@ -92,12 +92,13 @@
                 .style("height", "100%");
             _div.label = _div.container.append("div")
                 .style("display", "block")
+                .style("margin-bottom", "2px")
                 .style("pointer-events", "none");
             _div.barTrack = _div.container.append("div")
                 .style("display", "block")
                 .style("width", "100%")
                 .style("bottom", "0")
-                .style("background-color", _w.attr.backgroundColor);
+                .style("background-color", _w.attr.trackColor);
             _div.bar = _div.barTrack.append("div")
                 .style("display", "block")
                 .style("float", "left")

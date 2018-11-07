@@ -78,6 +78,7 @@
         var _colors = {};
         var _current = null;
         var _transition = false;
+        var _markers = {};
 
         /**
          * Binds data to the bar chart.
@@ -135,6 +136,143 @@
         this.highlightRange = function(range, duration) {
             if (!_transition) _w.utils.highlightRange(this, _svg, ".bar", range, duration);
             return this;
+        };
+
+        /**
+         * Adjusts marker position.
+         *
+         * @method _adjustMarker
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {string} key Identifier of the marker.
+         * @param {number} value Y position of the marker line.
+         * @returns {?Object} New marker descriptor if marker exists and could be adjusted, null otherwise.
+         * @private
+         */
+        function _adjustMarker(key, value) {
+            // Get data
+            var data = _data.filter(function (d) {
+                return d.name === key;
+            })[0];
+            if (!data) {
+                return null;
+            }
+
+            // Get marker data point indices
+            var bisect = d3.bisector(function (d) {
+                return d.x;
+            }).left;
+            var i1 = bisect(data.values, start);
+            var i2 = bisect(data.values, end);
+            if (i1 === null || i2 === null) {
+                return null;
+            }
+
+            // Get coordinates and color
+            var x1 = data.values[i1].x,
+                y1 = data.values[i1].y,
+                x2 = data.values[i2].x,
+                y2 = data.values[i2].y;
+            var xCorner = y1 < y2 ? x1 : x2;
+            var yCorner = y1 < y2 ? y2 : y1;
+
+            return {
+                start: {
+                    x: x1,
+                    y: y1
+                },
+                end: {
+                    x: x2,
+                    y: y2
+                },
+                corner: {
+                    x: xCorner,
+                    y: yCorner
+                }
+            };
+        }
+
+        /**
+         * Adds a marker to the chart.
+         * A marker is a horizontal line with a label.
+         * If a marker with the specified identifier already exists, the marker is ignored.
+         *
+         * @method addMarker
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {string} id Marker identifier.
+         * @param {(number|string)} value Y value (height) of the marker line.
+         * @param {string} label Label of the marker.
+         * @param {string} pos Position of the label relative to the marker line. Default is 0.
+         * @param {string} color Color of the marker. Default is the font color.
+         * @returns {?object} D3 selection of the marker if it could be added, null otherwise.
+         */
+        this.addMarker = function (id, value, label, pos, color) {
+            // Check if marker exists
+            if (_markers.hasOwnProperty(id)) {
+                return null;
+            }
+
+            // Add marker
+            var g = _svg.g.append("g")
+                .attr("class", "marker");
+            g.append("line")
+                .attr("class", "horizontal")
+                .attr("x1", _svg.scale.x.range()[0])
+                .attr("y1", _svg.scale.y(value))
+                .attr("x2", _svg.scale.x.range()[1])
+                .attr("y2", _svg.scale.y(value))
+                .style("stroke", color || _w.attr.fontColor)
+                .style("stroke-dasharray", "3 3")
+                .style("stroke-width", 1);
+            g.append("text")
+                .attr("x", _svg.scale.x.range()[0] + (pos || 0) * (_svg.scale.x.range()[1] - _svg.scale.x.range()[0]))
+                .attr("y", _svg.scale.y(value))
+                .attr("dx", 5)
+                .attr("dy", -5)
+                .attr("text-anchor", "start")
+                .style("fill", color || _w.attr.fontColor)
+                .style("font-family", "inherit")
+                .style("font-size", "0.9em")
+                .text(label);
+
+            // Set update method
+            var marker = {
+                g: g,
+                update: function (duration) {
+                    g.select(".horizontal")
+                        .transition().duration(duration)
+                        .attr("x1", _svg.scale.x.range()[0])
+                        .attr("y1", _svg.scale.y(value))
+                        .attr("x2", _svg.scale.x.range()[1])
+                        .attr("y2", _svg.scale.y(value));
+                    g.select("text")
+                        .transition().duration(duration)
+                        .attr("x", _svg.scale.x.range()[0] + (pos || 0) * (_svg.scale.x.range()[1] - _svg.scale.x.range()[0]))
+                        .attr("y", _svg.scale.y(value));
+                }
+            };
+
+            // Add to markers
+            _markers[id] = marker;
+
+            // Return marker
+            return marker;
+        };
+
+        /**
+         * Removes a marker from the plot.
+         *
+         * @method removeMarker
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {string} id Identifier of the marker to remove.
+         * @returns {boolean} True if marker exists and could be removed, false otherwise.
+         */
+        this.removeMarker = function (id) {
+            if (_markers.hasOwnProperty(id)) {
+                _markers[id].g.remove();
+                delete _markers[id];
+                return true;
+            }
+            return false;
         };
 
         // Tooltip builder
@@ -295,6 +433,13 @@
                 .attr("height", function (d) {
                     return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.y);
                 });
+
+            // Markers
+            for (var marker in _markers) {
+                if (_markers.hasOwnProperty(marker)) {
+                    _markers[marker].update(duration);
+                }
+            }
         };
 
         // Style updater
