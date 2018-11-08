@@ -178,9 +178,10 @@
             // Add label
             if (_w.attr.tick) {
                 _svg.label = _svg.g.append("text")
-                    .attr("x", -_w.attr.fontSize * 1.5)
+                    .attr("x", -5)
                     .attr("y", _w.attr.thickness / 2)
                     .attr("alignment-baseline", "central")
+                    .attr("text-anchor", "end")
                     .attr("font-size", _w.attr.fontSize)
                     .text(0);
             }
