@@ -203,9 +203,10 @@
          * @param {string} label Label of the marker.
          * @param {string} pos Position of the label relative to the marker line. Default is 0.
          * @param {string} color Color of the marker. Default is the font color.
+         * @param {string} anchor Text anchor. Supported values: start, middle, right. Default is start.
          * @returns {?object} D3 selection of the marker if it could be added, null otherwise.
          */
-        this.addMarker = function (id, value, label, pos, color) {
+        this.addMarker = function (id, value, label, pos, color, anchor) {
             // Check if marker exists
             if (_markers.hasOwnProperty(id)) {
                 return null;
@@ -214,6 +215,7 @@
             // Add marker
             var g = _svg.g.append("g")
                 .attr("class", "marker");
+            var usedAnchor = anchor && ["start", "middle", "end"].indexOf(anchor) > -1 ? anchor : "start";
             g.append("line")
                 .attr("class", "horizontal")
                 .attr("x1", _svg.scale.x.range()[0])
@@ -226,12 +228,12 @@
             g.append("text")
                 .attr("x", _svg.scale.x.range()[0] + (pos || 0) * (_svg.scale.x.range()[1] - _svg.scale.x.range()[0]))
                 .attr("y", _svg.scale.y(value))
-                .attr("dx", 5)
                 .attr("dy", -5)
                 .attr("text-anchor", "start")
                 .style("fill", color || _w.attr.fontColor)
                 .style("font-family", "inherit")
                 .style("font-size", "0.9em")
+                .style("text-anchor", usedAnchor)
                 .text(label);
 
             // Set update method
