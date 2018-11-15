@@ -868,10 +868,11 @@
                             .style("color", "black")
                             .style("font-size", "0.8em")
                             .style("line-height", "1.35em")
+                            .style("font-family", "inherit")
                             .html(content);
                     }
                 })
-                .on("mouseleave", function () {
+                .on("mouseout", function () {
                     // Remove description
                     if (_description !== null) {
                         _description.remove();
