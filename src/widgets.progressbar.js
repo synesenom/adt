@@ -106,8 +106,9 @@
                 .style("height", "100%");
         };
 
-        _w.render.update = function () {
-            _div.bar.style("width", _w.attr.percentage + "%");
+        _w.render.update = function (duration) {
+            _div.bar.transition().duration(duration)
+                .style("width", _w.attr.percentage + "%");
         };
 
         // Style updater
