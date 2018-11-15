@@ -164,25 +164,19 @@
             // Add gauge bar
             _svg.container = _svg.g.append("rect")
                 .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", _w.attr.innerWidth)
-                .attr("height", _w.attr.thickness)
-                .style("fill", _w.attr.trackColor);
+                .attr("y", 0);
             _svg.bar = _svg.g.append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("width", 0)
-                .attr("height", _w.attr.thickness)
                 .style("fill", _colors(0));
 
             // Add label
             if (_w.attr.tick) {
                 _svg.label = _svg.g.append("text")
                     .attr("x", -5)
-                    .attr("y", _w.attr.thickness / 2)
                     .attr("alignment-baseline", "central")
                     .attr("text-anchor", "end")
-                    .attr("font-size", _w.attr.fontSize)
                     .text(0);
             }
         };
@@ -202,9 +196,20 @@
             _w.widget.style("width", _w.attr.width + "px");
             _w.widget.style("height", _w.attr.height + "px");
 
+            // Colors
+            _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
+                _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
+
             // Elements
-            _svg.g
-                .attr("transform", "translate(" + _w.attr.margins.left + "," + (_w.attr.height - _w.attr.thickness) / 2 + ")");
+            _svg.g.attr("transform", "translate(" + _w.attr.margins.left + "," + (_w.attr.height - _w.attr.thickness) / 2 + ")");
+            _svg.container.attr("width", _w.attr.innerWidth)
+                .attr("height", _w.attr.thickness)
+                .style("fill", _w.attr.trackColor);
+            _svg.bar.attr("height", _w.attr.thickness);
+            if (_svg.label) {
+                _svg.label.attr("y", _w.attr.thickness / 2)
+                    .attr("font-size", _w.attr.fontSize);
+            }
         };
     }
 

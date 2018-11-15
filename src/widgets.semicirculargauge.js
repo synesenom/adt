@@ -259,8 +259,7 @@
             _w.widget.style("height", _w.attr.height + "px");
 
             // Elements
-            _svg.g
-                .attr("transform", "translate(" + _w.attr.width / 2 + "," + 0.5 * (_w.attr.height + _w.attr.innerWidth / 2) + ")");
+            _svg.g.attr("transform", "translate(" + _w.attr.width / 2 + "," + 0.5 * (_w.attr.height + _w.attr.innerWidth / 2) + ")");
         };
     }
 
