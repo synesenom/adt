@@ -100,6 +100,18 @@ new du.widgets.BubbleChart("bubblechart", "#bubblechart")
     ])
     .render();
 
+// Checkbox
+new du.widgets.Checkbox("checkbox", "#checkbox")
+    .x(width * 0.2)
+    .y(height * 0.4)
+    .width(width * 0.6)
+    .height(30)
+    .label("uncheck me!")
+    .colors("red")
+    .check(true)
+    .fontSize(16)
+    .render();
+
 // Chord chart
 new du.widgets.ChordChart("chordchart", "#chordchart")
     .x(width / 2 - height / 2)

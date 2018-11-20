@@ -101,7 +101,7 @@
         var _svg = {};
         var _scale = null;
         var _oldPos = 0;
-        var _pos = null;
+        var _pos = undefined;
 
         /**
          * Computes the current geometry of the gauge.
@@ -161,11 +161,17 @@
          *
          * @method _setPosition
          * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
-         * @param {number} value The value to set position to.
+         * @param {?number} value The value to set position to. If value is null, the needle is hidden.
          * @param {number} duration Duration of the transition.
          * @private
          */
         function _setPosition(value, duration) {
+            if (value === null) {
+                _svg.needlePointer
+                    .attr("d", "");
+                return;
+            }
+
             // Update needle
             var geo = _geometry();
             var self = this;
@@ -189,7 +195,8 @@
          *
          * @method position
          * @memberOf du.widgets.semicirculargauge.SemiCircularGauge
-         * @param {number} value The value to set the needle's position to.
+         * @param {number} value The value to set the needle's position to. If value is set to null, the needle
+         * is hidden.
          * @returns {du.widgets.semicirculargauge.SemiCircularGauge} Reference to the current SemiCircularGauge.
          */
         this.position = function(value) {
@@ -245,9 +252,9 @@
 
         // Update method
         _w.render.update = function(duration) {
-            if (_pos !== null) {
+            if (typeof _pos !== 'undefined') {
                 _setPosition(_pos, duration);
-                _pos = null;
+                _pos = undefined;
             }
         };
 

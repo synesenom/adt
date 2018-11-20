@@ -1,0 +1,67 @@
+- var name = "checkbox"
+- var links = {minjs: "widgets.checkbox", source: "widgets.checkbox", docs: "widgets.checkbox"}
+- var libs = ["d3.v4", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.linechart", "widgets.checkbox"]
+- var description = "Just a simple checkbox."
+- var div = {i: 'checkbox', c: 'widget short'}
+include pug/example
+script.doc.
+    // create chart
+    var chart = new du.widgets.LineChart("mychart", "#widget")
+        .data([{
+            name: "data",
+            values: new Array(100).fill(0).map(function (d, i) {
+                return {
+                    x: i,
+                    y: Math.pow(i / 40, 2),
+                    lo: i / 100,
+                    hi: i / 150
+                };
+            })
+        }])
+        .width(parseInt(d3.select("#widget").style("width")))
+        .height(parseInt(d3.select("#widget").style("height")))
+        .xLabel("time")
+        .yLabel("stock")
+        .tooltipYFormat(function(d) {
+            return d.toFixed(3);
+        })
+        .margins(60)
+        .fontSize(14)
+        .colors("black")
+        .render();
+script.doc.
+    // add checkboxes
+    var checkbox1 = new du.widgets.Checkbox("checkbox-marker", "#checkbox")
+        .width(parseInt(d3.select("#checkbox").style("width")))
+        .height(30)
+        .callback(function (v) {
+            if (v) {
+                chart.addMarker("marker", "data", 20, 60, "change");
+            } else {
+                chart.removeMarker("marker");
+            }
+        })
+        .label("marker")
+        .colors("royalblue")
+        .fontSize(16)
+        .render();
+    var checkbox2 = new du.widgets.Checkbox("checkbox-colorize", "#checkbox")
+        .x(160)
+        .width(parseInt(d3.select("#checkbox").style("width")))
+        .height(30)
+        .callback(function (v) {
+            chart.colors(v ? "yellowgreen" : "black")
+                .render();
+        })
+        .label("colorize!")
+        .colors("royalblue")
+        .fontSize(16)
+        .render();
+script.
+    window.onresize = function () {
+        chart
+            .width(parseInt(d3.select("#widget").style("width")))
+            .height(parseInt(d3.select("#widget").style("height")))
+            .render();
+    };

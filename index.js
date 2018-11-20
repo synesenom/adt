@@ -13,6 +13,7 @@ module.exports = {
         BarChart: require("./src/widgets.barchart"),
         BoxPlot: require("./src/widgets.boxplot"),
         BubbleChart: require("./src/widgets.bubblechart"),
+        Checkbox: require("./src/widgets.checkbox"),
         ChordChart: require("./src/widgets.chordchart"),
         Grid: require("./src/widgets.grid"),
         Hint: require("./src/widgets.hint"),
