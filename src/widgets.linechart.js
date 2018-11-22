@@ -96,11 +96,12 @@
         _w.attr.add(this, "lineStyles", null);
 
         // Widget elements.
-        var _svg = {};
-        var _data = [];
-        var _transition = false;
-        var _colors = {};
-        var _markers = {};
+        var _svg = {},
+            _data = [],
+            _transition = false,
+            _colors = {},
+            _markers = {},
+            _pins = {};
 
         /**
          * Binds data to the line plot.
@@ -333,6 +334,86 @@
             return false;
         };
 
+        /**
+         * Adds a pin to the specified line.
+         * A pin is a vertical line with a circle on top denoting a specific location in the chart.
+         * If a pin with the specified identifier already exists, the pin is ignored.
+         *
+         * @method addPin
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {string} id Pin identifier.
+         * @param {(number|string)} pos Pin position on the X axis.
+         * @param {string} color Pin color. Defaults to font color.
+         * @param {string} size Pin head radius. Default is 4 pixels.
+         * @param {string} height Height of the pin relative to the vertical range. Defaults to 1.
+         * @returns {?object} D3 selection of the pin if it could be added, null otherwise.
+         */
+        this.addPin = function(id, pos, color, size, height) {
+            // Check if pin exists
+            if (_pins.hasOwnProperty(id)) {
+                return null;
+            }
+
+            // Add pin
+            var g = _svg.g.append("g")
+                .attr("class", "pin");
+            g.append("line")
+                .attr("class", "pin-needle")
+                .attr("x1", _svg.scale.x(pos) + 2)
+                .attr("y1", _svg.scale.y.range()[0])
+                .attr("x2", _svg.scale.x(pos) + 2)
+                .attr("y2", (1 - (height || 1)) * _svg.scale.y.range()[0])
+                .style("stroke", color || _w.attr.fontColor)
+                .style("stroke-width", 1);
+            g.append("circle")
+                .attr("class", "pin-head")
+                .attr("cx", _svg.scale.x(pos) + 2)
+                .attr("cy", (1 - (height || 1)) * _svg.scale.y.range()[0])
+                .attr("r", (size || 6) + "px")
+                .style("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("fill", color || _w.attr.fontColor);
+
+            var pin = {
+                g: g,
+                update: function (duration) {
+                    g.select(".pin-needle")
+                        .transition().duration(duration)
+                        .attr("x1", _svg.scale.x(pos) + 2)
+                        .attr("y1", _svg.scale.y.range()[0])
+                        .attr("x2", _svg.scale.x(pos) + 2)
+                        .attr("y2", (1 - (height || 1)) * _svg.scale.y.range()[0]);
+                    g.select(".pin-head")
+                        .transition().duration(duration)
+                        .attr("cx", _svg.scale.x(pos) + 2)
+                        .attr("cy", (1 - (height || 1)) * _svg.scale.y.range()[0]);
+                }
+            };
+
+            // Add to pins
+            _pins[id] = pin;
+
+            // Return pin
+            return pin;
+        };
+
+        /**
+         * Removes a pin from the plot.
+         *
+         * @method removePin
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {string} id Identifier of the pin to remove.
+         * @returns {boolean} True if pin exists and could be removed, false otherwise.
+         */
+        this.removePin = function(id) {
+            if (_pins.hasOwnProperty(id)) {
+                _pins[id].g.remove();
+                delete _pins[id];
+                return true;
+            }
+            return false;
+        };
+
         // Tooltip builder
         _w.utils.tooltip = function (mouse) {
             // Get bisection
@@ -558,6 +639,13 @@
             for (var marker in _markers) {
                 if (_markers.hasOwnProperty(marker)) {
                     _markers[marker].update(duration);
+                }
+            }
+
+            // Pins
+            for (var pin in _pins) {
+                if (_pins.hasOwnProperty(pin)) {
+                    _pins[pin].update(duration);
                 }
             }
         };
