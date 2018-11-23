@@ -104,6 +104,36 @@
          */
         _w.attr.add(this, "track", false);
 
+        /**
+         * Sets the fill color. Default is black.
+         *
+         * @method fillColor
+         * @memberOf du.widgets.slider.Slider
+         * @param {string} color The fill color.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
+         */
+        _w.attr.add(this, "fillColor", "black");
+
+        /**
+         * Sets the slider thickness in pixels. Default is 8.
+         *
+         * @method thickness
+         * @memberOf du.widgets.slider.Slider
+         * @param {string} size The slider thickness in pixels.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
+         */
+        _w.attr.add(this, "thickness", 8);
+
+        /**
+         * Sets the track color. Default is #ddd.
+         *
+         * @method trackColor
+         * @memberOf du.widgets.slider.Slider
+         * @param {string} color The track color.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
+         */
+        _w.attr.add(this, "trackColor", "#ddd");
+
         // Widget elements
         var _svg = {};
         var _margins = {right: 20, left: 20};
@@ -170,16 +200,15 @@
             _svg.track = _svg.g.append("line")
                 .attr("stroke-linecap", "round")
                 .attr("stroke", _w.attr.fontColor)
-                .attr("stroke-width", "8px")
+                .attr("stroke-width", _w.attr.thickness + "px")
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
             _svg.inset = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
-                .style("stroke", "white")
-                .style("opacity", 0.9)
-                .style("stroke-width", "7px");
+                .style("stroke", _w.attr.trackColor)
+                .style("stroke-width", (_w.attr.thickness - 1) + "px");
             _svg.overlay = _svg.inset
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
@@ -193,7 +222,7 @@
                     .on("start drag", function () {
                         // Highlight handle
                         _svg.handle
-                            .style("fill", _w.attr.fontColor)
+                            .style("fill", _w.attr.fillColor)
                             .style("stroke-width", "2px")
                             .style("stroke", "white");
 
@@ -220,7 +249,7 @@
                         _svg.handle
                             .style("fill", "white")
                             .style("stroke-width", "1px")
-                            .style("stroke", _w.attr.fontColor);
+                            .style("stroke", _w.attr.fillColor);
                     })
                 );
 
@@ -244,12 +273,13 @@
                 .attr("x2", _scale.range()[0])
                 .attr("stroke-linecap", "round")
                 .style("stroke-width", "8px")
-                .style("stroke", _w.attr.fontColor);
+                .style("stroke", _w.attr.fillColor);
 
             _svg.handle = _svg.g.insert("circle", ".track-overlay")
-                .attr("r", 8)
+                .attr("r", _w.attr.thickness)
                 .style("fill", "white")
-                .style("stroke-width", "1px");
+                .style("stroke-width", "1px")
+                .style("stroke", _w.attr.fillColor);
         };
 
         // Update method
@@ -282,8 +312,6 @@
                 .attr("x", _scale)
                 .attr("font-size", _w.attr.fontSize + "px")
                 .attr("fill", _w.attr.fontColor);
-            _svg.handle
-                .style("stroke", _w.attr.fontColor)
         };
     }
 
