@@ -199,17 +199,17 @@
 
             _svg.track = _svg.g.append("line")
                 .attr("stroke-linecap", "round")
-                .attr("stroke", _w.attr.fontColor)
+                .attr("stroke", _w.attr.trackColor)
                 .attr("stroke-width", _w.attr.thickness + "px")
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            _svg.inset = _svg.track
+            /*_svg.inset = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
                 .style("stroke", _w.attr.trackColor)
-                .style("stroke-width", (_w.attr.thickness - 1) + "px");
-            _svg.overlay = _svg.inset
+                .style("stroke-width", (_w.attr.thickness - 1) + "px");*/
+            _svg.overlay = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
                 })
@@ -249,7 +249,7 @@
                         _svg.handle
                             .style("fill", "white")
                             .style("stroke-width", "1px")
-                            .style("stroke", _w.attr.fillColor);
+                            .style("stroke", _w.attr.trackColor);
                     })
                 );
 
@@ -279,7 +279,7 @@
                 .attr("r", _w.attr.thickness)
                 .style("fill", "white")
                 .style("stroke-width", "1px")
-                .style("stroke", _w.attr.fillColor);
+                .style("stroke", _w.attr.trackColor);
         };
 
         // Update method
@@ -302,9 +302,9 @@
             _svg.track
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            _svg.inset
+            /*_svg.inset
                 .attr("x1", _scale.range()[0])
-                .attr("x2", _scale.range()[1]);
+                .attr("x2", _scale.range()[1]);*/
             _svg.overlay
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);

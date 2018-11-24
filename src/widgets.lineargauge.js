@@ -134,7 +134,7 @@
         }
 
         /**
-         * Sets the position of the needle to the specified value.
+         * Sets the position of the gauge bar to the specified value.
          *
          * @method position
          * @memberOf du.widgets.lineargauge.LinearGauge
