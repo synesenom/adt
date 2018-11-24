@@ -272,7 +272,7 @@
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[0])
                 .attr("stroke-linecap", "round")
-                .style("stroke-width", "8px")
+                .style("stroke-width", _w.attr.thickness + "px")
                 .style("stroke", _w.attr.fillColor);
 
             _svg.handle = _svg.g.insert("circle", ".track-overlay")
