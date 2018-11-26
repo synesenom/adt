@@ -201,10 +201,14 @@
             // Update axes
             _svg.axes.x
                 .transition().duration(duration)
-                .call(_svg.axisFn.x.scale(_svg.scale.x));
+                .call(_svg.axisFn.x
+                    .tickValues(_w.attr.xTicks)
+                    .scale(_svg.scale.x));
             _svg.axes.y
                 .transition().duration(duration)
-                .call(_svg.axisFn.y.scale(_svg.scale.y));
+                .call(_svg.axisFn.y
+                    .tickValues(_w.attr.yTicks)
+                    .scale(_svg.scale.y));
 
             // Build/update plots
             _colors = _w.utils.colors(_data ? _data.map(function (d) {

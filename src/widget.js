@@ -395,6 +395,28 @@
         _attr.add(this, "yLabel", null);
 
         /**
+         * Sets explicit tick values for the X axis. Note that thick formatting set by {xTickFormat} still applies.
+         * Default it is off (generated automatically).
+         *
+         * @method xTicks
+         * @memberOf du.widget.Widget
+         * @param {(number[]|string[])} Array of numbers or strings.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "xTicks", null);
+
+        /**
+         * Sets explicit tick values for the Y axis. Note that thick formatting set by {xTickFormat} still applies.
+         * Default it is off (generated automatically).
+         *
+         * @method yTicks
+         * @memberOf du.widget.Widget
+         * @param {(number[]|string[])} Array of numbers or strings.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "yTicks", null);
+
+        /**
          * Sets the format function for the ticks.
          * Default is an SI prefixed number
          *

@@ -149,10 +149,14 @@
             // Axes
             _svg.axes.x
                 .transition().duration(duration)
-                .call(_svg.axisFn.x.scale(_w.attr.vertical ? _svg.scale.y : _svg.scale.x));
+                .call(_svg.axisFn.x
+                    .tickValues(_w.attr.xTicks)
+                    .scale(_w.attr.vertical ? _svg.scale.y : _svg.scale.x));
             _svg.axes.y
                 .transition().duration(duration)
-                .call(_svg.axisFn.y.scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
+                .call(_svg.axisFn.y
+                    .tickValues(_w.attr.yTicks)
+                    .scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
 
             // Plot
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
