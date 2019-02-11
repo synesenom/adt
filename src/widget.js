@@ -972,17 +972,17 @@
          * @private
          */
         function _hideTooltip() {
-            var tooltipId = "du-widgets-plot-tooltip";
+            var tooltipId = _id + "-tooltip";
             d3.select("#" + tooltipId)
                 .transition().duration(200)
                 .style("opacity", 0)
                 .on("end", function() {
-                    d3.select(this).style("display", "none");
+                    d3.select(this).remove();
                 });
         }
 
         /**
-         * Shows/hides the within-widget tooltip.
+         * Shows/hides the within-widget tooltip. The tooltip is attached (and bound) to the widget.
          *
          * @method _showTooltip
          * @memberOf du.widget.Widget
@@ -990,7 +990,7 @@
          */
         function _showTooltip(on) {
             // Get tooltip ID and mouse position
-            var tooltipId = "du-widgets-plot-tooltip";
+            var tooltipId = _id + "-tooltip";
             var m = d3.mouse(_widget.node());
             var mx = d3.event.pageX;
             var my = d3.event.pageY;
