@@ -118,7 +118,7 @@
             // Build tooltip content
             return {
                 title: point.name,
-                stripe: _w.attr.colors[point.name],
+                stripe: _colors[point.name],
                 content: {
                     type: "metrics",
                     data: [
