@@ -160,6 +160,7 @@
             fontWeight: "normal",
             innerWidth: 200,
             innerHeight: 150,
+            placeholder: false,
 
             /**
              * Attribute categories.
@@ -222,8 +223,6 @@
          * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "relative", false);
-
-        //_attr.add(this, "resize", 1);
 
         /**
          * Sets the horizontal position of the widget.
@@ -951,7 +950,11 @@
                 } else {
                     ph.html(content);
                 }
+
+                // Set placeholder flag
+                _attr.placeholder = true;
             } else {
+                // Show widget
                 _widget.transition().duration();
                 _widget
                     .transition().duration(duration)
@@ -960,6 +963,8 @@
                 if (!ph.empty()) {
                     ph.remove();
                 }
+
+                _attr.placeholder = false;
             }
             return this;
         };
@@ -1240,7 +1245,7 @@
             _widget
                 .style("pointer-events", _attr.tooltip && _utils.tooltip ? "all" : null)
                 .on("mousemove", function () {
-                    _attr.tooltip && _utils.tooltip && _showTooltip(true);
+                    _attr.tooltip && !_attr.placeholder && _utils.tooltip && _showTooltip(true);
                 })
                 .on("mouseleave", function() {
                     _attr.tooltip && _utils.tooltip && _showTooltip(false);
