@@ -15,6 +15,7 @@ module.exports = {
         BubbleChart: require("./src/widgets.bubblechart"),
         Checkbox: require("./src/widgets.checkbox"),
         ChordChart: require("./src/widgets.chordchart"),
+        ContourPlot: require("./src/widgets.contourplot"),
         Grid: require("./src/widgets.grid"),
         Hint: require("./src/widgets.hint"),
         Histogram: require("./src/widgets.histogram"),

@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,700"><link rel="stylesheet" type="text/css" href="../dependencies/wp.min.css"><link rel="stylesheet" type="text/css" href="../style/examples.css"><link rel="stylesheet" type="text/css" href="../dependencies/highlight.min.css"><script type="text/javascript" src="../dependencies/d3.v5.min.js"></script><script type="text/javascript" src="../dependencies/d3-hsv.v0.1.min.js"></script><script type="text/javascript" src="../dependencies/lodash.4.17.4.min.js"></script><script type="text/javascript" src="../dependencies/ranjs.1.9.1.min.js"></script><script type="text/javascript" src="../dl/widget.min.js"></script><script type="text/javascript" src="../dl/widgets.contourplot.min.js"></script><script src="../dependencies/codedoc.min.js"></script><script src="../dependencies/highlight.9.12.0.min.js"></script><script type="text/javascript">codedoc.heading()
+    .callback(function() {
+        hljs.initHighlighting.called = false;
+        hljs.initHighlighting();
+});</script><title>contourplot | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A contour plot can be used to show <span class='good'>data distributed on a plane</span> when only the <span class='good'>density</span> of the data points is of interest. Note that it is more appropriate to use when the value of the data points <span class='good'>changes slowly in space</span> and not recommended to visualize <span class='bad'>rapid changes</span>.</div><div id="code-doc"></div><div id="doc-link"><a class="margined" href="../dl/widgets.contourplot.min.js">min.js</a><a class="margined" href="../api/widgets.contourplot.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.contourplot.js">source</a></div></main></body></html><script class="doc">// create chart
+var width = parseFloat(d3.select("#widget").style("width"));
+var height = parseFloat(d3.select("#widget").style("height"));
+var normal1 = new ran.dist.Normal(5, 2);
+var normal2 = new ran.dist.Normal(1, 3);
+var contourplot = new du.widgets.ContourPlot("mychart", "#widget")
+    .data(new Array(100000).fill(0).map(function(d, i) {
+        return Math.random() < 0.3 ? {
+            x: normal1.sample(),
+            y: normal2.sample()
+        } : {
+            x: normal2.sample(),
+            y: normal1.sample()
+        }
+    }))
+    .width(width)
+    .height(height)
+    .xLabel("x")
+    .yLabel("y")
+    .margins(40)
+    .fontSize(14)
+    .layers(20)
+    .colors(['transparent', 'limegreen', 'red'])
+    .tooltip(true)
+    .tooltipXFormat(function(x) { return x.toFixed(2); })
+    .tooltipYFormat(function(x) { return x.toFixed(2); })
+    .render();</script><script class="doc">// update data
+setInterval(function() {
+    var r = Math.random();
+    contourplot.data(new Array(100000).fill(0).map(function (d, i) {
+        return Math.random() < r ? {
+            x: normal1.sample(),
+            y: normal2.sample()
+        } : {
+            x: normal2.sample(),
+            y: normal1.sample()
+        }
+    })).render();
+}, 20000);</script><script>window.onresize = function () {
+    contourplot
+        .width(parseFloat(d3.select('#widget').style('width')))
+        .height(parseFloat(d3.select('#widget').style('height')))
+        .render();
+};
+</script>

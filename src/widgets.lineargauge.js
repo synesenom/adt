@@ -84,7 +84,7 @@
         _w.attr.add(this, "trackColor", "rgba(0, 0, 0, 0.1)");
 
         /**
-         * Sets the min and max color of the gauge. Must be an array with two colors. The color of intermediate segments
+         * Sets the min and max colors of the gauge. Must be an array with two colors. The color of intermediate segments
          * is interpolated with HSL interpolation.
          * Default values are the first red and green colors from Color Brewer (['#e41a1c', '#4daf4a']).
          *
