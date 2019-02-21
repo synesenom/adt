@@ -25,18 +25,8 @@
         var _w = Widget.call(this, name, "contourplot", "svg", parent);
 
         /**
-         * Sets the opacity of the contour plot.
-         * Default is 0.5.
-         *
-         * @method opacity
-         * @memberOf du.widgets.contourplot.ContourPlot
-         * @param {number} value The opacity value to set.
-         * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
-         */
-        _w.attr.add(this, "opacity", 0.5);
-
-        /**
          * Sets the number of contour layers which are distributed uniformly over the scale of the data.
+         * Default is 20.
          *
          * @method layers
          * @memberOf du.widgets.contourplot.ContourPlot
@@ -44,6 +34,26 @@
          * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
          */
         _w.attr.add(this, 'layers', 20);
+
+        /**
+         * Sets the grid size to compute contours on. Default is [40, 40].
+         *
+         * @method grid
+         * @memberOf du.widgets.contourplot.ContourPlot
+         * @param {number[]} size Array of numbers containing the horizontal and vertical size of the grid..
+         * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
+         */
+        _w.attr.add(this, 'grid', [40, 40]);
+
+        /**
+         * Adds borders to the contours. Default is false.
+         *
+         * @method borders
+         * @memberOf du.widgets.contourplot.ContourPlot
+         * @param {boolean} on Whether to add borders.
+         * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
+         */
+        _w.attr.add(this, 'borders', false);
 
         /**
          * Sets the min, mid and max colors of the contour plot. Must be an array with three colors. The color of
@@ -63,8 +73,6 @@
         var _colors = null;
         var _current = null;
         var _transition = false;
-        var _nx = 50,
-            _ny = 25;
 
         /**
          * Binds data to the contour plot.
@@ -81,18 +89,32 @@
             _data = {
                 xDomain: d3.extent(data, function(d) { return d.x; }),
                 yDomain: d3.extent(data, function(d) { return d.y; }),
-                values: new Array(_nx * _ny).fill(0)
+                values: new Array(_w.attr.grid[0] * _w.attr.grid[1]).fill(0)
             };
 
             // Accumulate
-            var sx = (_data.xDomain[1] - _data.xDomain[0]) / _nx,
-                sy = (_data.yDomain[1] - _data.yDomain[0]) / _ny;
+            var sx = (_data.xDomain[1] - _data.xDomain[0]) / _w.attr.grid[0],
+                sy = (_data.yDomain[1] - _data.yDomain[0]) / _w.attr.grid[1];
             data.forEach(function(d) {
                 var i = Math.floor((d.x - _data.xDomain[0]) / sx),
                     j = Math.floor((d.y - _data.yDomain[0]) / sy);
-                _data.values[i + j * _nx] += d.value || 1;
+                _data.values[i + j * _w.attr.grid[0]] += d.value || 1;
             });
 
+            return this;
+        };
+
+        /**
+         * Highlights the specified contour.
+         *
+         * @method highlight
+         * @memberOf du.widgets.contourplot.ContourPlot
+         * @param {(string|string[])} key Single key or an array of keys of the contour(s) to highlight.
+         * @param {number} duration Duration of the highlight animation.
+         * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
+         */
+        this.highlight = function (key, duration) {
+            if (!_transition) _w.utils.highlight(this, _svg, ".contour", key, duration);
             return this;
         };
 
@@ -104,11 +126,11 @@
             // Find cell
             var x = _svg.scale.x.invert(mouse[0]),
                 y = _svg.scale.y.invert(mouse[1]);
-            var sx = (_data.xDomain[1] - _data.xDomain[0]) / _nx,
-                sy = (_data.yDomain[1] - _data.yDomain[0]) / _ny;
+            var sx = (_data.xDomain[1] - _data.xDomain[0]) / _w.attr.grid[0],
+                sy = (_data.yDomain[1] - _data.yDomain[0]) / _w.attr.grid[1];
             var i = Math.floor((x - _data.xDomain[0]) / sx),
-                j = _ny - Math.floor((y - _data.yDomain[0]) / sy);
-            var value = _data.values[i + _nx * j];
+                j = _w.attr.grid[1] - Math.floor((y - _data.yDomain[0]) / sy);
+            var value = _data.values[i + _w.attr.grid[0] * j];
 
             if (typeof value === 'undefined') {
                 return null;
@@ -128,10 +150,10 @@
             };
         };
 
-        // TODO Smooth transition
-        function pathTween(d1, precision) {
+        // TODO Fix transition for multipolygons
+        function pathTween(d1, index, precision) {
             return function() {
-                var path0 = this,
+                var path0 = d3.select('.contour-' + index).node(),
                     path1 = path0.cloneNode(),
                     n0 = path0.getTotalLength(),
                     n1 = (path1.setAttribute('d', d1), path1).getTotalLength();
@@ -139,10 +161,9 @@
                 var distances = [0],
                     i = 0,
                     dt = precision / Math.max(n0, n1);
-                while ((i += dt) < i) {
+                while ((i += dt) < 1) {
                     distances.push(i);
                 }
-                distances.push(1);
 
                 var points = distances.map(function(t) {
                     var p0 = path0.getPointAtLength(t * n0),
@@ -186,7 +207,7 @@
 
             // Calculate contour
             var contours = d3.contours()
-                .size([_nx, _ny])
+                .size([_w.attr.grid[0], _w.attr.grid[1]])
                 .thresholds(_w.attr.layers)(_data.values);
 
             // Update axes
@@ -203,36 +224,46 @@
 
             // Build/update plots
             _svg.plots.contours = _svg.g.selectAll(".contour")
-                .data(contours);
+                .data(contours, function(d, i) {
+                    return i;
+                });
             _svg.plots.contours.exit()
-                .transition().duration(duration)
-                .style("opacity", 0)
                 .remove();
             _svg.plots.contours.enter().append('path')
-                .attr('class', 'contour')
+                .attr('class', function(d, i) {
+                    return 'contour contour-' + i;
+                })
                 .attr('d', d3.geoPath())
-                .attr("transform", "translate(1, 0) scale(" + _w.attr.innerWidth / _nx + "," + _w.attr.innerHeight / _ny + ")")
+                .attr("transform",
+                    "translate(1, 0) scale(" + _w.attr.innerWidth / _w.attr.grid[0] + "," + _w.attr.innerHeight / _w.attr.grid[1] + ")")
                 .attr('fill', function(d) {
                     return _colors(d.value);
                 })
-                .style('stroke', 'none')
+                .attr('stroke', _w.attr.borders ? '#fff' : 'none')
+                .attr('stroke-width', function(d, i) {
+                    return _w.attr.borders && i !== 0 ? '0.1px' : '0px';
+                })
                 .style("opacity", 0)
                 .merge(_svg.plots.contours)
                 .each(function () {
                     _transition = true;
                 })
-                // TODO Add mouse events
-                .on("mouseover", function (d) {
+                .on("mouseover", function (d, i) {
                     _current = d;
-                    //_w.attr.mouseover && _w.attr.mouseover(d.name);
+                    _w.attr.mouseover && _w.attr.mouseover('contour-' + i);
                 })
-                .on("mouseleave", function (d) {
+                .on("mouseleave", function (d, i) {
                     _current = null;
-                    //_w.attr.mouseleave && _w.attr.mouseleave(d.name);
+                    _w.attr.mouseleave && _w.attr.mouseleave('contour-' + i);
+                })
+                .on("click", function (d, i) {
+                    _w.attr.click && _w.attr.click('contour-' + i);
                 })
                 .transition().duration(duration)
                 .style("opacity", 1)
-                //.attrTween('d', pathTween(DUMMY_D, 4))
+                /*.attrTween('d', function(d, i) {
+                    return pathTween(d3.geoPath()(d), i, 1)();
+                })*/
                 .attr('d', d3.geoPath())
                 .style("fill", function (d) {
                     return _colors(d.value);
@@ -275,9 +306,6 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
-
-            // Plots
-
         }
     }
 

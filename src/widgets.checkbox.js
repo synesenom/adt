@@ -66,7 +66,8 @@
                 .style("position", "absolute")
                 .style("width", "100%")
                 .style("height", "100%")
-                .style("display", "table");
+                .style("display", "table")
+                .style('pointer-events', 'all');
             _svg.container = _svg.g.append("div")
                 .style("display", "table-cell")
                 .style("vertical-align", "middle");
@@ -75,7 +76,8 @@
                 .style("position", "relative")
                 .style("cursor", "pointer")
                 .style("user-select", "none")
-                .style("padding-left", 1.8 * _w.attr.fontSize + "px")
+                .style("padding-left", 1.8 * _w.attr.fontSize + "px");
+            _svg.text = _svg.label.append('span')
                 .text(_w.attr.label);
             _svg.input = _svg.label.append("input")
                 .attr("type", "checkbox")
@@ -95,14 +97,14 @@
                     // Call callback
                     _w.attr.callback && _w.attr.callback(checked);
                 });
-            _svg.box = _svg.container.append("span")
+            _svg.box = _svg.label.append("span")
                 .style("position", "absolute")
                 .style("display", "inline-block")
                 .style("top", 0)
                 .style("left", 0)
                 .style("width", 1.2 * _w.attr.fontSize + "px")
                 .style("height", 1.2 * _w.attr.fontSize + "px")
-                .style("margin-top", 0.5 * (_w.attr.height - 1.2 * _w.attr.fontSize) + "px")
+                .style("margin-top", 0.5 * (_w.attr.height - 1.4 * _w.attr.fontSize) + "px")
                 .style("background-color", _w.attr.colors)
                 .style("opacity", 0.1);
             _svg.checkmark = _svg.box.append("span")
@@ -131,6 +133,7 @@
         _w.render.style = function () {
             _w.widget
                 .style("font-size", _w.attr.fontSize + "px");
+            _svg.text.text(_w.attr.label);
         };
     }
 

@@ -17,6 +17,7 @@ module.exports = {
         ChordChart: require("./src/widgets.chordchart"),
         ContourPlot: require("./src/widgets.contourplot"),
         Grid: require("./src/widgets.grid"),
+        HeatMap: require("./src/widgets.heatmap"),
         Hint: require("./src/widgets.hint"),
         Histogram: require("./src/widgets.histogram"),
         InfoBox: require("./src/widgets.infobox"),

@@ -101,7 +101,7 @@ new du.widgets.BubbleChart("bubblechart", "#bubblechart")
     .render();
 
 // Checkbox
-new du.widgets.Checkbox("checkbox", "#checkbox")
+var checkbox = new du.widgets.Checkbox("checkbox", "#checkbox")
     .x(width * 0.2)
     .y(height * 0.4)
     .width(width * 0.6)
@@ -109,6 +109,10 @@ new du.widgets.Checkbox("checkbox", "#checkbox")
     .label("uncheck me!")
     .colors("red")
     .check(true)
+    .callback(function(checked) {
+        checkbox.label((checked ? 'un' : '') + 'check me!')
+            .render();
+    })
     .fontSize(16)
     .render();
 
@@ -136,6 +140,27 @@ new du.widgets.ChordChart("chordchart", "#chordchart")
         {source: "orange", target: "plum", value: 1},
         {source: "plum", target: "orange", value: 2}
     ])
+    .render();
+
+// Contour plot
+new du.widgets.ContourPlot("contourplot", "#contourplot")
+    .grid([40, 30])
+    .data(new Array(1e5).fill(0).map(function () {
+        var x = Math.random() * 3,
+            y = Math.random() * 2,
+            r = Math.pow(x - 0.6, 2) + Math.pow(y - 0.8, 2);
+        return {
+            x: x,
+            y: y,
+            value: (1 - Math.pow(r, 2)) * Math.exp(-r / 2) * Math.sin(r)
+        };
+    }))
+    .width(width)
+    .height(height)
+    .margins(26)
+    .borders(true)
+    .colors(['blue', 'white', 'red'])
+    .layers(12)
     .render();
 
 // Description
@@ -222,6 +247,27 @@ grid.add(new du.widgets.AreaChart("subchart2")
             })
         }
     ]), 1, 0, 1, 1);
+
+// Heat map
+new du.widgets.HeatMap("heatmap", "#heatmap")
+    .grid([60, 40])
+    .data(new Array(100000).fill(0).map(function () {
+        var x = Math.random() * 30 - 15,
+            y = Math.random() * 20 - 10,
+            r1 = Math.pow(x + 9, 2) + Math.pow(y + 2, 2),
+            r2 = Math.pow(x - 9, 2) + Math.pow(y - 4, 2);
+        return {
+            x: x,
+            y: y,
+            value: Math.exp(-r1 / 200) + Math.exp(-r2 / 50)
+        };
+    }))
+    .width(width)
+    .height(height)
+    .margins(26)
+    .smooth(true)
+    .colors(['yellowgreen', 'yellow', 'red'])
+    .render();
 
 // Hint
 new du.widgets.Hint("hint", "#hint")

@@ -20,8 +20,8 @@ function run() {
     progressbar
         .percentage(t)
         .label("Loading " + Math.round(t) + "%")
-        .render();
-    t = t < 100 ? t+Math.random() : 0.;
+        .render(0);
+    t = t < 100 ? t + Math.random() : 0;
     setTimeout(run, -100 * Math.log(Math.random()))
 }
 run();</script><script>window.onresize = function () {
