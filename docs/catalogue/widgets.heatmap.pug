@@ -18,9 +18,8 @@ script.doc.
         .margins(40)
         .fontSize(14)
         .grid([80, 40])
-        .smooth(true)
         .colors(['transparent', 'yellowgreen', 'crimson'])
-        .data(new Array(100000).fill(0).map(function (d, i) {
+        .data(new Array(100000).fill(0).map(function () {
             return Math.random() < 0.3 ? {
                 x: normal1.sample(),
                 y: normal2.sample()
@@ -37,7 +36,7 @@ script.doc.
     // update data
     setInterval(function() {
         var r = Math.random();
-        heatmap.data(new Array(100000).fill(0).map(function (d, i) {
+        heatmap.data(new Array(100000).fill(0).map(function () {
             return Math.random() < r ? {
                 x: normal1.sample(),
                 y: normal2.sample()

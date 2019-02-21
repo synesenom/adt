@@ -46,6 +46,17 @@
          */
         _w.attr.add(this, 'smooth', false);
 
+        /**
+         * Adds an image to the background of the heat map. Note that the image is scaled up to fit the heat map.
+         * Default is empty.
+         *
+         * @method background
+         * @memberOf du.widgets.heatmap.HeatMap
+         * @param {string} source Path to the image to add.
+         * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
+         */
+        _w.attr.add(this, 'background', null);
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -154,7 +165,10 @@
                 .style('background-color', 'none')
                 .style('width', '100%')
                 .style('height', '100%')
-                .style('background-color', 'transparent')
+                .style('background-color', _w.attr.background === null ? 'transparent' : null)
+                .style('background-image', _w.attr.background !== null ? 'url(' + _w.attr.background + ')' : null)
+                .style("background-repeat", "none")
+                .style("background-size", _w.attr.innerWidth + "px " + _w.attr.innerHeight + "px")
                 .append('canvas')
                 .attr('x', 0)
                 .attr('y', 0)
@@ -235,7 +249,9 @@
                 .attr('x', _w.attr.margins.left + 1)
                 .attr('y', _w.attr.margins.top)
                 .attr('width', _w.attr.innerWidth)
-                .attr('height', _w.attr.innerHeight);
+                .attr('height', _w.attr.innerHeight)
+                .style('background-color', _w.attr.background === null ? 'transparent' : null)
+                .style('background-image', _w.attr.background !== null ? 'url(' + _w.attr.background + ')' : null);
             _svg.canvas.canvas
                 .style('width', _w.attr.innerWidth + 'px')
                 .style('height', _w.attr.innerHeight + 'px')
