@@ -10,7 +10,7 @@ echo "------------------------"
 
 # Build docs
 echo "  building documentation"
-# python docs/python/parser.py
+python docs/python/parser.py
 
 # Build modules
 echo "  compiling modules:"

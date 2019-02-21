@@ -57,6 +57,17 @@
          */
         _w.attr.add(this, 'background', null);
 
+        /**
+         * Sets the opacity of the heat map. Useful when background image is used.
+         * Default is 1.
+         *
+         * @method opacity
+         * @memberOf du.widgets.heatmap.HeatMap
+         * @param {number} level Opacity level to set.
+         * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
+         */
+        _w.attr.add(this, 'opacity', 1);
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -256,7 +267,8 @@
                 .style('width', _w.attr.innerWidth + 'px')
                 .style('height', _w.attr.innerHeight + 'px')
                 .style('image-rendering', _w.attr.smooth ? null : 'crisp-edges')
-                .style('image-rendering', _w.attr.smooth ? null : 'pixelated');
+                .style('image-rendering', _w.attr.smooth ? null : 'pixelated')
+                .style('opacity', _w.attr.opacity);
 
             // Axes
             _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);

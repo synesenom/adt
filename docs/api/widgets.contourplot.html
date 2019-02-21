@@ -2,12 +2,28 @@
 <div class='card'><pre><code>du.widgets.contourplot.ContourPlot(name[, parent])</code></pre>
 <br>The contour plot widget class. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>name</i></td><td><code>string</code></td><td>Identifier of the widget.</td></tr><tr><td><i>parent</i></td><td><code>object</code></td><td>Parent element to append widget to. If not specified, widget is appended to body. <code>optional</code></td></tr></table>
-</div><br><h2 id='api-du.widgets.contourplot.ContourPlot.opacity'>opacity</h2>
-<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.opacity(value)</code></pre>
-<br>Sets the opacity of the contour plot. Default is 0.5. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>value</i></td><td><code>number</code></td><td>The opacity value to set.</td></tr></table>
+</div><br><h2 id='api-du.widgets.contourplot.ContourPlot.layers'>layers</h2>
+<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.layers(count)</code></pre>
+<br>Sets the number of contour layers which are distributed uniformly over the scale of the data. Default is 20. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>count</i></td><td><code>number</code></td><td>Number of layers to use.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><h2 id='api-du.widgets.contourplot.ContourPlot.grid'>grid</h2>
+<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.grid(size)</code></pre>
+<br>Sets the grid size to compute contours on. Default is [40, 40]. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>size</i></td><td><code>number[]</code></td><td>Array of numbers containing the horizontal and vertical size of the grid..</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><h2 id='api-du.widgets.contourplot.ContourPlot.borders'>borders</h2>
+<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.borders(on)</code></pre>
+<br>Adds borders to the contours. Default is false. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>Whether to add borders.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><h2 id='api-du.widgets.contourplot.ContourPlot.colors'>colors</h2>
+<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.colors(colors)</code></pre>
+<br>Sets the min, mid and max colors of the contour plot. Must be an array with three colors. The color of intermediate contours is interpolated with HSL interpolation. Default color set is [transparent, grey, black]. 
+<br>Overrides: <code>du.widgets.Widget.colors</code><br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>colors</i></td><td><code>string[]</code></td><td>Start and end colors of the gauge.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><h2 id='api-du.widgets.contourplot.ContourPlot.data'>data</h2>
 <div class='card'><pre><code>du.widgets.contourplot.ContourPlot.data(data)</code></pre>
-<br>Binds data to the contour plot. Expected data format: array of objects containing <code>x</code> and <code>y</code> values. 
+<br>Binds data to the contour plot. Expected data format: array of objects containing the <code>x</code>, <code>y</code> coordinates of the data points and a <code>value</code> denoting the weight of the data point. If <code>value</code> is missing, it is assumed to be 1. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr></table>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><h2 id='api-du.widgets.contourplot.ContourPlot.highlight'>highlight</h2>
+<div class='card'><pre><code>du.widgets.contourplot.ContourPlot.highlight(key, duration)</code></pre>
+<br>Highlights the specified contour. 
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>key</i></td><td><code>string</code> <code>string[]</code></td><td>Single key or an array of keys of the contour(s) to highlight.</td></tr><tr><td><i>duration</i></td><td><code>number</code></td><td>Duration of the highlight animation.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>
