@@ -551,15 +551,15 @@
         _attr.add(this, "tooltip", false);
 
         /**
-         * Sets the number format for Y values in the tooltip.
-         * Default is just the number itself.
+         * Sets the format for the title in the tooltip.
+         * Default is just the title itself.
          *
-         * @method tooltipYFormat
+         * @method tooltipTitleFormat
          * @memberOf du.widget.Widget
-         * @param {Function} format The formatting function that takes a number and returns a string.
+         * @param {Function} format The formatting function that takes a string and returns a string.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        _attr.add(this, "tooltipYFormat", function(x) {
+        _attr.add(this, "tooltipTitleFormat", function(x) {
             return x;
         });
 
@@ -573,6 +573,32 @@
          * @returns {du.widget.Widget} Reference to the current widget.
          */
         _attr.add(this, "tooltipXFormat", function(x) {
+            return x;
+        });
+
+        /**
+         * Sets the number format for Y values in the tooltip.
+         * Default is just the number itself.
+         *
+         * @method tooltipYFormat
+         * @memberOf du.widget.Widget
+         * @param {Function} format The formatting function that takes a number and returns a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "tooltipYFormat", function(x) {
+            return x;
+        });
+
+        /**
+         * Sets the number format for Z values in the tooltip whenever there is a third dimension.
+         * Default is just the number itself.
+         *
+         * @method tooltipZFormat
+         * @memberOf du.widget.Widget
+         * @param {Function} format The formatting function that takes a number and returns a string.
+         * @returns {du.widget.Widget} Reference to the current widget.
+         */
+        _attr.add(this, "tooltipZFormat", function(x) {
             return x;
         });
 

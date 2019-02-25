@@ -108,7 +108,7 @@
             if (!site) {
                 this.tt && this.tt.remove();
                 this.tt = null;
-                return;
+                return null;
             }
 
             // Marker
@@ -172,6 +172,7 @@
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
+
             // Groups
             _svg.plots.groups = _svg.g.selectAll(".dot-group")
                 .data(_data, function (d) {
@@ -179,6 +180,7 @@
                 });
             _svg.plots.groups.exit()
                 .transition().duration(duration)
+                .style('opacity', 0)
                 .remove();
             var groups = _svg.plots.groups.enter().append("g")
                 .attr("class", function (d) {

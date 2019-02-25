@@ -86,7 +86,7 @@
          * @method data
          * @memberOf du.widgets.heatmap.HeatMap
          * @param {Array} data Data to plot.
-         * @returns {du.widgets.contourplot.ContourPlot} Reference to the current ContourPlot.
+         * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
          */
         this.data = function (data) {
             // Initialize data
@@ -267,22 +267,6 @@
                 .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
                 .style("pointer-events", "all");
 
-            // Canvas
-            _svg.canvas.container
-                .attr('x', _w.attr.margins.left + 1)
-                .attr('y', _w.attr.margins.top)
-                .attr('width', _w.attr.innerWidth)
-                .attr('height', _w.attr.innerHeight);
-            _svg.canvas.background
-                .style('background-color', _w.attr.background.path ? null : 'transparent')
-                .style('background-image', _w.attr.background.path ? 'url(' + _w.attr.background.path + ')' : null)
-            _svg.canvas.canvas
-                .style('width', _w.attr.innerWidth + 'px')
-                .style('height', _w.attr.innerHeight + 'px')
-                .style('image-rendering', _w.attr.smooth ? null : 'crisp-edges')
-                .style('image-rendering', _w.attr.smooth ? null : 'pixelated')
-                .style('opacity', _w.attr.opacity);
-
             // Axes
             _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
@@ -307,6 +291,22 @@
                 .attr("fill", _w.attr.fontColor)
                 .style("font-size", _w.attr.fontSize + "px")
                 .text(_w.attr.yLabel);
+
+            // Canvas
+            _svg.canvas.container
+                .attr('x', _w.attr.margins.left + 1)
+                .attr('y', _w.attr.margins.top)
+                .attr('width', _w.attr.innerWidth)
+                .attr('height', _w.attr.innerHeight);
+            _svg.canvas.background
+                .style('background-color', _w.attr.background.path ? null : 'transparent')
+                .style('background-image', _w.attr.background.path ? 'url(' + _w.attr.background.path + ')' : null)
+            _svg.canvas.canvas
+                .style('width', _w.attr.innerWidth + 'px')
+                .style('height', _w.attr.innerHeight + 'px')
+                .style('image-rendering', _w.attr.smooth ? null : 'crisp-edges')
+                .style('image-rendering', _w.attr.smooth ? null : 'pixelated')
+                .style('opacity', _w.attr.opacity);
         }
     }
 

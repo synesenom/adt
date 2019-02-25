@@ -11,9 +11,9 @@
 <br>Enables smoothing (i.e., anti-aliasing) between cells. Default is false. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>on</i></td><td><code>boolean</code></td><td>Whether to turn on smoothing.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.heatmap.HeatMap</code></i></td><td>Reference to the current HeatMap.</td></tr></table></div><br><h2 id='api-du.widgets.heatmap.HeatMap.background'>background</h2>
-<div class='card'><pre><code>du.widgets.heatmap.HeatMap.background(source)</code></pre>
+<div class='card'><pre><code>du.widgets.heatmap.HeatMap.background(options)</code></pre>
 <br>Adds an image to the background of the heat map. Note that the image is scaled up to fit the heat map. Default is empty. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>source</i></td><td><code>Object</code></td><td>Object containing the following properties: <ul> <li><code>path</code>: Path to the image file.</li> <li><code>opacity</code>: Background opacity.</li> </ul></td></tr></table>
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>options</i></td><td><code>Object</code></td><td>Object containing the background options. The following properties are supported: <ul> <li><code>path</code>: Path to the image file.</li> <li><code>opacity</code>: Background opacity. Default is 1.</li> </ul></td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.heatmap.HeatMap</code></i></td><td>Reference to the current HeatMap.</td></tr></table></div><br><h2 id='api-du.widgets.heatmap.HeatMap.opacity'>opacity</h2>
 <div class='card'><pre><code>du.widgets.heatmap.HeatMap.opacity(level)</code></pre>
 <br>Sets the opacity of the heat map. Useful when background image is used. Default is 1. 
@@ -22,4 +22,4 @@
 <div class='card'><pre><code>du.widgets.heatmap.HeatMap.data(data)</code></pre>
 <br>Binds data to the heat map. Expected data format: array of objects containing the <code>x</code>, <code>y</code> coordinates of the data points and a <code>value</code> denoting the weight of the data point. If <code>value</code> is missing, it is assumed to be 1. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>data</i></td><td><code>Array</code></td><td>Data to plot.</td></tr></table>
-<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.contourplot.ContourPlot</code></i></td><td>Reference to the current ContourPlot.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>
+<table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.heatmap.HeatMap</code></i></td><td>Reference to the current HeatMap.</td></tr></table></div><br><label for='menu' id='exit'></label></main></body></html>

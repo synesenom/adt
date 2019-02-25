@@ -1,0 +1,69 @@
+- var name = "trajectoryplot"
+- var links = {minjs: "widgets.trajectoryplot", source: "widgets.trajectoryplot", docs: "widgets.trajectoryplot"}
+- var libs = ["d3.v5", "lodash.4.17.4"]
+- var modules = ["widget", "widgets.trajectoryplot"]
+- var description = "A trajectory plot can be used to the <span class='good'>temporal evolution of objects in two dimensions</span>, such as people or animals moving around in space or the changes of a system in a parameter space."
+include pug/example
+script.doc.
+    // create chart
+    var width = parseFloat(d3.select("#widget").style("width"));
+    var height = parseFloat(d3.select("#widget").style("height"));
+    var traj1 = [{t: Date.now(), x: -1, y: 0}];
+    var traj2 = [{t: Date.now(), x: 1, y: 0}];
+    var trajectoryplot = new du.widgets.TrajectoryPlot("mychart", "#widget")
+        .width(width)
+        .height(height)
+        .xLabel("x")
+        .yLabel("y")
+        .margins(40)
+        .fontSize(14)
+        .colors({cat: 'crimson', dog: 'dodgerblue'})
+        .boundary([-10, 10, -8, 18])
+        .maxLength(20)
+        .data([
+            {name: 'cat', values: traj1},
+            {name: 'dog', values: traj2}
+        ])
+        .tooltip(true)
+        .tooltipXFormat(function(x) { return x.toPrecision(2); })
+        .tooltipYFormat(function(x) { return x.toPrecision(2); })
+        .tooltipZFormat(function(x) {
+            var h = new Date(x).getHours(),
+                m = new Date(x).getMinutes(),
+                s = new Date(x).getSeconds();
+            return Math.floor(h / 10) + (h % 10)
+                + ':' + Math.floor(m / 10) + (m % 10)
+                + ':' + Math.floor(s / 10) + (s % 10);
+        })
+        .render();
+script.doc.
+    // update data
+    setInterval(function() {
+        var prev1 = traj1[traj1.length - 1];
+        traj1.push({
+            t: Date.now(),
+            x: 0.9 * prev1.x + Math.random() * 2 - 1
+                - 0.05 * prev1.y * Math.sign(prev1.x),
+            y: 0.9 * prev1.y + Math.random() * 2 - 1
+                - 0.05 * prev1.x * Math.sign(prev1.y)
+        });
+        if (traj1.length > 20) {
+            traj1.shift();
+        }
+        var prev2 = traj2[traj2.length - 1]
+        traj2.push({
+            t: Date.now(),
+            x: prev2.x + Math.random() * 2 - 1
+                - 0.01 * Math.exp(Math.abs(prev2.x - 3)) * Math.sign(prev2.x),
+            y: prev2.y + Math.random() * 2 - 1
+                - 0.01 * Math.exp(Math.abs(prev2.y - 5)) * Math.sign(prev2.y)
+        });
+        if (traj2.length > 20) {
+            traj2.shift();
+        }
+        trajectoryplot.data([
+            {name: 'cat', values: traj1},
+            {name: 'dog', values: traj2}
+        ]).render();
+    }, 5000);
++resize()

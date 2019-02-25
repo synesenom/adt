@@ -35,6 +35,7 @@ module.exports = {
         Slider: require("./src/widgets.slider"),
         Status: require("./src/widgets.status"),
         TrackPad: require("./src/widgets.trackpad"),
+        TrajectoryPlot: require("./src/widgets.trajectoryplot"),
         ViolinPlot: require("./src/widgets.violinplot")
     }
 };
