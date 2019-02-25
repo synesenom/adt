@@ -52,10 +52,14 @@
          *
          * @method background
          * @memberOf du.widgets.heatmap.HeatMap
-         * @param {string} source Path to the image to add.
+         * @param {Object} options Object containing the background options. The following properties are supported:
+         * <ul>
+         *     <li><code>path</code>: Path to the image file.</li>
+         *     <li><code>opacity</code>: Background opacity. Default is 1.</li>
+         * </ul>
          * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
          */
-        _w.attr.add(this, 'background', null);
+        _w.attr.add(this, 'background', {});
 
         /**
          * Sets the opacity of the heat map. Useful when background image is used.
@@ -170,21 +174,29 @@
                 .attr('y', _w.attr.margins.top)
                 .attr('width', _w.attr.innerWidth)
                 .attr('height', _w.attr.innerHeight);
-            _svg.canvas.canvas = _svg.canvas.container.append('xhtml:body')
+            _svg.canvas.body = _svg.canvas.container.append('xhtml:body')
                 .style('margin', 0)
                 .style('padding', 0)
                 .style('background-color', 'none')
                 .style('width', '100%')
+                .style('height', '100%');
+            _svg.canvas.background = _svg.canvas.body.append('div')
+                .style('position', 'absolute')
+                .style('margin', 0)
+                .style('padding', 0)
+                .style('width', '100%')
                 .style('height', '100%')
-                .style('background-color', _w.attr.background === null ? 'transparent' : null)
-                .style('background-image', _w.attr.background !== null ? 'url(' + _w.attr.background + ')' : null)
+                .style('background-color', _w.attr.background.path ? null : 'transparent')
+                .style('background-image', _w.attr.background.path ? 'url(' + _w.attr.background.path + ')' : null)
                 .style("background-repeat", "none")
                 .style("background-size", _w.attr.innerWidth + "px " + _w.attr.innerHeight + "px")
-                .append('canvas')
+                .style('opacity', _w.attr.background.opacity ? _w.attr.background.opacity : null);
+            _svg.canvas.canvas = _svg.canvas.body.append('canvas')
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('width', _w.attr.grid[0])
                 .attr('height', _w.attr.grid[1])
+                .style('position', 'absolute')
                 .style('width', _w.attr.innerWidth + 'px')
                 .style('height', _w.attr.innerHeight + 'px');
             _svg.canvas.ctx = _svg.canvas.canvas.node().getContext('2d');
@@ -260,9 +272,10 @@
                 .attr('x', _w.attr.margins.left + 1)
                 .attr('y', _w.attr.margins.top)
                 .attr('width', _w.attr.innerWidth)
-                .attr('height', _w.attr.innerHeight)
-                .style('background-color', _w.attr.background === null ? 'transparent' : null)
-                .style('background-image', _w.attr.background !== null ? 'url(' + _w.attr.background + ')' : null);
+                .attr('height', _w.attr.innerHeight);
+            _svg.canvas.background
+                .style('background-color', _w.attr.background.path ? null : 'transparent')
+                .style('background-image', _w.attr.background.path ? 'url(' + _w.attr.background.path + ')' : null)
             _svg.canvas.canvas
                 .style('width', _w.attr.innerWidth + 'px')
                 .style('height', _w.attr.innerHeight + 'px')
