@@ -1,3 +1,12 @@
+/**
+ * Module implementing a heat map. A heat map displays a density of a variable in two dimensional space.
+ *
+ * @author Enys Mones (enys.mones@sony.com)
+ * @module heatmap
+ * @memberOf du.widgets
+ * @requires d3@v4
+ * @requires du.Widget
+ */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'));

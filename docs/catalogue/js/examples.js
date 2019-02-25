@@ -575,6 +575,32 @@ new du.widgets.TrackPad("trackpad", "#trackpad")
     .yRange([0, 255])
     .render();
 
+var traj = [{t: Date.now(), x: -1, y: 0}];
+var trajectoryplot = new du.widgets.TrajectoryPlot('trajectoryplot', '#trajectoryplot')
+    .width(width)
+    .height(height)
+    .margins(26)
+    .boundary([-5, 5, -5, 5])
+    .maxLength(20)
+    .data([
+        {name: 'plot', values: traj},
+    ])
+    .render();
+setInterval(function() {
+    var prev = traj[traj.length - 1];
+    traj.push({
+        t: Date.now(),
+        x: 0.9 * prev.x + Math.random() * 2 - 1 - 0.05 * prev.y * Math.sign(prev.x),
+        y: 0.9 * prev.y + Math.random() * 2 - 1 - 0.05 * prev.x * Math.sign(prev.y)
+    });
+    if (traj.length > 20) {
+        traj.shift();
+    }
+    trajectoryplot.data([
+        {name: 'plot', values: traj},
+    ]).render(100);
+}, 500);
+
 // Violin plot
 new du.widgets.ViolinPlot("violinplot", "#violinplot")
     .data([

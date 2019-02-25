@@ -1,3 +1,13 @@
+/**
+ * Module implementing a trajectory plot. A trajectory plot is a two dimensional chart showing the sequence of positions
+ * for an object moving in time.
+ *
+ * @author Enys Mones (enys.mones@sony.com)
+ * @module trajectoryplot
+ * @memberOf du.widgets
+ * @requires d3@v4
+ * @requires du.Widget
+ */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'));
@@ -60,6 +70,16 @@
          * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
          */
         _w.attr.add(this, 'background', {});
+
+        /**
+         * Enables animation on new trajectory points. Default is false.
+         *
+         * @method animate
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {boolean} on Whether animation should be enabled or not.
+         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         */
+        _w.attr.add(this, 'animate', false);
 
         // Widget elements.
         var _svg = {};
@@ -248,7 +268,7 @@
                     .tickValues(_w.attr.yTicks)
                     .scale(_svg.scale.y));
 
-            // Build/update plots
+            // Build/update trajectory groups
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
@@ -303,7 +323,7 @@
                 .attr("cy", function (d) {
                     return _svg.scale.y(d.y);
                 })
-                .attr('r', 10)
+                .attr('r', _w.attr.animate ? 10 : 1)
                 .style("stroke", "none")
                 .style("fill", "currentColor")
                 .merge(_svg.plots.positions)

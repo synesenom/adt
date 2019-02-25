@@ -1,3 +1,13 @@
+/**
+ * Module implementing a contour plot. A contour plot can show slow changes of a variable in two dimensions when
+ * displaying the raw data would result in over plotting.
+ *
+ * @author Enys Mones (enys.mones@sony.com)
+ * @module contourplot
+ * @memberOf du.widgets
+ * @requires d3@v4
+ * @requires du.Widget
+ */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('./widget'));
