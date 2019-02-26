@@ -43,14 +43,14 @@
  * @memberOf du
  * @requires d3@v4
  */
-// TODO add heat map
 // TODO add calendar plot
 // TODO add graph widget
 // TODO implement resize
 // TODO separate data update from rendering
 // TODO update color automatically on data/color updates
 // TODO add internal parameters such as animation flag, etc
-// TODO put all plots in groups and update those
+
+// TODO Make tooltip content building a method for more customization
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), exports);

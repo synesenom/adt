@@ -87,6 +87,7 @@
         var _current = null;
         var _colors = null;
         var _transition = false;
+        var _markers = {};
 
         /**
          * Binds data to the trajectory plot.
@@ -138,6 +139,91 @@
             return this;
         };
 
+        /**
+         * Adds a marker to the plot.
+         * A marker is a dot along with some data that is used to show on tooltips.
+         * If a marker with the specified identifier already exists, the marker is ignored.
+         *
+         * @method addMarker
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {string} id Marker identifier.
+         * @param {string} name Name of the marker.
+         * @param {string} key Key of the line to mark.
+         * @param {number[]} pos Array containing the x and y coordinates of the marker.
+         * @param {Object} data Object containing any data contained in the marker.
+         * @returns {?Object} D3 selection of the marker if it could be added, null otherwise.
+         */
+        this.addMarker = function (id, name, key, pos, data) {
+            // Check if marker exists
+            if (_markers.hasOwnProperty(id)) {
+                return null;
+            }
+
+            var g = _svg.g.append("g")
+                .attr("class", "marker " + _w.utils.encode(key));
+            var circle = g.append("circle")
+                .attr("cx", _svg.scale.x(pos[0]) + 2)
+                .attr("cy", _svg.scale.y(pos[1]))
+                .attr("r", _w.attr.animate ? 10 : 7)
+                .style("stroke-width", "2px")
+                .style("stroke", "white")
+                .style("fill", _colors[key]);
+            if (_w.attr.animate) {
+                circle.transition().duration(700)
+                    .attr('r', 7);
+            }
+
+            var marker = {
+                key: key,
+                g: g,
+                update: function (duration) {
+                    g.select("circle")
+                        .on("mouseover", function () {
+                            _current = {
+                                name: name,
+                                type: 'marker',
+                                data: data
+                            };
+                            _w.attr.mouseover && _w.attr.mouseover(key);
+                        })
+                        .on("mouseleave", function () {
+                            _current = null;
+                            _w.attr.mouseleave && _w.attr.mouseleave(key);
+                        })
+                        .on("click", function () {
+                            _w.attr.click && _w.attr.click(key);
+                        })
+                        .transition().duration(duration)
+                        .attr("cx", _svg.scale.x(pos[0]) + 2)
+                        .attr("cy", _svg.scale.y(pos[1]))
+                        .style("fill", _colors[this.key]);
+                }
+            };
+
+            // Add to markers
+            _markers[id] = marker;
+
+            // Return marker
+            return marker;
+        };
+
+        /**
+         * Removes a marker from the plot.
+         *
+         * @method removeMarker
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {string} id Identifier of the marker to remove.
+         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         */
+        this.removeMarker = function (id) {
+            if (_markers.hasOwnProperty(id)) {
+                _markers[id].g.remove();
+                delete _markers[id];
+                return true;
+            }
+            return false;
+        };
+
         _w.utils.tooltip = function (mouse) {
             if (!mouse || _current === null) {
                 this.pm && this.pm.remove();
@@ -150,6 +236,25 @@
 
             // Tooltip
             switch (_current.type) {
+                case 'marker':
+                    // Remove tooltip markers
+                    this.pm && this.pm.remove();
+                    this.pm = null;
+                    this.mm && this.mm.remove();
+                    this.mm = null;
+
+                    // Content
+                    return {
+                        title: _w.attr.tooltipTitleFormat(_current.name + ' (marker)'),
+                        stripe: _colors[_current.name],
+                        content: {
+                            type: 'metrics',
+                            data: [{
+                                label: 'data: ' + JSON.stringify(_current.data)
+                            }]
+                        }
+                    };
+
                 case 'movement':
                     // Marker
                     this.mm = this.mm || _svg.g.append('line');
@@ -472,6 +577,13 @@
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
                 });
+
+            // Markers
+            for (var marker in _markers) {
+                if (_markers.hasOwnProperty(marker)) {
+                    _markers[marker].update(duration);
+                }
+            }
         };
 
         // Style updater
