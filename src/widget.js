@@ -1061,7 +1061,7 @@
                     .attr("id", tooltipId)
                     .style("position", "fixed")
                     .style("min-width", "100px")
-                    .style("background-color", "rgba(255, 255, 255, 0.9)")
+                    .style("background-color", "rgba(255, 255, 255, 0.98)")
                     .style("border-radius", "2px")
                     .style("box-shadow", "0 0 3px " + color)
                     .style("padding", "5px")
