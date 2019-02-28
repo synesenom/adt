@@ -174,15 +174,16 @@
             }
 
             var r = size ? size / 2 : 7;
-            var g = _svg.g.append("g")
-                .attr("class", "marker " + _w.utils.encode(key));
+            var g = _svg.g.select('.trajectory.' + key).append("g")
+                .attr("class", "marker marker-" + id + ' ' + _w.utils.encode(key));
             var circle = g.append("circle")
                 .attr("cx", _svg.scale.x(pos[0]) + 2)
                 .attr("cy", _svg.scale.y(pos[1]))
                 .attr("r", _w.attr.animate ? 1.5 * r : r)
                 .style("stroke-width", "2px")
                 .style("stroke", "white")
-                .style("fill", _colors[key]);
+                .style("fill", _colors[key])
+                .style('pointer-events', 'all');
             if (_w.attr.animate) {
                 circle.transition().duration(700)
                     .attr('r', r);
@@ -443,6 +444,7 @@
                 .attr('r', _w.attr.animate ? 10 : 1)
                 .style('stroke', "none")
                 .style('fill', "currentColor")
+                .style('pointer-events', 'none')
                 .merge(_svg.plots.positions)
                 .transition().duration(duration)
                 .attr('r', 1)
@@ -490,6 +492,7 @@
                 .attr("y2", function (d) {
                     return _svg.scale.y(d[0].y);
                 })
+                .style('pointer-events', 'none')
                 .merge(_svg.plots.movements)
                 .transition().duration(duration)
                 .attr("x2", function (d) {
