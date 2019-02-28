@@ -1069,6 +1069,7 @@
                     .style("font-size", "0.7em")
                     .style("color", _attr.fontColor)
                     .style("pointer-events", "none")
+                    .style('z-index', 9999)
                     .style("left", (container.left + container.right) / 2 + 'px')
                     .style("top", (container.top + container.bottom) / 2 + 'px');
             }
