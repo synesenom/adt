@@ -72,6 +72,19 @@
         _w.attr.add(this, 'background', {});
 
         /**
+         * Sets the fading exponent for the exponential fade-out of trajectories. Opacity of each trajectory segment and
+         * stop position is calculated as exp(-tau * t), where t denotes the age of the segment (relative to the age of
+         * the whole trajectory, so it is bounded in [0, 1]), and tau is the exponent.
+         * Default is 0.
+         *
+         * @method fadeExp
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {number} exponent Exponent to set for trajectory fading out.
+         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         */
+        _w.attr.add(this, 'fadeExp', 0);
+
+        /**
          * Enables animation on new trajectory points. Default is false.
          *
          * @method animate
@@ -116,7 +129,7 @@
                             t: dd.t,
                             x: dd.x,
                             y: dd.y,
-                            r: Math.min(1, i / arr.length),
+                            r: Math.exp(-_w.attr.fadeExp * (1 - i / arr.length)),
                             last: i === arr.length - 1
                         };
                     })
@@ -416,9 +429,6 @@
                     return d.t;
                 });
             _svg.plots.positions.exit()
-                .attr('r', 1)
-                .transition().duration(duration)
-                .style("opacity", 0)
                 .remove();
             _svg.plots.positions.enter().append("circle")
                 .attr("class", function(d) {
@@ -431,15 +441,13 @@
                     return _svg.scale.y(d.y);
                 })
                 .attr('r', _w.attr.animate ? 10 : 1)
-                .style("stroke", "none")
-                .style("fill", "currentColor")
+                .style('stroke', "none")
+                .style('fill', "currentColor")
                 .merge(_svg.plots.positions)
                 .transition().duration(duration)
-                .attr("r", function(d) {
-                    return d.last ? 5 : 1;
-                })
+                .attr('r', 1)
                 .style('opacity', function(d) {
-                    return d.last ? 1 : d.r;
+                    return d.r;
                 });
 
             // Movements
