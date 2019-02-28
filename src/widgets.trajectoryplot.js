@@ -270,7 +270,7 @@
                         }
                     };
 
-                case 'movement':
+                /* case 'movement':
                     // Marker
                     this.mm = this.mm || _svg.g.append('line');
                     this.mm.attr("x1", _svg.scale.x(_current.data[0].x))
@@ -333,7 +333,7 @@
                                 {label: 'time: &nbsp;&nbsp;&nbsp;&nbsp;' + _w.attr.tooltipZFormat(_current.data.t)}
                             ]
                         }
-                    };
+                    };*/
                 default:
                     return null;
             }
