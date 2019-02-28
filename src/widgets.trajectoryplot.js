@@ -150,27 +150,29 @@
          * @param {string} name Name of the marker.
          * @param {string} key Key of the line to mark.
          * @param {number[]} pos Array containing the x and y coordinates of the marker.
-         * @param {Object} data Object containing any data contained in the marker.
+         * @param {number} size Diameter of the marker.
+         * @param {Object} info String containing additional information about the marker.
          * @returns {?Object} D3 selection of the marker if it could be added, null otherwise.
          */
-        this.addMarker = function (id, name, key, pos, data) {
+        this.addMarker = function (id, name, key, pos, size, info) {
             // Check if marker exists
             if (_markers.hasOwnProperty(id)) {
                 return null;
             }
 
+            var r = size ? size / 2 : 7;
             var g = _svg.g.append("g")
                 .attr("class", "marker " + _w.utils.encode(key));
             var circle = g.append("circle")
                 .attr("cx", _svg.scale.x(pos[0]) + 2)
                 .attr("cy", _svg.scale.y(pos[1]))
-                .attr("r", _w.attr.animate ? 10 : 7)
+                .attr("r", _w.attr.animate ? 1.5 * r : r)
                 .style("stroke-width", "2px")
                 .style("stroke", "white")
                 .style("fill", _colors[key]);
             if (_w.attr.animate) {
                 circle.transition().duration(700)
-                    .attr('r', 7);
+                    .attr('r', r);
             }
 
             var marker = {
@@ -182,7 +184,7 @@
                             _current = {
                                 name: name,
                                 type: 'marker',
-                                data: data
+                                info: info || 'Information not available.'
                             };
                             _w.attr.mouseover && _w.attr.mouseover(key);
                         })
@@ -250,7 +252,7 @@
                         content: {
                             type: 'metrics',
                             data: [{
-                                label: 'data: ' + JSON.stringify(_current.data)
+                                label: _current.info
                             }]
                         }
                     };
@@ -539,6 +541,7 @@
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d[0].name);
                 });
+
             // Fake positions
             _svg.plots.fakePositions = _svg.plots.trajectories.selectAll(".fake-position")
                 .data(function (d) {
