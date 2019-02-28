@@ -584,6 +584,9 @@
                     _markers[marker].update(duration);
                 }
             }
+
+            // Background image
+            _svg.backgroundImage.attr('xlink:href', _w.attr.background.path ? _w.attr.background.path : null);
         };
 
         // Style updater
