@@ -85,7 +85,7 @@
         _w.attr.add(this, 'fadeExp', 0);
 
         /**
-         * Enables animation on new trajectory points. Default is false.
+         * Enables animation. Default is false.
          *
          * @method animate
          * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
@@ -93,6 +93,16 @@
          * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
          */
         _w.attr.add(this, 'animate', false);
+
+        /**
+         * Shows current position of the entity. Default is false.
+         *
+         * @method showHead
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {boolean} show Whether current position should be shown.
+         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         */
+        _w.attr.add(this, 'showHead', false);
 
         // Widget elements.
         var _svg = {};
@@ -196,9 +206,10 @@
                     g.select("circle")
                         .on("mouseover", function () {
                             _current = {
+                                key: key,
                                 name: name,
                                 type: 'marker',
-                                info: info || 'Information not available.'
+                                info: info
                             };
                             _w.attr.mouseover && _w.attr.mouseover(key);
                         })
@@ -261,80 +272,15 @@
 
                     // Content
                     return {
-                        title: _w.attr.tooltipTitleFormat(_current.name + ' (marker)'),
-                        stripe: _colors[_current.name],
+                        title: _current.info.title,
+                        stripe: _colors[_current.key],
                         content: {
                             type: 'metrics',
                             data: [{
-                                label: _current.info
+                                label: _current.info.content
                             }]
                         }
                     };
-
-                /* case 'movement':
-                    // Marker
-                    this.mm = this.mm || _svg.g.append('line');
-                    this.mm.attr("x1", _svg.scale.x(_current.data[0].x))
-                        .attr("y1", _svg.scale.y(_current.data[0].y))
-                        .attr("x2", _svg.scale.x(_current.data[1].x))
-                        .attr("y2", _svg.scale.y(_current.data[1].y))
-                        .style("pointer-events", "none")
-                        .style("stroke-width", '2px')
-                        .style("stroke", 'black')
-                        .style("fill", 'none')
-                        .style('display', null);
-                    this.pm && this.pm.remove();
-                    this.pm = null;
-
-                    // Content
-                    return {
-                        title: _w.attr.tooltipTitleFormat(_current.name + ' (movement)'),
-                        stripe: _colors[_current.name],
-                        content: {
-                            type: 'metrics',
-                            data: [
-                                {label: 'from: '
-                                    + _w.attr.tooltipZFormat(_current.data[0].t)
-                                    + ', (' + _w.attr.tooltipXFormat(_current.data[0].x)
-                                    + ', ' + _w.attr.tooltipYFormat(_current.data[0].y)
-                                    + ')'},
-                                {label: 'to: &nbsp;&nbsp;'
-                                    + _w.attr.tooltipZFormat(_current.data[1].t)
-                                    + ', (' + _w.attr.tooltipXFormat(_current.data[1].x)
-                                    + ', ' + _w.attr.tooltipYFormat(_current.data[1].y)
-                                    + ')'}
-                            ]
-                        }
-                    };
-                case 'position':
-                    // Marker
-                    this.pm = this.pm || _svg.g.append("circle");
-                    this.pm.attr("r", 6)
-                        .attr("cx", _svg.scale.x(_current.data.x))
-                        .attr("cy", _svg.scale.y(_current.data.y))
-                        .style("pointer-events", "none")
-                        .style("stroke-width", '2px')
-                        .style("stroke", 'white')
-                        .style("fill", 'black')
-                        .style('display', null);
-                    this.mm && this.mm.remove();
-                    this.mm = null;
-
-                    // Content
-                    return {
-                        title: _w.attr.tooltipTitleFormat(_current.name + ' (position)'),
-                        stripe: _colors[_current.name],
-                        content: {
-                            type: 'metrics',
-                            data: [
-                                {label: 'location: ('
-                                    + _w.attr.tooltipXFormat(_current.data.x)
-                                    + ', '
-                                    + _w.attr.tooltipYFormat(_current.data.y) + ')'},
-                                {label: 'time: &nbsp;&nbsp;&nbsp;&nbsp;' + _w.attr.tooltipZFormat(_current.data.t)}
-                            ]
-                        }
-                    };*/
                 default:
                     return null;
             }
@@ -422,35 +368,40 @@
                     _transition = false;
                 });
 
-            // Positions
-            _svg.plots.positions = _svg.plots.trajectories.selectAll(".position")
-                .data(function (d) {
-                    return d.values;
-                }, function(d) {
-                    return d.t;
-                });
-            _svg.plots.positions.exit()
-                .remove();
-            _svg.plots.positions.enter().append("circle")
-                .attr("class", function(d) {
-                    return "position position-" + d.t;
-                })
-                .attr("cx", function (d) {
-                    return _svg.scale.x(d.x);
-                })
-                .attr("cy", function (d) {
-                    return _svg.scale.y(d.y);
-                })
-                .attr('r', _w.attr.animate ? 10 : 1)
-                .style('stroke', "none")
-                .style('fill', "currentColor")
-                .style('pointer-events', 'none')
-                .merge(_svg.plots.positions)
-                .transition().duration(duration)
-                .attr('r', 1)
-                .style('opacity', function(d) {
-                    return d.r;
-                });
+            // Head
+            if (_w.attr.showHead) {
+                _svg.plots.position = _svg.plots.trajectories.selectAll('.position')
+                    .data(function (d) {
+                        return d.values.slice(-1);
+                    }, function (d) {
+                        return 0;
+                    });
+                _svg.plots.position.exit()
+                    .transition().duration(duration)
+                    .style('opacity', 0)
+                    .remove();
+                _svg.plots.position.enter().append('circle')
+                    .attr('class', 'position')
+                    .attr("cx", function (d) {
+                        return _svg.scale.x(d.x);
+                    })
+                    .attr("cy", function (d) {
+                        return _svg.scale.y(d.y);
+                    })
+                    .attr('r', _w.attr.animate ? 10 : 1)
+                    .style('stroke', "none")
+                    .style('fill', "currentColor")
+                    .style('pointer-events', 'none')
+                    .merge(_svg.plots.position)
+                    .transition().duration(duration)
+                    .attr('r', 3)
+                    .attr("cx", function (d) {
+                        return _svg.scale.x(d.x);
+                    })
+                    .attr("cy", function (d) {
+                        return _svg.scale.y(d.y);
+                    });
+            }
 
             // Movements
             _svg.plots.movements = _svg.plots.trajectories.selectAll('.movement')
@@ -551,45 +502,6 @@
                 })
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d[0].name);
-                });
-
-            // Fake positions
-            _svg.plots.fakePositions = _svg.plots.trajectories.selectAll(".fake-position")
-                .data(function (d) {
-                    return d.values;
-                }, function(d) {
-                    return d.t;
-                });
-            _svg.plots.fakePositions.exit()
-                .remove();
-            _svg.plots.fakePositions.enter().append("circle")
-                .attr("class", function(d) {
-                    return "fake-position fake-position-" + d.t;
-                })
-                .attr("cx", function (d) {
-                    return _svg.scale.x(d.x);
-                })
-                .attr("cy", function (d) {
-                    return _svg.scale.y(d.y);
-                })
-                .attr('r', 5)
-                .style("stroke", "none")
-                .style("fill", "transparent")
-                .merge(_svg.plots.fakePositions)
-                .on("mouseover", function (d) {
-                    _current = {
-                        name: d.name,
-                        type: 'position',
-                        data: d
-                    };
-                    _w.attr.mouseover && _w.attr.mouseover(d.name);
-                })
-                .on("mouseleave", function (d) {
-                    _current = null;
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
-                })
-                .on("click", function (d) {
-                    _w.attr.click && _w.attr.click(d.name);
                 });
 
             // Markers

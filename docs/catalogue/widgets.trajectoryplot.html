@@ -22,6 +22,8 @@ var trajectoryplot = new du.widgets.TrajectoryPlot("mychart", "#widget")
     ])
     .fadeExp(3)
     .animate(true)
+    .showHead(true)
+    .tooltip(true)
     .tooltipXFormat(function(x) { return x.toPrecision(2); })
     .tooltipYFormat(function(x) { return x.toPrecision(2); })
     .tooltipZFormat(function(x) {
@@ -32,7 +34,11 @@ var trajectoryplot = new du.widgets.TrajectoryPlot("mychart", "#widget")
             + ':' + Math.floor(m / 10) + (m % 10)
             + ':' + Math.floor(s / 10) + (s % 10);
     })
-    .render();</script><script class="doc">// update data
+    .render();
+/*trajectoryplot.addMarker('foo', 'foo', 'cat', [1, 0], 20, {
+    title: 'Marker',
+    content: 'Some information'
+});*/</script><script class="doc">// update data
 setInterval(function() {
     var prev1 = traj1[traj1.length - 1];
     traj1.push({
