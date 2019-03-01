@@ -174,7 +174,7 @@
          * @param {string} key Key of the line to mark.
          * @param {number[]} pos Array containing the x and y coordinates of the marker.
          * @param {number} size Diameter of the marker.
-         * @param {Object} info String containing additional information about the marker.
+         * @param {Object} info Object containing the title and content for the marker's tooltip.
          * @returns {?Object} D3 selection of the marker if it could be added, null otherwise.
          */
         this.addMarker = function (id, name, key, pos, size, info) {
@@ -252,11 +252,8 @@
         };
 
         _w.utils.tooltip = function (mouse) {
+            console.log(mouse, _current);
             if (!mouse || _current === null) {
-                this.pm && this.pm.remove();
-                this.pm = null;
-                this.mm && this.mm.remove();
-                this.mm = null;
                 _current = null;
                 return null;
             }
@@ -264,12 +261,6 @@
             // Tooltip
             switch (_current.type) {
                 case 'marker':
-                    // Remove tooltip markers
-                    this.pm && this.pm.remove();
-                    this.pm = null;
-                    this.mm && this.mm.remove();
-                    this.mm = null;
-
                     // Content
                     return {
                         title: _current.info.title,
