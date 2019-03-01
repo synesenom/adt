@@ -147,6 +147,13 @@
             };
 
             // Axes
+            if (_w.attr.vertical) {
+                _svg.axisFn.x.tickFormat(_w.attr.yTickFormat);
+                _svg.axisFn.y.tickFormat(_w.attr.xTickFormat);
+            } else {
+                _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
+                _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
+            }
             _svg.axes.x
                 .transition().duration(duration)
                 .call(_svg.axisFn.x
@@ -257,12 +264,16 @@
             // Axes
             if (_w.attr.vertical) {
                 _svg.axisFn.x.tickFormat(_w.attr.yTickFormat);
+                _svg.axisFn.y.tickFormat(_w.attr.xTickFormat);
             } else {
+                _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
                 _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             }
             _svg.axes.x
+                .call(_svg.axisFn.x)
                 .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
             _svg.axes.y
+                .call(_svg.axisFn.y)
                 .attr("transform", "translate(0," + 1 + ")");
             _svg.g.selectAll(".tick > text")
                 .attr("cursor", "default")

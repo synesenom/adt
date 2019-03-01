@@ -816,7 +816,7 @@
             /**
              * Builds color mapping for an array of keys based on the {colors} attribute.
              * If no color is specified, the default color scheme is used (color brewer).
-             * If single color is defined, a sequential color scheme is generated for 10 categories.
+             * If single color is defined it is applied to all plot elements.
              * If a full color mapping is specified, it is used directly without change.
              *
              * @method colors
@@ -853,7 +853,7 @@
 
                         // Generate color mapping
                         return keys.reduce(function(map, d, i) {
-                            map[d] = scale(i);
+                            map[d] = _attr.colors; //scale(i);
                             return map;
                         }, {});
                     }
