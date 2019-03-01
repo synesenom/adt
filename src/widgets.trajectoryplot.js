@@ -125,7 +125,6 @@
          * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
          */
         this.data = function (data) {
-            // TODO Add noise to the points
             _data = data.map(function (d) {
                 return {
                     name: d.name,
@@ -193,7 +192,23 @@
                 .style("stroke-width", "2px")
                 .style("stroke", "white")
                 .style("fill", _colors[key])
-                .style('pointer-events', 'all');
+                .style('pointer-events', 'all')
+                .on("mouseover", function () {
+                    _current = {
+                        key: key,
+                        name: name,
+                        type: 'marker',
+                        info: info
+                    };
+                    _w.attr.mouseover && _w.attr.mouseover(key);
+                })
+                .on("mouseleave", function () {
+                    _current = null;
+                    _w.attr.mouseleave && _w.attr.mouseleave(key);
+                })
+                .on("click", function () {
+                    _w.attr.click && _w.attr.click(key);
+                });
             if (_w.attr.animate) {
                 circle.transition().duration(700)
                     .attr('r', r);
@@ -203,8 +218,9 @@
                 key: key,
                 g: g,
                 update: function (duration) {
-                    g.select("circle")
+                    circle
                         .on("mouseover", function () {
+                            console.log('FOO');
                             _current = {
                                 key: key,
                                 name: name,
@@ -252,7 +268,6 @@
         };
 
         _w.utils.tooltip = function (mouse) {
-            console.log(mouse, _current);
             if (!mouse || _current === null) {
                 _current = null;
                 return null;
@@ -477,22 +492,6 @@
                 })
                 .attr("y2", function (d) {
                     return _svg.scale.y(d[1].y);
-                })
-                .merge(_svg.plots.fakeMovements)
-                .on("mouseover", function (d) {
-                    _current = {
-                        name: d[0].name,
-                        type: 'movement',
-                        data: d
-                    };
-                    _w.attr.mouseover && _w.attr.mouseover(d[0].name);
-                })
-                .on("mouseleave", function (d) {
-                    _current = null;
-                    _w.attr.mouseleave && _w.attr.mouseleave(d[0].name);
-                })
-                .on("click", function (d) {
-                    _w.attr.click && _w.attr.click(d[0].name);
                 });
 
             // Markers

@@ -1008,7 +1008,8 @@
                 .transition().duration(200)
                 .style("opacity", 0)
                 .on("end", function() {
-                    d3.select(this).remove();
+                    d3.select(this)
+                        .style('display', 'none');//.remove();
                 });
         }
 
