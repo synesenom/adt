@@ -100,6 +100,7 @@
         // Widget elements
         var _svg = {};
         var _scale = null;
+        var _colors = null;
         var _oldPos = 0;
         var _pos = undefined;
 
@@ -216,7 +217,7 @@
             _svg.g = _w.widget.append("g");
 
             // Color interpolation
-            var colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
+            _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
                 _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
 
             // Add segments
@@ -233,7 +234,7 @@
                 _svg.segments.push(
                     _svg.g.append("path")
                         .attr("d", arc)
-                        .style("fill", colors(i / (_w.attr.segments - 1)))
+                        .style("fill", _colors(i / (_w.attr.segments - 1)))
                 );
             }
 
@@ -252,6 +253,17 @@
 
         // Update method
         _w.render.update = function(duration) {
+            // Calculate scale
+            _scale = d3.scaleLinear()
+                .domain([_w.attr.min, _w.attr.max])
+                .range([0, Math.PI])
+                .clamp(true);
+
+            // Color interpolation
+            _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
+                _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
+
+            // Set position
             if (typeof _pos !== 'undefined') {
                 _setPosition(_pos, duration);
                 _pos = undefined;

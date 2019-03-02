@@ -46,7 +46,6 @@
  * @requires topojson@v1
  * @requires du.widgets.Widget
  */
-// TODO add country name in center of largest land
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('../src/widget'));

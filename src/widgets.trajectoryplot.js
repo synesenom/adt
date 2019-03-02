@@ -360,6 +360,7 @@
                     return "trajectory " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
+                .style("stroke-linecap", "round")
                 .style("color", function (d) {
                     return _colors[d.name];
                 });

@@ -1157,6 +1157,8 @@
                 ty = container.bottom - _attr.margins.bottom - 10 - th;
             }
 
+            // TODO Set initial position within widget
+
             // Set position
             tooltip
                 .style("display", "block")

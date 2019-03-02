@@ -148,16 +148,10 @@
 
         // Builder
         _w.render.build = function () {
-            // Calculate scale
-            _scale = d3.scaleLinear()
-                .domain([_w.attr.min, _w.attr.max])
-                .range([0, _w.attr.innerWidth])
-                .clamp(true);
-
             // Build gauge
             _svg.g = _w.widget.append("g");
 
-            // Color interpolation
+            // Colors
             _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
                 _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
 
@@ -179,10 +173,24 @@
                     .attr("text-anchor", "end")
                     .text(0);
             }
+
+            // Set position
+            _setPosition(_w.attr.min, 0);
         };
 
         // Update method
         _w.render.update = function(duration) {
+            // Calculate scale
+            _scale = d3.scaleLinear()
+                .domain([_w.attr.min, _w.attr.max])
+                .range([0, _w.attr.innerWidth])
+                .clamp(true);
+
+            // Color interpolation
+            _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
+                _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
+
+            // Set position
             if (_pos !== null) {
                 _setPosition(_pos, duration);
                 _pos = null;
@@ -190,7 +198,6 @@
         };
 
         // Style updater
-        // TODO Add parameters that can be modified
         _w.render.style = function () {
             // Widget
             _w.widget.style("width", _w.attr.width + "px");

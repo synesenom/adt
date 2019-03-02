@@ -291,7 +291,6 @@
         };
 
         // Style updater
-        // TODO Update domain
         _w.render.style = function () {
             // Widget
             _w.widget.style("width", _w.attr.width + "px");
