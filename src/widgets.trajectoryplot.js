@@ -168,7 +168,6 @@
          *
          * @method addMarker
          * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
-         * @param {string} id Marker identifier.
          * @param {string} name Name of the marker.
          * @param {string} key Key of the line to mark.
          * @param {number[]} pos Array containing the x and y coordinates of the marker.
@@ -176,7 +175,10 @@
          * @param {Object} info Object containing the title and content for the marker's tooltip.
          * @returns {?Object} D3 selection of the marker if it could be added, null otherwise.
          */
-        this.addMarker = function (id, name, key, pos, size, info) {
+        this.addMarker = function (name, key, pos, size, info) {
+            // Create ID
+            var id = 'marker-' + _w.utils.encode(name);
+
             // Check if marker exists
             if (_markers.hasOwnProperty(id)) {
                 return null;
@@ -255,16 +257,29 @@
          *
          * @method removeMarker
          * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
-         * @param {string} id Identifier of the marker to remove.
+         * @param {string} name Name of the marker to remove.
          * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
          */
-        this.removeMarker = function (id) {
+        this.removeMarker = function (name) {
+            var id = 'marker-' + _w.utils.encode(name);
+
             if (_markers.hasOwnProperty(id)) {
                 _markers[id].g.remove();
                 delete _markers[id];
                 return true;
             }
             return false;
+        };
+
+        /**
+         * Returns the ID of all markers.
+         *
+         * @method getMarkers
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @returns {string[]} Array containing all marker IDs.
+         */
+        this.getMarkers = function () {
+            return Array.from(Object.keys(_markers));
         };
 
         _w.utils.tooltip = function (mouse) {

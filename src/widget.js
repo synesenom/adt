@@ -142,6 +142,16 @@
         }
 
         /**
+         * Internal IDs.
+         *
+         * @var {Object} _IDS
+         * @memberOf du.widget.Widget
+         */
+        var _IDS = {
+            tooltipContainer: 'du-widget-tooltips'
+        };
+
+        /**
          * Default widget attributes.
          *
          * @var {object} _attr
@@ -1004,12 +1014,12 @@
          */
         function _hideTooltip() {
             var tooltipId = _id + "-tooltip";
-            d3.select("#" + tooltipId)
+            d3.select("#" + _IDS.tooltipContainer + " > #" + tooltipId)
                 .transition().duration(200)
                 .style("opacity", 0)
                 .on("end", function() {
                     d3.select(this)
-                        .style('display', 'none');//.remove();
+                        .style('display', 'none');
                 });
         }
 
@@ -1053,12 +1063,18 @@
                 return;
             }
 
+            // Create tooltip container if not exists yet
+            if (d3.select('#' + _IDS.tooltipContainer).empty()) {
+                d3.select('body').append('div')
+                    .attr('id', _IDS.tooltipContainer);
+            }
+
             // Create tooltip if needed
             var tooltip = d3.select("#" + tooltipId);
             if (d3.select("#" + tooltipId).empty()) {
                 var color = d3.color(_attr.fontColor);
                 color.opacity = 0.3;
-                tooltip = d3.select("body").append("div")
+                tooltip = d3.select('#' + _IDS.tooltipContainer).append("div")
                     .attr("id", tooltipId)
                     .style("position", "fixed")
                     .style("min-width", "100px")
@@ -1143,11 +1159,11 @@
             }
 
             // Calculate position
-            var elem = tooltip.node().getBoundingClientRect();
-            var tw = elem.width;
-            var th = elem.height;
-            var tx = mx + 20;
-            var ty = my + 20;
+            var elem = tooltip.node().getBoundingClientRect(),
+                tw = elem.width,
+                th = elem.height,
+                tx = mx + 20,
+                ty = my + 20;
 
             // Correct for edges
             if (tx + tw > container.right - _attr.margins.right - 5) {
@@ -1157,9 +1173,7 @@
                 ty = container.bottom - _attr.margins.bottom - 10 - th;
             }
 
-            // TODO Set initial position within widget
-
-            // Set position
+            // Move to position
             tooltip
                 .style("display", "block")
                 .transition().duration(0)
