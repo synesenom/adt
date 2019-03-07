@@ -23,17 +23,6 @@ var trajectoryplot = new du.widgets.TrajectoryPlot("mychart", "#widget")
     .fadeExp(3)
     .animate(true)
     .showHead(true)
-    .tooltip(true)
-    .tooltipXFormat(function(x) { return x.toPrecision(2); })
-    .tooltipYFormat(function(x) { return x.toPrecision(2); })
-    .tooltipZFormat(function(x) {
-        var h = new Date(x).getHours(),
-            m = new Date(x).getMinutes(),
-            s = new Date(x).getSeconds();
-        return Math.floor(h / 10) + (h % 10)
-            + ':' + Math.floor(m / 10) + (m % 10)
-            + ':' + Math.floor(s / 10) + (s % 10);
-    })
     .render();</script><script class="doc">// update data
 setInterval(function() {
     var prev1 = traj1[traj1.length - 1];
@@ -61,8 +50,8 @@ setInterval(function() {
     trajectoryplot.data([
         {name: 'cat', values: traj1},
         {name: 'dog', values: traj2}
-    ]).render();
-}, 1000);</script><script>window.onresize = function () {
+    ]).render(200);
+}, 400);</script><script>window.onresize = function () {
     trajectoryplot
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

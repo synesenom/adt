@@ -217,12 +217,12 @@
             }
 
             var marker = {
+                name: name,
                 key: key,
                 g: g,
                 update: function (duration) {
                     circle
                         .on("mouseover", function () {
-                            console.log('FOO');
                             _current = {
                                 key: key,
                                 name: name,
@@ -258,7 +258,7 @@
          * @method removeMarker
          * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
          * @param {string} name Name of the marker to remove.
-         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         * @returns {boolean} True if marker existed and could be removed, false otherwise.
          */
         this.removeMarker = function (name) {
             var id = 'marker-' + _w.utils.encode(name);
@@ -272,14 +272,16 @@
         };
 
         /**
-         * Returns the ID of all markers.
+         * Returns the name of all markers.
          *
          * @method getMarkers
          * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
-         * @returns {string[]} Array containing all marker IDs.
+         * @returns {string[]} Array containing all marker names.
          */
         this.getMarkers = function () {
-            return Array.from(Object.keys(_markers));
+            return Object.values(_markers).map(function(d) {
+                return d.name;
+            });
         };
 
         _w.utils.tooltip = function (mouse) {
@@ -395,7 +397,7 @@
                 _svg.plots.position = _svg.plots.trajectories.selectAll('.position')
                     .data(function (d) {
                         return d.values.slice(-1);
-                    }, function (d) {
+                    }, function () {
                         return 0;
                     });
                 _svg.plots.position.exit()
