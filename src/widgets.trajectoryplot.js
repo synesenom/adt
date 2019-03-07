@@ -562,6 +562,7 @@
                 .attr('width', _w.attr.innerWidth)
                 .attr('height', _w.attr.innerHeight);
             _svg.backgroundImage
+                .attr('xlink:href', _w.attr.background.path ? _w.attr.background.path : null)
                 .attr('width', _w.attr.innerWidth + 'px')
                 .attr('height', _w.attr.innerHeight + 'px');
             _svg.background
