@@ -1,7 +1,7 @@
 {
   "name": "dashboard-utils",
   "author": "Enys Mones",
-  "version": "0.22.17",
+  "version": "0.22.18",
   "license": "MIT",
   "repository": "https://github.com/synesenom/dashboard-utils",
   "dependencies": {
