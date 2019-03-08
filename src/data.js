@@ -22,18 +22,18 @@
  * @author Enys Mones (enys.mones@sony.com)
  * @module data
  * @memberOf du
- * @requires lodash@4.17.4
+ * @requires lodash.cloneDeep
  */
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('lodash'));
+        module.exports = factory(require('lodash.clonedeep'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['_', 'exports'], factory);
+        define(['cloneDeep', 'exports'], factory);
     } else {
         global.du = global.du || {};
-        global.du.data = factory(global._);
+        global.du.data = factory(global.cloneDeep);
     }
-} (this, function (_) {
+} (this, function (cloneDeep) {
     "use strict";
 
     /**
@@ -159,9 +159,11 @@
 
             // Convert into an array
             var res = [];
-            _.forOwn(sums, function(v, k) {
-                res.push({key: k, value: v});
-            });
+            for (var k in sums) {
+                if (sums.hasOwnProperty(k)) {
+                    res.push({key: k, value: sums[k]});
+                }
+            }
 
             // Return sorted values
             return res.sort(function(a, b) {
@@ -216,7 +218,7 @@
              * @returns {Array} The histogram data.
              */
             function get() {
-                return _.cloneDeep(_data);
+                return cloneDeep(_data);
             }
 
             /**
@@ -417,13 +419,17 @@
                     return {};
 
                 var count = {};
-                _.forOwn(_data[0].y, function(di, d) {
-                    count[d] = 0;
-                });
+                for (var d in _data[0].y) {
+                    if (_data[0].y.hasOwnProperty(d)) {
+                        count[d] = 0;
+                    }
+                }
                 sub(length ? length : 1, offset).forEach(function(h) {
-                    _.forOwn(_data[0].y, function(di, d) {
-                        count[d] += h.y[d];
-                    });
+                    for (var d in _data[0].y) {
+                        if (_data[0].y.hasOwnProperty(d)) {
+                            count[d] += h.y[d];
+                        }
+                    }
                 });
                 return count;
             }
@@ -442,11 +448,13 @@
                 var p = 0;
                 if (_data.length > 0) {
                     var history = sub(length, offset);
-                    _.forOwn(_data[0].y, function(di, d) {
-                        p = Math.max(d3.max(history, function(h) {
-                            return h.y.hasOwnProperty(d) ? h.y[d] : 0;
-                        }), p);
-                    });
+                    for (var d in _data[0].y) {
+                        if (_data[0].y.hasOwnProperty(d)) {
+                            p = Math.max(d3.max(history, function(h) {
+                                return h.y.hasOwnProperty(d) ? h.y[d] : 0;
+                            }), p);
+                        }
+                    }
                 }
                 return p;
             }
@@ -466,12 +474,14 @@
                 var last = sum(1, offset);
                 var prev = sum(2, offset);
                 var trend = {};
-                _.forOwn(_data[0].y, function(di, d) {
-                    prev[d] -= last[d];
-                    if (prev[d] >= 10 && last[d] > 0) {
-                        trend[d] = (last[d] - prev[d]) / prev[d];
+                for (var d in _data[0].y) {
+                    if (_data[0].y.hasOwnProperty(d)) {
+                        prev[d] -= last[d];
+                        if (prev[d] >= 10 && last[d] > 0) {
+                            trend[d] = (last[d] - prev[d]) / prev[d];
+                        }
                     }
-                });
+                }
                 return trend;
             }
 
@@ -488,12 +498,17 @@
             function yDist(length, offset) {
                 var counts = sum(length, offset);
                 var total = 0;
-                _.forOwn(counts, function(c) {
-                    total += c;
-                });
-                _.forOwn(counts, function(c, i) {
-                    counts[i] /= total > 0 ? total : 1;
-                });
+                for (var i in counts) {
+                    if (counts.hasOwnProperty(i)) {
+                        total += counts[i];
+
+                    }
+                }
+                for (i in counts) {
+                    if (counts.hasOwnProperty(i)) {
+                        counts[i] /= total > 0 ? total : 1;
+                    }
+                }
                 return counts;
             }
 
@@ -540,7 +555,7 @@
 
             // Initialize data and index
             if (data) {
-                _data = _.cloneDeep(data);
+                _data = cloneDeep(data);
                 _data.forEach(function(d, i) {
                     _index.push(i);
                 });

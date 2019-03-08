@@ -42,7 +42,6 @@
  * @module map
  * @memberOf du.widgets
  * @requires d3@v4
- * @requires lodash@4.17.4
  * @requires topojson@v1
  * @requires leaflet@1.3.1
  * @requires du.math.la
@@ -52,17 +51,17 @@
 // TODO make map available on gist and only set the type
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = factory(require('d3'), require('lodash'), require('topojson'), require('leaflet'),
+        module.exports = factory(require('d3'), require('topojson'), require('leaflet'),
             require('./math.la'), require('./widget'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['d3', '_', 'topojson', 'leaflet', 'src/math.la', 'src/widget', 'exports'], factory);
+        define(['d3', 'topojson', 'leaflet', 'src/math.la', 'src/widget', 'exports'], factory);
     } else {
         global.du = global.du || {};
         global.du.widgets = global.du.widgets || {};
-        global.du.widgets.Map = factory(global.d3, global._, global.topojson, global.L, global.du.math.la,
+        global.du.widgets.Map = factory(global.d3, global.topojson, global.L, global.du.math.la,
             global.du.Widget);
     }
-} (this, function (d3, _, topojson, L, la, Widget) {
+} (this, function (d3, topojson, L, la, Widget) {
     "use strict";
 
     /**
@@ -486,15 +485,18 @@
              */
             function remove(id) {
                 if (_clusterings.hasOwnProperty(id)) {
-                    _.forOwn(_clusterings[id], function (group, name) {
-                        var groupId = selector(id, name);
-                        group.forEach(function (member) {
-                            if (typeof _countries._id(member) === "number") {
-                                _mapLayer._select(member)
-                                    .classed(groupId, false);
-                            }
-                        });
-                    });
+                    for(var name in _clusterings[id]) {
+                        if (_clusterings[id].hasOwnProperty(name)) {
+                            var groupId = selector(id, name),
+                                group = _clusterings[id][name];
+                            group.forEach(function (member) {
+                                if (typeof _countries._id(member) === "number") {
+                                    _mapLayer._select(member)
+                                        .classed(groupId, false);
+                                }
+                            });
+                        }
+                    }
                     return true;
                 } else {
                     return false;
@@ -509,17 +511,23 @@
              * @private
              */
             function _mark() {
-                _.forOwn(_clusterings, function (list, id) {
-                    _.forOwn(list, function (group, name) {
-                        var groupId = selector(id, name);
-                        group.forEach(function (member) {
-                            if (typeof _countries._id(member) === "number") {
-                                _mapLayer._select(member)
-                                    .classed(groupId, true);
+                for(var id in _clusterings) {
+                    if (_clusterings.hasOwnProperty(id)) {
+                        var list = _clusterings[id];
+                        for(var name in _clusterings[id]) {
+                            if (_clusterings[id].hasOwnProperty(name)) {
+                                var groupId = selector(id, name),
+                                    group = _clusterings[id][name];
+                                group.forEach(function (member) {
+                                    if (typeof _countries._id(member) === "number") {
+                                        _mapLayer._select(member)
+                                            .classed(groupId, true);
+                                    }
+                                });
                             }
-                        });
-                    });
-                });
+                        }
+                    }
+                }
             }
 
             // Exposed methods
@@ -1430,13 +1438,16 @@
                     .style("height", _w.attr.height + "px");
 
                 // Update layers
-                _.forOwn(_layers, function (layer) {
-                    layer.g
-                        .attr("width", _w.attr.width + "px")
-                        .attr("height", _w.attr.height + "px");
-                    layer.rescaleContent(scaleX, scaleY);
-                    layer.render();
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        var layer = _layers[layerId];
+                        layer.g
+                            .attr("width", _w.attr.width + "px")
+                            .attr("height", _w.attr.height + "px");
+                        layer.rescaleContent(scaleX, scaleY);
+                        layer.render();
+                    }
+                }
 
                 // Transform
                 _zoomLayer(_zoom.current());
@@ -1470,10 +1481,13 @@
              */
             function _clear() {
                 // Save and clear canvases
-                _.forOwn(_layers, function (layer) {
-                    layer.canvas.save();
-                    layer.canvas.clearRect(0, 0, _w.attr.width, _w.attr.height);
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        var layer = _layers[layerId];
+                        layer.canvas.save();
+                        layer.canvas.clearRect(0, 0, _w.attr.width, _w.attr.height);
+                    }
+                }
             }
 
             /**
@@ -1487,17 +1501,22 @@
             function highlight(id) {
                 var safeId = _w.utils.encode(id);
                 if (safeId && _layers.hasOwnProperty(safeId)) {
-                    _.forOwn(_layers, function (layer, name) {
-                        layer.g
-                            .transition().duration(100)
-                            .style("opacity", safeId === name ? 1 : 0);
-                    });
+                    for (var name in _layers) {
+                        if (_layers.hasOwnProperty(name)) {
+                            _layers[name].g
+                                .transition().duration(100)
+                                .style("opacity", safeId === name ? 1 : 0);
+                        }
+                    }
+
                 } else {
-                    _.forOwn(_layers, function (layer) {
-                        layer.g
-                            .transition().duration(100)
-                            .style("opacity", 1);
-                    });
+                    for (var name in _layers) {
+                        if (_layers.hasOwnProperty(name)) {
+                            _layers[name].g
+                                .transition().duration(100)
+                                .style("opacity", 1);
+                        }
+                    }
                 }
                 return widget;
             }
@@ -1510,9 +1529,11 @@
              * @private
              */
             function _render(scale) {
-                _.forOwn(_layers, function (layer) {
-                    layer.render(scale);
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        _layers[layerId].render(scale);
+                    }
+                }
             }
 
             /**
@@ -1523,9 +1544,11 @@
              * @private
              */
             function _restore() {
-                _.forOwn(_layers, function (layer) {
-                    layer.canvas.restore();
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        _layers[layerId].canvas.restore();
+                    }
+                }
             }
 
             /**
@@ -1664,10 +1687,13 @@
              */
             function _zoomLayer(transform) {
                 _staticLayer._clear();
-                _.forOwn(_layers, function (layer) {
-                    layer.canvas.translate(transform.x, transform.y);
-                    layer.canvas.scale(transform.k, transform.k);
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        var layer = _layers[layerId];
+                        layer.canvas.translate(transform.x, transform.y);
+                        layer.canvas.scale(transform.k, transform.k);
+                    }
+                }
                 _staticLayer._render(transform.k);
                 _staticLayer._restore();
             }
@@ -1978,11 +2004,13 @@
                     .style("height", _w.attr.height + "px");
 
                 // Update layers
-                _.forOwn(_layers, function (layer) {
-                    layer.g
-                        .attr("width", _w.attr.width + "px")
-                        .attr("height", _w.attr.height + "px");
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        _layers[layerId].g
+                            .attr("width", _w.attr.width + "px")
+                            .attr("height", _w.attr.height + "px");
+                    }
+                }
             }
 
             /**
@@ -2014,17 +2042,21 @@
             function highlight(id) {
                 var safeId = _w.utils.encode(id);
                 if (safeId && _layers.hasOwnProperty(safeId)) {
-                    _.forOwn(_layers, function (layer, name) {
-                        layer.g
-                            .transition().duration(200)
-                            .style("opacity", safeId === name ? 1 : 0);
-                    });
+                    for (var name in _layers) {
+                        if (_layers.hasOwnProperty(name)) {
+                            _layers[layerId].g
+                                .transition().duration(200)
+                                .style("opacity", safeId === name ? 1 : 0);
+                        }
+                    }
                 } else {
-                    _.forOwn(_layers, function (layer) {
-                        layer.g
-                            .transition().duration(200)
-                            .style("opacity", 1);
-                    });
+                    for (var layerId in _layers) {
+                        if (_layers.hasOwnProperty(layerId)) {
+                            _layers[layerId].g
+                                .transition().duration(200)
+                                .style("opacity", 1);
+                        }
+                    }
                 }
                 return widget;
             }
@@ -2226,9 +2258,11 @@
              * @private
              */
             function _zoomLayer(transform) {
-                _.forOwn(_layers, function (layer) {
-                    layer.g.attr("transform", transform);
-                });
+                for (var layerId in _layers) {
+                    if (_layers.hasOwnProperty(layerId)) {
+                        _layers[layerId].g.attr("transform", transform);
+                    }
+                }
             }
 
             // Public methods
