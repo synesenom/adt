@@ -151,6 +151,12 @@
             // Build gauge
             _svg.g = _w.widget.append("g");
 
+            // Calculate scale
+            _scale = d3.scaleLinear()
+                .domain([_w.attr.min, _w.attr.max])
+                .range([0, _w.attr.innerWidth])
+                .clamp(true);
+
             // Colors
             _colors = d3.interpolateHsl(_w.attr.colors ? _w.attr.colors[0] : "#e41a1c",
                 _w.attr.colors ? _w.attr.colors[1] : "#4daf4a");
