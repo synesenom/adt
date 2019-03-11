@@ -57,21 +57,6 @@
         _w.attr.add(this, 'maxLength', 10);
 
         /**
-         * Adds an image to the background of the trajectory plot. Note that the image is scaled up to fit the plot.
-         * Default is empty.
-         *
-         * @method background
-         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
-         * @param {Object} options Object containing the background options. The following properties are supported:
-         * <ul>
-         *     <li><code>path</code>: Path to the image file.</li>
-         *     <li><code>opacity</code>: Background opacity. Default is 1.</li>
-         * </ul>
-         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
-         */
-        _w.attr.add(this, 'background', {});
-
-        /**
          * Sets the fading exponent for the exponential fade-out of trajectories. Opacity of each trajectory segment and
          * stop position is calculated as exp(-tau * t), where t denotes the age of the segment (relative to the age of
          * the whole trajectory, so it is bounded in [0, 1]), and tau is the exponent.
@@ -111,6 +96,25 @@
         var _colors = null;
         var _transition = false;
         var _markers = {};
+        var _background = {};
+
+        /**
+         * Adds an image to the background of the trajectory plot. Note that the image is scaled up to fit the plot.
+         * Default is empty.
+         *
+         * @method background
+         * @memberOf du.widgets.trajectoryplot.TrajectoryPlot
+         * @param {Object} options Object containing the background options. The following properties are supported:
+         * <ul>
+         *     <li><code>path</code>: Path to the image file.</li>
+         *     <li><code>opacity</code>: Background opacity. Default is 1.</li>
+         * </ul>
+         * @returns {du.widgets.trajectoryplot.TrajectoryPlot} Reference to the current TrajectoryPlot.
+         */
+        this.background = function (options) {
+            _background = options;
+            return this;
+        };
 
         /**
          * Binds data to the trajectory plot.
@@ -322,7 +326,7 @@
                 .attr('width', _w.attr.innerWidth)
                 .attr('height', _w.attr.innerHeight);
             _svg.backgroundImage = _svg.backgroundPattern.append('image')
-                .attr('xlink:href', _w.attr.background.path ? _w.attr.background.path : null)
+                .attr('xlink:href', _background !== null ? _background.path : null)
                 .attr('preserveAspectRatio', 'none')
                 .attr('x', 1)
                 .attr('y', 0)
@@ -334,8 +338,8 @@
                 .attr('width', _w.attr.innerWidth + 'px')
                 .attr('height', _w.attr.innerHeight + 'px')
                 .attr('stroke', 'none')
-                .attr('fill', _w.attr.background.path ? 'url(#'  + 'trajectory-background-' + _w.utils.encode(name) +')' : 'none')
-                .style('opacity', _w.attr.background.opacity ? _w.attr.background.opacity : null);
+                .attr('fill', _background.path ? 'url(#'  + 'trajectory-background-' + _w.utils.encode(name) +')' : 'none')
+                .style('opacity', _background !== null ? _background.opacity : null);
         };
 
         // Data updater
@@ -520,7 +524,14 @@
             }
 
             // Background image
-            _svg.backgroundImage.attr('xlink:href', _w.attr.background.path ? _w.attr.background.path : null);
+            // Set position
+            if (_background !== null) {
+                _svg.backgroundImage.attr('xlink:href', _background.path ? _background.path : null);
+                _svg.background
+                    .attr('fill', _background.path ? 'url(#'  + 'trajectory-background-' + _w.utils.encode(name) +')' : 'none')
+                    .style('opacity', _background.opacity ? _background.opacity : null);
+                _background = null;
+            }
         };
 
         // Style updater
@@ -562,14 +573,11 @@
                 .attr('width', _w.attr.innerWidth)
                 .attr('height', _w.attr.innerHeight);
             _svg.backgroundImage
-                .attr('xlink:href', _w.attr.background.path ? _w.attr.background.path : null)
                 .attr('width', _w.attr.innerWidth + 'px')
                 .attr('height', _w.attr.innerHeight + 'px');
             _svg.background
                 .attr('width', _w.attr.innerWidth + 'px')
-                .attr('height', _w.attr.innerHeight + 'px')
-                .attr('fill', _w.attr.background.path ? 'url(#'  + 'trajectory-background-' + _w.utils.encode(name) +')' : 'none')
-                .style('opacity', _w.attr.background.opacity ? _w.attr.background.opacity : null);
+                .attr('height', _w.attr.innerHeight + 'px');
         }
     }
 
