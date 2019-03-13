@@ -149,7 +149,7 @@
         _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain.reverse() : _data.map(function (d) {
+                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain : _data.map(function (d) {
                     return d.name;
                 }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
                 y: _w.utils.scale([0, d3.max(_data, function (d) {
