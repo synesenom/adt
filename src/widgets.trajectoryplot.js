@@ -474,6 +474,12 @@
                 .style('pointer-events', 'none')
                 .merge(_svg.plots.movements)
                 .transition().duration(duration)
+                .attr("x1", function (d) {
+                    return _svg.scale.x(d[0].x);
+                })
+                .attr("y1", function (d) {
+                    return _svg.scale.y(d[0].y);
+                })
                 .attr("x2", function (d) {
                     return _svg.scale.x(d[1].x);
                 })
@@ -514,6 +520,20 @@
                 })
                 .attr("y2", function (d) {
                     return _svg.scale.y(d[1].y);
+                })
+                .merge(_svg.plots.fakeMovements)
+                .transition().duration(duration)
+                .attr("x1", function (d) {
+                    return _svg.scale.x(d[0].x);
+                })
+                .attr("y1", function (d) {
+                    return _svg.scale.y(d[0].y);
+                })
+                .attr("x2", function (d) {
+                    return _svg.scale.x(d[1].x);
+                })
+                .attr("y2", function (d) {
+                    return _svg.scale.y(d[1].y);
                 });
 
             // Markers
@@ -524,7 +544,6 @@
             }
 
             // Background image
-            // Set position
             if (_background !== null) {
                 _svg.backgroundImage.attr('xlink:href', _background.path ? _background.path : null);
                 _svg.background
