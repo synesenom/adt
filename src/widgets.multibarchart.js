@@ -72,6 +72,17 @@
          */
         _w.attr.add(this, "sortByX", false);
 
+        /**
+         * Sets X domain for the multi bar chart. The order of the values specified in the domain are used to sort the
+         * data in the chart. Default is off.
+         *
+         * @method xDomain
+         * @memberOf du.widgets.multibarchart.MultiBarChart
+         * @param {(number[]|string[])} domain Array containing the domain values.
+         * @returns {du.widgets.multibarchart.MultiBarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, 'xDomain', null);
+
         // Widget elements
         var _svg = {};
         var _data = [];
@@ -328,7 +339,7 @@
                 });
             }
             _svg.scale = {
-                x: _w.utils.scale(xData, [0, _w.attr.innerWidth], "band"),
+                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain : xData, [0, _w.attr.innerWidth], "band"),
                 y: _w.utils.scale(data.reduce(function (a, d) {
                     return a.concat(d.values);
                 }, []).map(function (d) {
