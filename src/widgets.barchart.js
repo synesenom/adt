@@ -61,6 +61,17 @@
          */
         _w.attr.add(this, "vertical", false);
 
+        /**
+         * Sets X domain for the bar chart. The order of the values specified in the domain are used to sort the data in
+         * the bar chart. Default is off.
+         *
+         * @method xDomain
+         * @memberOf du.widgets.barchart.BarChart
+         * @param {(number[]|string[])} domain Array containing the domain values.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, 'xDomain', null);
+
         // Widget elements
         var _svg = {};
         var _data = [];
@@ -138,7 +149,7 @@
         _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.map(function (d) {
+                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain : _data.map(function (d) {
                     return d.name;
                 }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
                 y: _w.utils.scale([0, d3.max(_data, function (d) {
