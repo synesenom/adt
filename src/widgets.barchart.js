@@ -147,14 +147,26 @@
 
         // Data updater
         _w.render.update = function (duration) {
+            // Prepare some default values for properly behaving X and Y axes
+            var xValues = [];
+            if (_w.attr.xDomain) {
+                xValues = _w.attr.xDomain;
+            } else if (typeof _data !== 'undefined' && _data.length > 0) {
+                xValues = _data.map(function (d) {
+                    return d.name;
+                }).reverse();
+            }
+            var yValues = [];
+            if (typeof _data !== 'undefined' && _data.length > 0) {
+                yValues = d3.max(_data, function (d) {
+                    return d.value;
+                });
+            }
+
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain : _data.map(function (d) {
-                    return d.name;
-                }).reverse(), [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
-                y: _w.utils.scale([0, d3.max(_data, function (d) {
-                    return d.value;
-                })], _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
+                x: _w.utils.scale(xValues, [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
+                y: _w.utils.scale([0, yValues], _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
             };
 
             // Axes
@@ -175,6 +187,11 @@
                 .call(_svg.axisFn.y
                     .tickValues(_w.attr.yTicks)
                     .scale(_w.attr.vertical ? _svg.scale.x : _svg.scale.y));
+
+            // If data is empty, skip plotting part
+            if (typeof _data === 'undefined' || _data.length === 0) {
+                return;
+            }
 
             // Plot
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
