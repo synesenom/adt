@@ -147,7 +147,7 @@
 
         // Data updater
         _w.render.update = function (duration) {
-            // Prepare some default values for properly behaving X and Y axes
+            // Prepare values for scales
             var xValues = [];
             if (_w.attr.xDomain) {
                 xValues = _w.attr.xDomain;
@@ -156,6 +156,7 @@
                     return d.name;
                 }).reverse();
             }
+
             var yValues = [];
             if (typeof _data !== 'undefined' && _data.length > 0) {
                 yValues = d3.max(_data, function (d) {

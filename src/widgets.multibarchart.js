@@ -105,7 +105,7 @@
          * @returns {du.widgets.multibarchart.MultiBarChart} Reference to the current BarChart.
          */
         this.data = function (data) {
-            _data = data.map(function (d) {
+            _data = data ? data.map(function (d) {
                 return {
                     name: d.name,
                     values: d.values.map(function (dd) {
@@ -117,7 +117,7 @@
                         };
                     })
                 };
-            });
+            }) : undefined;
             return this;
         };
 
@@ -324,47 +324,63 @@
 
         // Data updater
         _w.render.update = function (duration) {
-            // Filter data
-            var data = _data.slice();
-
-            // Calculate scale
-            var xData = data.reduce(function (a, d) {
-                return a.concat(d.values);
-            }, []).map(function (d) {
-                return d.x;
-            });
-            if (_w.attr.sortByX) {
-                xData.sort(function(a, b) {
-                    return a.localeCompare(b);
+            // Prepare values for scales
+            var xValues = [];
+            if (_w.attr.xDomain) {
+                xValues = _w.attr.xDomain;
+            } else if (typeof _data !== 'undefined' && _data.length > 0) {
+                xValues = _data.reduce(function (a, d) {
+                    return a.concat(d.values);
+                }, []).map(function (d) {
+                    return d.x;
                 });
             }
-            _svg.scale = {
-                x: _w.utils.scale(_w.attr.xDomain ? _w.attr.xDomain : xData, [0, _w.attr.innerWidth], "band"),
-                y: _w.utils.scale(data.reduce(function (a, d) {
+
+            var yValues = [];
+            if (typeof _data !== 'undefined' && _data.length > 0) {
+                yValues = _data.reduce(function (a, d) {
                     return a.concat(d.values);
                 }, []).map(function (d) {
                     return d.y;
-                }).concat([0]), [_w.attr.innerHeight, 0])
+                }).concat([0]);
+            }
+
+            // Sort if necessary
+            if (_w.attr.sortByX) {
+                xValues.sort(function(a, b) {
+                    return a.localeCompare(b);
+                });
+            }
+
+            // Calculate scale
+            _svg.scale = {
+                x: _w.utils.scale(xValues, [0, _w.attr.innerWidth], "band"),
+                y: _w.utils.scale(yValues, [_w.attr.innerHeight, 0])
             };
 
-            // Update axes
+            // Axes
+            _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
                 .transition().duration(duration)
                 .call(_svg.axisFn.x
                     .tickValues(_w.attr.xTicks)
                     .scale(_svg.scale.x));
+            _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .transition().duration(duration)
                 .call(_svg.axisFn.y
                     .tickValues(_w.attr.yTicks)
                     .scale(_svg.scale.y));
 
-            // Build/update error bands
+            // If data is empty, skip plotting part
+            if (typeof _data === 'undefined' || _data.length === 0) {
+                return;
+            }
+
+            // Plot
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
-
-            // Groups
             _svg.plots.groups = _svg.g.selectAll(".bar-group")
                 .data(_data, function (d) {
                     return d.name;
@@ -402,7 +418,7 @@
                     return d.values.map(function (v) {
                         return {
                             name: d.name,
-                            n: data.length,
+                            n: _data.length,
                             i: i,
                             x: v.x,
                             y: v.y
