@@ -98,6 +98,13 @@
          * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
          */
         this.data = function (data) {
+            // TODO Convert data to grid size array
+            // Ignore empty data
+            if (typeof data === 'undefined' || data.length === 0) {
+                _data = undefined;
+                return this;
+            }
+
             // Initialize data
             _data = {
                 xDomain: d3.extent(data, function(d) { return d.x; }),
@@ -111,7 +118,6 @@
             data.forEach(function(d) {
                 var i = Math.floor((d.x - _data.xDomain[0]) / sx),
                     j = Math.floor((d.y - _data.yDomain[0]) / sy);
-                // console.log(d.x, d.y, sx, sy, i, j, i + j * _w.attr.grid[0]);
                 _data.values[i + j * _w.attr.grid[0]] += d.value || 1;
             });
 
@@ -216,9 +222,26 @@
         _w.render.update = function (duration) {
             // Calculate scale
             _svg.scale = {
-                x: _w.utils.scale(_data.xDomain, [0, _w.attr.innerWidth]),
-                y: _w.utils.scale(_data.yDomain, [_w.attr.innerHeight, 0])
+                x: _w.utils.scale(_data ? _data.xDomain : [0, 1], [0, _w.attr.innerWidth]),
+                y: _w.utils.scale(_data ? _data.yDomain : [0, 1], [_w.attr.innerHeight, 0])
             };
+
+            // Update axes
+            _svg.axes.x
+                .transition().duration(duration)
+                .call(_svg.axisFn.x
+                    .tickValues(_w.attr.xTicks)
+                    .scale(_svg.scale.x));
+            _svg.axes.y
+                .transition().duration(duration)
+                .call(_svg.axisFn.y
+                    .tickValues(_w.attr.yTicks)
+                    .scale(_svg.scale.y));
+
+            // If data is empty or invalid, do nothing
+            if (typeof _data === 'undefined' || _data.length === 0) {
+                return;
+            }
 
             // Color interpolation
             var i0 = d3.interpolateHsl(
@@ -233,18 +256,6 @@
                     return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2);
                 };
             _colors = d3.scaleSequential(interpolateTerrain).domain(d3.extent(_data.values));
-
-            // Update axes
-            _svg.axes.x
-                .transition().duration(duration)
-                .call(_svg.axisFn.x
-                    .tickValues(_w.attr.xTicks)
-                    .scale(_svg.scale.x));
-            _svg.axes.y
-                .transition().duration(duration)
-                .call(_svg.axisFn.y
-                    .tickValues(_w.attr.yTicks)
-                    .scale(_svg.scale.y));
 
             // Build/update plots
             _transition = true;
