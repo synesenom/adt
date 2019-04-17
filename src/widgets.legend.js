@@ -116,13 +116,20 @@
                     .style("display", "inline-block")
                     .style("position", "relative")
                     .style("float", "right")
-                    .style("text-align", "left")
-                    .text(label.text || label.key);
+                    .style("text-align", "left");
                 _svg.legends[label.key] = {
                     g: g,
                     square: square,
                     text: text
                 };
+            });
+        };
+
+        // Data updater
+        _w.render.update = function () {
+            _w.attr.labels.forEach(function (label) {
+                _svg.legends[label.key].text
+                    .text(label.text || label.key);
             });
         };
 
