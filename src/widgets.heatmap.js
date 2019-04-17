@@ -321,6 +321,7 @@
             _svg.canvas.background
                 .style('background-color', _w.attr.background.path ? null : 'transparent')
                 .style('background-image', _w.attr.background.path ? 'url(' + _w.attr.background.path + ')' : null)
+                .style("background-size", _w.attr.innerWidth + "px " + _w.attr.innerHeight + "px")
                 .style('opacity', _w.attr.background.opacity ? _w.attr.background.opacity : 1);
             _svg.canvas.canvas
                 .style('width', _w.attr.innerWidth + 'px')
