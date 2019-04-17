@@ -16,6 +16,10 @@ var heatmap = new du.widgets.HeatMap("mychart", "#widget")
     .fontSize(14)
     .grid([80, 40])
     .colors(['transparent', 'yellowgreen', 'crimson'])
+    .zScale(function(x) {
+        // Use logarithmic scale
+        return Math.log(1 + x) / Math.log(2);
+    })
     .data(new Array(100000).fill(0).map(function () {
         return Math.random() < 0.3 ? {
             x: normal1.sample(),

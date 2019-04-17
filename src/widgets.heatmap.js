@@ -81,6 +81,17 @@
          */
         _w.attr.add(this, 'opacity', 1);
 
+        /**
+         * Sets the scale for the density color map. Default is the identity function.
+         *
+         * @method zScale
+         * @memberOf du.widgets.heatmap.HeatMap
+         * @param {function} scale Scale function to apply for the color mapping. Must map the interval [0, 1] to
+         * [0, 1].
+         * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
+         */
+        _w.attr.add(this, 'zScale', null);
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -98,7 +109,6 @@
          * @returns {du.widgets.heatmap.HeatMap} Reference to the current HeatMap.
          */
         this.data = function (data) {
-            // TODO Convert data to grid size array
             // Ignore empty data
             if (typeof data === 'undefined' || data.length === 0) {
                 _data = undefined;
@@ -243,19 +253,23 @@
                 return;
             }
 
+            // Get data extent
+            var extent = d3.extent(_data.values);
+
             // Color interpolation
             var i0 = d3.interpolateHsl(
-                _w.attr.colors ? _w.attr.colors[0] : 'transparent',
-                _w.attr.colors ? _w.attr.colors[1] : 'grey'
+                    _w.attr.colors ? _w.attr.colors[0] : 'transparent',
+                    _w.attr.colors ? _w.attr.colors[1] : 'grey'
                 ),
                 i1 = d3.interpolateHsl(
                     _w.attr.colors ? _w.attr.colors[1] : 'grey',
                     _w.attr.colors ? _w.attr.colors[2] : 'black'
                 ),
                 interpolateTerrain = function (t) {
-                    return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2);
+                    var s = _w.attr.zScale ? _w.attr.zScale(t) : t;
+                    return s < 0.5 ? i0(s * 2) : i1((s - 0.5) * 2);
                 };
-            _colors = d3.scaleSequential(interpolateTerrain).domain(d3.extent(_data.values));
+            _colors = d3.scaleSequential(interpolateTerrain).domain(extent);
 
             // Build/update plots
             _transition = true;
