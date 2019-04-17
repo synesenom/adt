@@ -6,7 +6,7 @@
 </div><br><h2 id='api-du.widgets.legend.Legend.labels'>labels</h2>
 <div class='card'><pre><code>du.widgets.legend.Legend.labels(keys)</code></pre>
 <br>Sets the labels for the legend entries. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>keys</i></td><td><code>Array</code></td><td>Array of label keys to use as legend text.</td></tr></table>
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>keys</i></td><td><code>Object[]</code></td><td>Array of objects containing a <code>key</code> and a <code>text</code> propert for the specific key. The key is used to assign the label to a color. The order of the labels is used when the legend is built. If text is not specified, the label key is used as text.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widgets.legend.Legend</code></i></td><td>Reference to the current Legend.</td></tr></table></div><br><h2 id='api-du.widgets.legend.Legend.twoColumns'>twoColumns</h2>
 <div class='card'><pre><code>du.widgets.legend.Legend.twoColumns(on)</code></pre>
 <br>Makes legend two-column wide. Default is false. 

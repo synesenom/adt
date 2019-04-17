@@ -7,12 +7,16 @@ include pug/example
 script.doc.
     // prepare labels and colors
     var labels = [
-        "mango", "orange", "a fruit with a long name", "kiwi", "pear"
+        {key: "mango"},
+        {key: "orange"},
+        {key: "noname", text: "a fruit with a long name"},
+        {key: "kiwi"},
+        {key: "pear"}
     ];
     var colors = {
         mango: "tomato",
         orange: "orange",
-        "a fruit with a long name": "green",
+        noname: "green",
         kiwi: "limegreen",
         pear: "khaki"
     }
@@ -21,9 +25,9 @@ script.doc.
     var width = parseInt(d3.select("#widget").style("width"));
     var height = parseInt(d3.select("#widget").style("height"));
     var legend = new du.widgets.Legend("mylegend", "#widget")
-        .x(Math.max(10, (width - 280) / 2))
+        .x(Math.max(10, (width - 300) / 2))
         .y(height / 3)
-        .width(300)
+        .width(320)
         .height(150)
         .labels(labels)
         .colors(colors)

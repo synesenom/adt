@@ -4,21 +4,25 @@
         hljs.initHighlighting();
 });</script><title>legend | dashboard-utils</title></head><body><main><div id="widget"></div><h1>description</h1><div id="desc">A legend is a list of labels together with colored squares.</div><div id="code-doc"></div><div id="doc-link"><a class="margined" href="../dl/widgets.legend.min.js">min.js</a><a class="margined" href="../api/widgets.legend.html">docs</a><a href="https://github.com/synesenom/dashboard-utils/blob/master/src/widgets.legend.js">source</a></div></main></body></html><script class="doc">// prepare labels and colors
 var labels = [
-    "mango", "orange", "a fruit with a long name", "kiwi", "pear"
+    {key: "mango"},
+    {key: "orange"},
+    {key: "noname", text: "a fruit with a long name"},
+    {key: "kiwi"},
+    {key: "pear"}
 ];
 var colors = {
     mango: "tomato",
     orange: "orange",
-    "a fruit with a long name": "green",
+    noname: "green",
     kiwi: "limegreen",
     pear: "khaki"
 }</script><script class="doc">// create widget
 var width = parseInt(d3.select("#widget").style("width"));
 var height = parseInt(d3.select("#widget").style("height"));
 var legend = new du.widgets.Legend("mylegend", "#widget")
-    .x(Math.max(10, (width - 280) / 2))
+    .x(Math.max(10, (width - 300) / 2))
     .y(height / 3)
-    .width(300)
+    .width(320)
     .height(150)
     .labels(labels)
     .colors(colors)

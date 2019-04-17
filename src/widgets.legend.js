@@ -58,7 +58,9 @@
          *
          * @method labels
          * @memberOf du.widgets.legend.Legend
-         * @param {Array} keys Array of label keys to use as legend text.
+         * @param {Object[]} keys Array of objects containing a {key} and a {text} propert for the specific key. The
+         * key is used to assign the label to a color. The order of the labels is used when the legend is built. If text
+         * is not specified, the label key is used as text.
          * @returns {du.widgets.legend.Legend} Reference to the current Legend.
          */
         _w.attr.add(this, "labels", []);
@@ -99,7 +101,7 @@
             _svg.legends = {};
             _w.attr.labels.forEach(function (label) {
                 var g = _svg.g.append("div")
-                    .attr("class", "legend-entry " + _w.utils.encode(label))
+                    .attr("class", "legend-entry " + _w.utils.encode(label.key))
                     .style("display", "inline-block")
                     .style("position", "relative")
                     .style("width", "100%")
@@ -115,8 +117,8 @@
                     .style("position", "relative")
                     .style("float", "right")
                     .style("text-align", "left")
-                    .text(label);
-                _svg.legends[label] = {
+                    .text(label.text || label.key);
+                _svg.legends[label.key] = {
                     g: g,
                     square: square,
                     text: text
@@ -127,7 +129,9 @@
         // Style updater
         _w.render.style = function () {
             // Set colors
-            _w.attr.colors = _w.utils.colors(_w.attr.labels);
+            _w.attr.colors = _w.utils.colors(_w.attr.labels.map(function(d) {
+                return d.key;
+            }));
 
             _svg.g
                 .style("width", _w.attr.width + 'px')
