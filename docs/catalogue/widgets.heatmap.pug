@@ -29,6 +29,7 @@ script.doc.
             };
         }))
         .tooltip(true)
+        .tooltipTitleFormat(function(x) { return 'Height: ' + parseInt(x) + 'm'; })
         .tooltipXFormat(function(x) { return x.toFixed(2); })
         .tooltipYFormat(function(x) { return x.toFixed(2); })
         .render();

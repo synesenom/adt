@@ -28,6 +28,7 @@ var contourplot = new du.widgets.ContourPlot("mychart", "#widget")
         }
     }))
     .tooltip(true)
+    .tooltipTitleFormat(function(x) { return 'Altitude: ' + parseInt(x) + 'm'; })
     .tooltipXFormat(function(x) { return x.toFixed(2); })
     .tooltipYFormat(function(x) { return x.toFixed(2); })
     .render();</script><script class="doc">// update data

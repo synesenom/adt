@@ -144,7 +144,7 @@
 
             // Tooltip
             return {
-                title: 'Value: ' + value.toPrecision(3),
+                title: _w.attr.tooltipTitleFormat(value),
                 stripe: _colors(value),
                 content: {
                     type: 'metrics',
