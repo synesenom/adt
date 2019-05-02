@@ -679,8 +679,10 @@
                 return {
                     g: g,
                     axisFn: {
-                        x: d3.axisBottom(null),
+                        x: d3.axisBottom(null)
+                            .ticks(7),
                         y: d3.axisLeft(null)
+                            .ticks(5)
                     },
                     axes: {
                         x: g.append("g")
