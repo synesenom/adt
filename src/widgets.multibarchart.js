@@ -336,13 +336,16 @@
                 });
             }
 
-            var yValues = [];
+            var yMax = 0;
             if (typeof _data !== 'undefined' && _data.length > 0) {
-                yValues = _data.reduce(function (a, d) {
+                yMax = d3.max(_data.reduce(function (a, d) {
                     return a.concat(d.values);
                 }, []).map(function (d) {
                     return d.y;
-                }).concat([0]);
+                }));
+            }
+            if (yMax === 0) {
+                yMax = 1;
             }
 
             // Sort if necessary
@@ -355,7 +358,7 @@
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(xValues, [0, _w.attr.innerWidth], "band"),
-                y: _w.utils.scale(yValues, [_w.attr.innerHeight, 0])
+                y: _w.utils.scale([0, yMax], [_w.attr.innerHeight, 0])
             };
 
             // Axes

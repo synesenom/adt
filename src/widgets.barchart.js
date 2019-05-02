@@ -157,17 +157,20 @@
                 }).reverse();
             }
 
-            var yValues = [];
+            var yMax = 0;
             if (typeof _data !== 'undefined' && _data.length > 0) {
-                yValues = d3.max(_data, function (d) {
-                    return d.value;
+                yMax = d3.max(_data, function (d) {
+                    return 1.1 * d.value;
                 });
+            }
+            if (yMax === 0) {
+                yMax = 1;
             }
 
             // Calculate scale
             _svg.scale = {
                 x: _w.utils.scale(xValues, [_w.attr.vertical ? _w.attr.innerHeight : _w.attr.innerWidth, 0], "band"),
-                y: _w.utils.scale([0, yValues], _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
+                y: _w.utils.scale([0, yMax], _w.attr.vertical ? [0, _w.attr.innerWidth] : [_w.attr.innerHeight, 0])
             };
 
             // Axes
