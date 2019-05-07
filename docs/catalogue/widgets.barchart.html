@@ -21,6 +21,7 @@ var barchart = new du.widgets.BarChart("mychart", "#widget")
     .yLabel("stock")
     .margins(60)
     .fontSize(14)
+    .values(true)
     .colors({
         plum: "darkmagenta",
         banana: "gold",
@@ -43,7 +44,7 @@ setInterval(function () {
         {name: "kiwi", value: parseInt(Math.random() * 10)},
         {name: "pear", value: parseInt(Math.random() * 10)}
     ]).render();
-}, 20000);</script><script>window.onresize = function () {
+}, 2000);</script><script>window.onresize = function () {
     barchart
         .width(parseFloat(d3.select('#widget').style('width')))
         .height(parseFloat(d3.select('#widget').style('height')))

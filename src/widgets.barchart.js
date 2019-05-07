@@ -82,6 +82,16 @@
          */
         _w.attr.add(this, 'corner', 0);
 
+        /**
+         * Adds values as indicative numbers on the bars. Default is false.
+         *
+         * @method values
+         * @memberOf du.widgets.barchart.BarChart
+         * @param {boolean} on Whether to add indicative numbers on the bars.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, 'values', false);
+
         // Widget elements
         var _svg = {};
         var _data = [];
@@ -211,6 +221,8 @@
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
+
+            // Bars
             _svg.plots.bars = _svg.g.selectAll(".bar")
                 .data(_data, function (d) {
                     return d.name;
@@ -219,7 +231,7 @@
                 .transition().duration(duration)
                 .style('opacity', 0)
                 .remove();
-            var enter = _svg.plots.bars.enter().append("rect")
+            var enterBars = _svg.plots.bars.enter().append("rect")
                 .attr("class", function (d) {
                     return "bar " + _w.utils.encode(d.name);
                 })
@@ -232,7 +244,7 @@
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none");
             if (_w.attr.vertical) {
-                enter
+                enterBars
                     .attr("y", function (d) {
                         return _svg.scale.x(d.name);
                     })
@@ -240,7 +252,7 @@
                     .attr("x", 1)
                     .attr("width", 0);
             } else {
-                enter
+                enterBars
                     .attr("x", function (d) {
                         return _svg.scale.x(d.name);
                     })
@@ -248,7 +260,7 @@
                     .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
                     .attr("height", 0);
             }
-            var union = enter.merge(_svg.plots.bars)
+            var unionBars = enterBars.merge(_svg.plots.bars)
                 .each(function () {
                     _transition = true;
                 })
@@ -262,7 +274,7 @@
                     _w.attr.click && _w.attr.click(d.name);
                 });
             if (_w.attr.vertical) {
-                union = union
+                unionBars = unionBars
                     .transition().duration(duration)
                     .attr("y", function (d) {
                         return _svg.scale.x(d.name);
@@ -273,7 +285,7 @@
                         return _svg.scale.y(d.value);
                     });
             } else {
-                union = union
+                unionBars = unionBars
                     .transition().duration(duration)
                     .attr("x", function (d) {
                         return _svg.scale.x(d.name);
@@ -286,11 +298,81 @@
                         return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
                     });
             }
-            union
+            unionBars
                 .style("opacity", 1)
                 .style("fill", function (d) {
                     return _colors[d.name];
                 })
+                .on("end", function () {
+                    _transition = false;
+                });
+
+            // Values
+            _svg.plots.values = _svg.g.selectAll(".bar-value")
+                .data(_data, function (d) {
+                    return d.name;
+                });
+            _svg.plots.values.exit()
+                .transition().duration(duration)
+                .style('opacity', 0)
+                .remove();
+            var enterValues = _svg.plots.values.enter().append("text")
+                .attr("class", function (d) {
+                    return "bar-value " + _w.utils.encode(d.name);
+                })
+                .attr('text-anchor', 'middle')
+                .style('font-size', _w.attr.fontSize + 'px')
+                .style("fill", 'black')
+                .style("stroke", "none")
+                .text(function(d) {
+                    return d.value;
+                });
+            if (_w.attr.vertical) {
+                enterValues
+                    .attr("y", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("x", 1);
+            } else {
+                enterValues
+                    .attr("x", function (d) {
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
+                    })
+                    .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - 2 * _w.attr.fontSize);
+            }
+            var unionValues = enterValues.merge(_svg.plots.values)
+                .each(function () {
+                    _transition = true;
+                });
+            if (_w.attr.vertical) {
+                unionValues = unionValues
+                    .transition().duration(duration)
+                    .attr("y", function (d) {
+                        return _svg.scale.x(d.name);
+                    })
+                    .attr("x", 1);
+            } else {
+                unionValues = unionValues
+                    .transition().duration(duration)
+                    .attr("x", function (d) {
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
+                    })
+                    .attr("y", function (d) {
+                        var y = _svg.scale.y(d.value) + 1.5 * _w.attr.fontSize;
+                        var h = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
+                        return h - y > 2 * _w.attr.fontSize ? y : _svg.scale.y(d.value) - 0.9 * _w.attr.fontSize;
+                    })
+                    .style('fill', function(d) {
+                        var y = _svg.scale.y(d.value) + 1.5 * _w.attr.fontSize;
+                        var h = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
+                        return h - y > 2 * _w.attr.fontSize ? 'white' : 'black';
+                    })
+                    .text(function(d) {
+                        return d.value;
+                    });
+            }
+            unionValues
+                .style("opacity", 1)
                 .on("end", function () {
                     _transition = false;
                 });
