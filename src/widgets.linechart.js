@@ -165,6 +165,41 @@
         };
 
         /**
+         * Finds the Y coordinate of a point on a path given its X coordinate.
+         * Source: https://stackoverflow.com/questions/15578146/get-y-coordinate-of-point-along-svg-path-with-given-an-x-coordinate
+         *
+         * @method _findY
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {Object} path SVG path element.
+         * @param {number} x The X coordinate of the point.
+         * @returns {number} The corresponding Y coordinate of the point on the path.
+         * @private
+         */
+        function _findY(path, x) {
+            var pathLength = path.getTotalLength();
+            var start = 0;
+            var end = pathLength;
+            var target = (start + end) / 2;
+
+            x = Math.max(x, path.getPointAtLength(0).x);
+            x = Math.min(x, path.getPointAtLength(pathLength).x);
+
+            while (target >= start && target <= pathLength) {
+                var pos = path.getPointAtLength(target);
+
+                if (Math.abs(pos.x - x) < 0.01) {
+                    return pos.y;
+                } else if (pos.x > x) {
+                    end = target;
+                } else {
+                    start = target;
+                }
+                target = (start + end) / 2;
+            }
+        }
+
+
+        /**
          * Adjusts marker position.
          *
          * @method _adjustMarker
@@ -460,13 +495,12 @@
                 x = point.x;
 
                 // Marker
-                var mx = _svg.scale.x.invert(mouse[0]),
-                    ip = d3.interpolateNumber(left.y, right.y),
-                    y = ip((mx - left.x) / (right.x - left.x));
+                var y = _findY(_svg.plots.paths[d.name], mouse[0]);
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
                     .attr("cx", mouse[0] + 2)
-                    .attr("cy", _svg.scale.y(!isNaN(y) ? y : left.y))
+                    //.attr("cy", _svg.scale.y(!isNaN(y) ? y : left.y))
+                    .attr("cy", y)
                     .attr("r", 4)
                     .style("fill", _colors[d.name]);
 
@@ -540,7 +574,7 @@
                 .y(function (d) {
                     return _svg.scale.y(d.y);
                 })
-                .curve(_w.attr.smooth ? d3.curveCatmullRom : d3.curveLinear);
+                .curve(_w.attr.smooth ? d3.curveMonotoneX : d3.curveLinear);
             var error = d3.area()
                 .x(function (d) {
                     return _svg.scale.x(d.x) + 2;
@@ -549,7 +583,7 @@
                 }).y1(function (d) {
                     return _svg.scale.y(Math.min(d.y + d.hi, yMax));
                 })
-                .curve(_w.attr.smooth ? d3.curveCatmullRom : d3.curveLinear);
+                .curve(_w.attr.smooth ? d3.curveMonotoneX : d3.curveLinear);
 
             // Update axes
             _svg.axes.x
@@ -607,6 +641,7 @@
                 });
 
             // Build/update lines
+            _svg.plots.paths = {};
             _svg.plots.lines = _svg.g.selectAll(".line")
                 .data(data, function (d) {
                     return d.name;
@@ -624,9 +659,6 @@
                 .style("opacity", 0)
                 .style("fill", "none")
                 .merge(_svg.plots.lines)
-                .each(function () {
-                    _transition = true;
-                })
                 .on("mouseover", function (d) {
                     _w.attr.mouseover && _w.attr.mouseover(d.name);
                 })
@@ -648,8 +680,9 @@
                 .style("stroke", function (d) {
                     return _colors[d.name];
                 })
-                .on("end", function () {
+                .on("end", function (d) {
                     _transition = false;
+                    _svg.plots.paths[d.name] = d3.select(this).node();
                 });
 
             // Markers
