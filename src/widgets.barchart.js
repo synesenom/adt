@@ -72,6 +72,16 @@
          */
         _w.attr.add(this, 'xDomain', null);
 
+        /**
+         * Adds rounded corners to the bars. Default is 0.
+         *
+         * @method corner
+         * @memberOf du.widgets.barchart.BarChart
+         * @param {number} radius Corner radius to use.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, 'corner', 0);
+
         // Widget elements
         var _svg = {};
         var _data = [];
@@ -216,6 +226,8 @@
                 .style("fill", function (d) {
                     return _colors[d.name];
                 })
+                .style('rx', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
+                .style('ry', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
                 .style("pointer-events", "all")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none");
