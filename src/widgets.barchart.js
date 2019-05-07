@@ -83,7 +83,7 @@
         _w.attr.add(this, 'corner', 0);
 
         /**
-         * Adds values as indicative numbers on the bars. Default is false.
+         * Adds values as indicative numbers on the bars. Uses the same formatting as the tooltip. Default is false.
          *
          * @method values
          * @memberOf du.widgets.barchart.BarChart
@@ -323,10 +323,10 @@
                 .attr('text-anchor', 'middle')
                 .attr('alignment-baseline', 'middle')
                 .style('font-size', _w.attr.fontSize + 'px')
-                .style("fill", 'black')
+                .style("fill", 'white')
                 .style("stroke", "none")
                 .text(function(d) {
-                    return d.value;
+                    return _w.attr.tooltipYFormat(d.value);
                 });
             if (_w.attr.vertical) {
                 enterValues
@@ -357,10 +357,10 @@
                     })
                     .style('fill', function(d) {
                         var x = _svg.scale.y(d.value) - _w.attr.fontSize;
-                        return x > 1.5 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
+                        return x > 1.5 * _w.attr.fontSize ? 'white' : 'black';
                     })
                     .text(function(d) {
-                        return d.value;
+                        return _w.attr.tooltipYFormat(d.value);
                     });
             } else {
                 unionValues = unionValues
@@ -379,7 +379,7 @@
                         return h - y > 2 * _w.attr.fontSize ? 'white' : 'black';
                     })
                     .text(function(d) {
-                        return d.value;
+                        return _w.attr.tooltipYFormat(d.value);
                     });
             }
             unionValues
