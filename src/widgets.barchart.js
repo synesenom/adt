@@ -357,7 +357,7 @@
                     })
                     .style('fill', function(d) {
                         var x = _svg.scale.y(d.value) - _w.attr.fontSize;
-                        return x > 1.5 * _w.attr.fontSize ? 'white' : 'black';
+                        return x > 1.5 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
                     })
                     .text(function(d) {
                         return _w.attr.tooltipYFormat(d.value);
@@ -376,7 +376,7 @@
                     .style('fill', function(d) {
                         var y = _svg.scale.y(d.value) + 1.5 * _w.attr.fontSize;
                         var h = _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom;
-                        return h - y > 2 * _w.attr.fontSize ? 'white' : 'black';
+                        return h - y > 2 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
                     })
                     .text(function(d) {
                         return _w.attr.tooltipYFormat(d.value);
