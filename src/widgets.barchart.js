@@ -321,6 +321,7 @@
                     return "bar-value " + _w.utils.encode(d.name);
                 })
                 .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'middle')
                 .style('font-size', _w.attr.fontSize + 'px')
                 .style("fill", 'black')
                 .style("stroke", "none")
@@ -330,7 +331,7 @@
             if (_w.attr.vertical) {
                 enterValues
                     .attr("y", function (d) {
-                        return _svg.scale.x(d.name);
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
                     })
                     .attr("x", 1);
             } else {
@@ -348,9 +349,19 @@
                 unionValues = unionValues
                     .transition().duration(duration)
                     .attr("y", function (d) {
-                        return _svg.scale.x(d.name);
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
                     })
-                    .attr("x", 1);
+                    .attr("x", function(d) {
+                        var x = _svg.scale.y(d.value) - _w.attr.fontSize;
+                        return x > 1.5 * _w.attr.fontSize ? x : _svg.scale.y(d.value) + _w.attr.fontSize;
+                    })
+                    .style('fill', function(d) {
+                        var x = _svg.scale.y(d.value) - _w.attr.fontSize;
+                        return x > 1.5 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
+                    })
+                    .text(function(d) {
+                        return d.value;
+                    });
             } else {
                 unionValues = unionValues
                     .transition().duration(duration)

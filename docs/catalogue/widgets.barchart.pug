@@ -34,20 +34,20 @@ script.doc.
             kiwi: "limegreen",
             pear: "khaki"
         })
-        //.vertical(true)
+        .vertical(true)
         .tooltip(true)
         .render();
 script.doc.
     // update data
     setInterval(function () {
         barchart.data([
-            {name: "plum", value: parseInt(Math.random() * 10)},
-            {name: "banana", value: parseInt(Math.random() * 10)},
-            {name: "mango", value: parseInt(Math.random() * 10)},
-            {name: "orange", value: parseInt(Math.random() * 10)},
-            {name: "melon", value: parseInt(Math.random() * 10)},
-            {name: "kiwi", value: parseInt(Math.random() * 10)},
-            {name: "pear", value: parseInt(Math.random() * 10)}
+            {name: "plum", value: parseInt(Math.random() * 50)},
+            {name: "banana", value: parseInt(Math.random() * 50)},
+            {name: "mango", value: parseInt(Math.random() * 50)},
+            {name: "orange", value: parseInt(Math.random() * 20)},
+            {name: "melon", value: parseInt(Math.random() * 20)},
+            {name: "kiwi", value: parseInt(Math.random() * 20)},
+            {name: "pear", value: parseInt(Math.random() * 20)}
         ]).render();
-    }, 2000);
+    }, 20000);
 +resize()
