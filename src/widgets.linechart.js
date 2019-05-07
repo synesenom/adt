@@ -95,6 +95,17 @@
          */
         _w.attr.add(this, "lineStyles", null);
 
+        /**
+         * Adds smoothing to the curves and error bands. Smoothing is done by using Catmull-Rom splines for each curve.
+         * Default is false.
+         *
+         * @method smooth
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {boolean} on Whether to add smoothing to the curves.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
+         */
+        _w.attr.add(this, "smooth", false);
+
         // Widget elements.
         var _svg = {},
             _data = [],
@@ -528,7 +539,8 @@
                 })
                 .y(function (d) {
                     return _svg.scale.y(d.y);
-                });
+                })
+                .curve(_w.attr.smooth ? d3.curveCatmullRom : d3.curveLinear);
             var error = d3.area()
                 .x(function (d) {
                     return _svg.scale.x(d.x) + 2;
@@ -536,7 +548,8 @@
                     return _svg.scale.y(Math.max(d.y - d.lo, yMin));
                 }).y1(function (d) {
                     return _svg.scale.y(Math.min(d.y + d.hi, yMax));
-                });
+                })
+                .curve(_w.attr.smooth ? d3.curveCatmullRom : d3.curveLinear);
 
             // Update axes
             _svg.axes.x
