@@ -83,7 +83,7 @@
         _w.attr.add(this, 'corner', 0);
 
         /**
-         * Adds values as indicative numbers on the bars. Uses the same formatting as the tooltip. Default is false.
+         * Adds values as indicative numbers on the bars. Default is false.
          *
          * @method values
          * @memberOf du.widgets.barchart.BarChart
@@ -91,6 +91,18 @@
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
         _w.attr.add(this, 'values', false);
+
+        /**
+         * Sets the formatter for the bar values. Default is just the value itself.
+         *
+         * @method valueFormat
+         * @memberOf du.widgets.barchart.BarChart
+         * @param {Function} format The formatter function to use.
+         * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
+         */
+        _w.attr.add(this, 'valueFormat', function(x) {
+            return x;
+        });
 
         // Widget elements
         var _svg = {};
@@ -326,7 +338,7 @@
                 .style("fill", 'white')
                 .style("stroke", "none")
                 .text(function(d) {
-                    return _w.attr.tooltipYFormat(d.value);
+                    return _w.attr.valueFormat(d.value);
                 });
             if (_w.attr.vertical) {
                 enterValues
@@ -360,7 +372,7 @@
                         return x > 1.5 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
                     })
                     .text(function(d) {
-                        return _w.attr.tooltipYFormat(d.value);
+                        return _w.attr.valueFormat(d.value);
                     });
             } else {
                 unionValues = unionValues
@@ -379,7 +391,7 @@
                         return h - y > 2 * _w.attr.fontSize ? 'white' : _w.attr.fontColor;
                     })
                     .text(function(d) {
-                        return _w.attr.tooltipYFormat(d.value);
+                        return _w.attr.valueFormat(d.value);
                     });
             }
             unionValues
