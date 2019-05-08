@@ -75,12 +75,12 @@
         /**
          * Adds rounded corners to the bars. Default is 0.
          *
-         * @method corner
+         * @method corners
          * @memberOf du.widgets.barchart.BarChart
          * @param {number} radius Corner radius to use.
          * @returns {du.widgets.barchart.BarChart} Reference to the current BarChart.
          */
-        _w.attr.add(this, 'corner', 0);
+        _w.attr.add(this, 'corners', 0);
 
         /**
          * Adds values as indicative numbers on the bars. Default is false.
@@ -171,6 +171,27 @@
             };
         };
 
+        function _arc (r, sign) {
+            return r ? 'a' + r * sign[0] + ',' + r * sign[1]
+                + ' 0 0 1 ' + r * sign[2] + ',' + r * sign[3] : '';
+        }
+
+        function _roundedRect(x, y, width, height, r) {
+            r = [
+                Math.min(r[0], height, width) + 0.01,
+                Math.min(r[1], height, width) + 0.01,
+                Math.min(r[2], height, width) + 0.01,
+                Math.min(r[3], height, width) + 0.01
+            ];
+
+            return 'M' + (x + r[0]) + ',' + y
+                + 'h' + (width - r[0] - r[1]) + _arc(r[1], [1, 1, 1, 1])
+                + 'v' + (height - r[1] - r[2]) + _arc(r[2], [1, 1, -1, 1])
+                + 'h' + (-width + r[2] + r[3]) + _arc(r[3], [1, 1, -1, -1])
+                + 'v' + (-height + r[3] + r[0]) + _arc(r[0], [1, 1, 1, -1])
+                + 'z';
+        }
+
         // Builder
         _w.render.build = function () {
             _svg = _w.utils.standardAxis();
@@ -243,34 +264,52 @@
                 .transition().duration(duration)
                 .style('opacity', 0)
                 .remove();
-            var enterBars = _svg.plots.bars.enter().append("rect")
+            var enterBars = _svg.plots.bars.enter().append("path")
                 .attr("class", function (d) {
                     return "bar " + _w.utils.encode(d.name);
                 })
                 .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .style('rx', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
-                .style('ry', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
+                //.style('rx', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
+                //.style('ry', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
                 .style("pointer-events", "all")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none");
             if (_w.attr.vertical) {
-                enterBars
+                /*enterBars
                     .attr("y", function (d) {
                         return _svg.scale.x(d.name);
                     })
                     .attr("height", _svg.scale.x.bandwidth())
                     .attr("x", 1)
-                    .attr("width", 0);
+                    .attr("width", 0);*/
+                enterBars.attr('d', function(d) {
+                    return _roundedRect(
+                        1,
+                        _svg.scale.x(d.name),
+                        0,
+                        _svg.scale.x.bandwidth(),
+                        [0, _w.attr.corners, _w.attr.corners, 0]
+                    );
+                });
             } else {
-                enterBars
+                /*enterBars
                     .attr("x", function (d) {
                         return _svg.scale.x(d.name);
                     })
                     .attr("width", _svg.scale.x.bandwidth())
                     .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
-                    .attr("height", 0);
+                    .attr("height", 0);*/
+                enterBars.attr('d', function(d) {
+                    return _roundedRect(
+                        _svg.scale.x(d.name),
+                        _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom,
+                        _svg.scale.x.bandwidth(),
+                        0,
+                        [_w.attr.corners, _w.attr.corners, 0, 0]
+                    );
+                });
             }
             var unionBars = enterBars.merge(_svg.plots.bars)
                 .each(function () {
@@ -288,18 +327,27 @@
             if (_w.attr.vertical) {
                 unionBars = unionBars
                     .transition().duration(duration)
-                    .attr("y", function (d) {
+                    /*.attr("y", function (d) {
                         return _svg.scale.x(d.name);
                     })
                     .attr("height", _svg.scale.x.bandwidth())
                     .attr("x", 1)
                     .attr("width", function (d) {
                         return _svg.scale.y(d.value);
+                    });*/
+                    .attr('d', function(d) {
+                        return _roundedRect(
+                            1,
+                            _svg.scale.x(d.name),
+                            _svg.scale.y(d.value),
+                            _svg.scale.x.bandwidth(),
+                            [0, _w.attr.corners, _w.attr.corners, 0]
+                        );
                     });
             } else {
                 unionBars = unionBars
                     .transition().duration(duration)
-                    .attr("x", function (d) {
+                    /*.attr("x", function (d) {
                         return _svg.scale.x(d.name);
                     })
                     .attr("width", _svg.scale.x.bandwidth())
@@ -308,6 +356,15 @@
                     })
                     .attr("height", function (d) {
                         return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
+                    });*/
+                    .attr('d', function(d) {
+                        return _roundedRect(
+                            _svg.scale.x(d.name),
+                            _svg.scale.y(d.value),
+                            _svg.scale.x.bandwidth(),
+                            _svg.scale.y(0) - _svg.scale.y(d.value),
+                            [_w.attr.corners, _w.attr.corners, 0, 0]
+                        );
                     });
             }
             unionBars
