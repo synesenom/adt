@@ -160,7 +160,7 @@
 
             // Build tooltip content
             return {
-                title: _w.attr.tooltipXFormat(point.name),
+                title: _w.attr.tooltipTitleFormat(point.name,
                 stripe: _colors[point.name],
                 content: {
                     type: "metrics",
