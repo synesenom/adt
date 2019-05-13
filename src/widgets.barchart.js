@@ -271,19 +271,10 @@
                 .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                //.style('rx', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
-                //.style('ry', _w.attr.corner > 0 ? _w.attr.corner + 'px' : null)
                 .style("pointer-events", "all")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none");
             if (_w.attr.vertical) {
-                /*enterBars
-                    .attr("y", function (d) {
-                        return _svg.scale.x(d.name);
-                    })
-                    .attr("height", _svg.scale.x.bandwidth())
-                    .attr("x", 1)
-                    .attr("width", 0);*/
                 enterBars.attr('d', function(d) {
                     return _roundedRect(
                         1,
@@ -294,13 +285,6 @@
                     );
                 });
             } else {
-                /*enterBars
-                    .attr("x", function (d) {
-                        return _svg.scale.x(d.name);
-                    })
-                    .attr("width", _svg.scale.x.bandwidth())
-                    .attr("y", _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom)
-                    .attr("height", 0);*/
                 enterBars.attr('d', function(d) {
                     return _roundedRect(
                         _svg.scale.x(d.name),
@@ -327,14 +311,6 @@
             if (_w.attr.vertical) {
                 unionBars = unionBars
                     .transition().duration(duration)
-                    /*.attr("y", function (d) {
-                        return _svg.scale.x(d.name);
-                    })
-                    .attr("height", _svg.scale.x.bandwidth())
-                    .attr("x", 1)
-                    .attr("width", function (d) {
-                        return _svg.scale.y(d.value);
-                    });*/
                     .attr('d', function(d) {
                         return _roundedRect(
                             1,
@@ -347,16 +323,6 @@
             } else {
                 unionBars = unionBars
                     .transition().duration(duration)
-                    /*.attr("x", function (d) {
-                        return _svg.scale.x(d.name);
-                    })
-                    .attr("width", _svg.scale.x.bandwidth())
-                    .attr("y", function (d) {
-                        return _svg.scale.y(d.value);
-                    })
-                    .attr("height", function (d) {
-                        return _w.attr.height - _w.attr.margins.top - _w.attr.margins.bottom - _svg.scale.y(d.value);
-                    });*/
                     .attr('d', function(d) {
                         return _roundedRect(
                             _svg.scale.x(d.name),
@@ -510,6 +476,9 @@
                 .style("font-size", _w.attr.fontSize + "px")
                 .style("fill", _w.attr.fontColor)
                 .text(_w.attr.vertical ? _w.attr.xLabel : _w.attr.yLabel);
+
+            // Bar values
+            _svg.plots.values.style('font-size', _w.attr.fontSize + 'px');
         };
     }
 
