@@ -478,7 +478,9 @@
                 .text(_w.attr.vertical ? _w.attr.xLabel : _w.attr.yLabel);
 
             // Bar values
-            _svg.plots.values.style('font-size', _w.attr.fontSize + 'px');
+            if (typeof _svg.plots.values !== 'undefined') {
+                _svg.plots.values.style('font-size', _w.attr.fontSize + 'px');
+            }
         };
     }
 
