@@ -106,6 +106,16 @@
          */
         _w.attr.add(this, "smooth", false);
 
+        /**
+         * Adds dots to the lines at each data point. Default value is false.
+         *
+         * @method dots
+         * @memberOf du.widgets.linechart.LineChart
+         * @param {boolean} on Whether to add dots to the lines.
+         * @returns {du.widgets.linechart.LineChart} Reference to the current LineChart.
+         */
+        _w.attr.add(this, "dots", false);
+
         // Widget elements.
         var _svg = {},
             _data = [],
@@ -568,7 +578,7 @@
             // Calculate line/error function
             var line = d3.line()
                 .x(function (d) {
-                    return _svg.scale.x(d.x) + 2;
+                    return _svg.scale.x(d.x);
                 })
                 .y(function (d) {
                     return _svg.scale.y(d.y);
@@ -576,7 +586,7 @@
                 .curve(_w.attr.smooth ? d3.curveMonotoneX : d3.curveLinear);
             var error = d3.area()
                 .x(function (d) {
-                    return _svg.scale.x(d.x) + 2;
+                    return _svg.scale.x(d.x);
                 }).y0(function (d) {
                     return _svg.scale.y(Math.max(d.y - d.lo, yMin));
                 }).y1(function (d) {
@@ -596,27 +606,28 @@
                     .tickValues(_w.attr.yTicks)
                     .scale(_svg.scale.y));
 
-            // Build/update error bands
+            // Create colors
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
-            _svg.plots.errors = _svg.g.selectAll(".error")
+
+            // Groups
+            _svg.plots.groups = _svg.g.selectAll(".plot-group")
                 .data(data, function (d) {
                     return d.name;
                 });
-            _svg.plots.errors.exit()
+            _svg.plots.groups.exit()
                 .transition().duration(duration)
-                .style("opacity", 0)
+                .style('opacity', 0)
                 .remove();
-            _svg.plots.errors = _svg.plots.errors.enter().append("path")
+            var groups = _svg.plots.groups.enter().append("g")
                 .attr("class", function (d) {
-                    return "error " + _w.utils.encode(d.name);
+                    return "plot-group " + _w.utils.encode(d.name);
                 })
                 .style("shape-rendering", "geometricPrecision")
-                .style("opacity", 0)
-                .style("stroke", "none")
-                .style("fill", "transparent")
-                .merge(_svg.plots.errors)
+                .style("stroke", "transparent")
+                .style("fill", "transparent");
+            _svg.plots.groups = groups.merge(_svg.plots.groups)
                 .each(function () {
                     _transition = true;
                 })
@@ -628,22 +639,47 @@
                 })
                 .on("click", function (d) {
                     _w.attr.click && _w.attr.click(d.name);
+                });
+            _svg.plots.groups
+                .transition().duration(duration)
+                .style("fill", function (d) {
+                    return _colors[d.name];
                 })
+                .style("stroke", function (d) {
+                    return _colors[d.name];
+                })
+                .on("end", function () {
+                    _transition = false;
+                });
+
+            // Add error bands
+            _svg.plots.errors = _svg.plots.groups.selectAll(".error")
+                .data(function(d) {
+                    return [d];
+                });
+            _svg.plots.errors.exit()
+                .transition().duration(duration)
+                .style("opacity", 0)
+                .remove();
+            _svg.plots.errors.enter().append("path")
+                .attr("class", function (d) {
+                    return "error " + _w.utils.encode(d.name);
+                })
+                .style("opacity", 0)
+                .style("stroke", "none")
+                .merge(_svg.plots.errors)
                 .transition().duration(duration)
                 .attr("d", function (d) {
                     return error(d.values);
                 })
                 .style("opacity", 1)
-                .style("fill-opacity", 0.2)
-                .style("fill", function (d) {
-                    return _colors[d.name];
-                });
+                .style("fill-opacity", 0.2);
 
-            // Build/update lines
+            // Add lines and paths
             _svg.plots.paths = {};
-            _svg.plots.lines = _svg.g.selectAll(".line")
-                .data(data, function (d) {
-                    return d.name;
+            _svg.plots.lines = _svg.plots.groups.selectAll(".line")
+                .data(function (d) {
+                    return [d];
                 });
             _svg.plots.lines.exit()
                 .transition().duration(duration)
@@ -654,19 +690,9 @@
                 .attr("class", function (d) {
                     return "line " + _w.utils.encode(d.name);
                 })
-                .style("shape-rendering", "geometricPrecision")
                 .style("opacity", 0)
                 .style("fill", "none")
                 .merge(_svg.plots.lines)
-                .on("mouseover", function (d) {
-                    _w.attr.mouseover && _w.attr.mouseover(d.name);
-                })
-                .on("mouseleave", function (d) {
-                    _w.attr.mouseleave && _w.attr.mouseleave(d.name);
-                })
-                .on("click", function (d) {
-                    _w.attr.click && _w.attr.click(d.name);
-                })
                 .transition().duration(duration)
                 .style("opacity", 1)
                 .attr("d", function (d) {
@@ -676,43 +702,39 @@
                 .style("stroke-dasharray", function(d) {
                     return _w.attr.lineStyles && _w.attr.lineStyles[d.name] ? _w.attr.lineStyles[d.name] : null;
                 })
-                .style("stroke", function (d) {
-                    return _colors[d.name];
-                })
                 .on("end", function (d) {
                     _transition = false;
                     _svg.plots.paths[d.name] = d3.select(this).node();
                 });
 
-            // Build/update dots
+            // Add dots
             if (_w.attr.dots) {
-                _svg.plots.dots = _svg.g.selectAll(".dot")
-                    .data(data, function (d) {
-                        return d.name;
+                _svg.plots.dots = _svg.plots.groups.selectAll(".dot")
+                    .data(function (d) {
+                        return d.values;
                     });
                 _svg.plots.dots.exit()
                     .transition().duration(duration)
                     .style("opacity", 0)
                     .remove();
-                _svg.plots.dots.enter()
-                    .append("circle")
-                    .attr("class", function (d) {
-                        return "dot " + _w.utils.encode(d.name);
-                    })
-                    .style("shape-rendering", "geometricPrecision")
+                _svg.plots.dots.enter().append("circle")
+                    .attr("class", "dot")
                     .style("opacity", 0)
-                    .style("fill", "none")
+                    .attr("cx", function (d) {
+                        return _svg.scale.x(d.x);
+                    })
+                    .attr("cy", function (d) {
+                        return _svg.scale.y(d.y);
+                    })
                     .merge(_svg.plots.dots)
                     .transition().duration(duration)
                     .style("opacity", 1)
+                    .attr("r", 3)
                     .attr("cx", function (d) {
-                        return line(d);
+                        return _svg.scale.x(d.x);
                     })
-                    .style("fill", function (d) {
-                        return _colors[d.name];
-                    })
-                    .on("end", function (d) {
-                        _transition = false;
+                    .attr("cy", function (d) {
+                        return _svg.scale.y(d.y);
                     });
             }
 

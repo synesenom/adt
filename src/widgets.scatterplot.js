@@ -168,7 +168,7 @@
                     .tickValues(_w.attr.yTicks)
                     .scale(_svg.scale.y));
 
-            // Build/update plots
+            // Create colors
             _colors = _w.utils.colors(_data ? _data.map(function (d) {
                 return d.name;
             }) : null);
