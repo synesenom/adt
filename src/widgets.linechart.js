@@ -187,7 +187,7 @@
             while (target >= start && target <= pathLength) {
                 var pos = path.getPointAtLength(target);
 
-                if (Math.abs(pos.x - x) < 0.01) {
+                if (Math.abs(pos.x - x) < 0.0001) {
                     return pos.y;
                 } else if (pos.x > x) {
                     end = target;
@@ -498,8 +498,7 @@
                 var y = _findY(_svg.plots.paths[d.name], mouse[0]);
                 tt[d.name] = tt[d.name] || _svg.g.append("circle");
                 tt[d.name]
-                    .attr("cx", mouse[0] + 2)
-                    //.attr("cy", _svg.scale.y(!isNaN(y) ? y : left.y))
+                    .attr("cx", mouse[0])
                     .attr("cy", y)
                     .attr("r", 4)
                     .style("fill", _colors[d.name]);
@@ -684,6 +683,38 @@
                     _transition = false;
                     _svg.plots.paths[d.name] = d3.select(this).node();
                 });
+
+            // Build/update dots
+            if (_w.attr.dots) {
+                _svg.plots.dots = _svg.g.selectAll(".dot")
+                    .data(data, function (d) {
+                        return d.name;
+                    });
+                _svg.plots.dots.exit()
+                    .transition().duration(duration)
+                    .style("opacity", 0)
+                    .remove();
+                _svg.plots.dots.enter()
+                    .append("circle")
+                    .attr("class", function (d) {
+                        return "dot " + _w.utils.encode(d.name);
+                    })
+                    .style("shape-rendering", "geometricPrecision")
+                    .style("opacity", 0)
+                    .style("fill", "none")
+                    .merge(_svg.plots.dots)
+                    .transition().duration(duration)
+                    .style("opacity", 1)
+                    .attr("cx", function (d) {
+                        return line(d);
+                    })
+                    .style("fill", function (d) {
+                        return _colors[d.name];
+                    })
+                    .on("end", function (d) {
+                        _transition = false;
+                    });
+            }
 
             // Markers
             for (var marker in _markers) {
