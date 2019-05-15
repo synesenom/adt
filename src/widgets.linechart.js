@@ -167,6 +167,7 @@
          */
         this.highlight = function (key, duration) {
             if (!_transition) {
+                _w.utils.highlight(this, _svg, ".dot", key, duration);
                 _w.utils.highlight(this, _svg, ".line", key, duration);
                 _w.utils.highlight(this, _svg, ".error", key, duration);
                 _w.utils.highlight(this, _svg, ".marker", key, duration);
@@ -723,7 +724,9 @@
                     .style("opacity", 0)
                     .remove();
                 _svg.plots.dots.enter().append("circle")
-                    .attr("class", "dot")
+                    .attr("class", function(d) {
+                        return "dot " + _w.utils.encode(d.name);
+                    })
                     .style("opacity", 0)
                     .attr("cx", function (d) {
                         return _svg.scale.x(d.x);
