@@ -141,10 +141,6 @@
 
         // Tooltip builder
         _w.utils.tooltip = function (mouse) {
-            if (!_data) {
-                return;
-            }
-
             // Get bisection
             var dir = _w.attr.vertical ? 1 : 0;
             var bisect = d3.bisector(function (d) {
@@ -160,6 +156,9 @@
             // Get data entry
             var left = _data[i - 1] ? _data[i - 1] : _data[i];
             var right = _data[i] ? _data[i] : _data[i - 1];
+            if (typeof left === 'undefined' || typeof right === 'undefined') {
+                return;
+            }
             var point = mouse[dir] - left.name > right.name - mouse[dir] ? right : left;
 
             // Build tooltip content
