@@ -9,31 +9,7 @@ script.doc.
     var width = parseFloat(d3.select("#widget").style("width"));
     var height = parseFloat(d3.select("#widget").style("height"));
     var linechart = new du.widgets.LineChart("mychart", "#widget")
-        .data([
-            {
-                name: "mango",
-                values: new Array(100).fill(0).map(function (d, i) {
-                    return {
-                        x: i,
-                        y: Math.pow(i / 40, 2),
-                        lo: i / 100,
-                        hi: i / 150
-                    };
-                })
-            },
-            {
-                name: "kiwi",
-                values: new Array(100).fill(0).map(function (d, i) {
-                    return {
-                        x: i,
-                        y: Math.log(i + 1)
-                           * Math.pow(Math.cos(Math.PI * i / 15), 2) + 2,
-                        lo: .4,
-                        hi: .9
-                    };
-                })
-            }
-        ])
+        .data([])
         .width(width)
         .height(height)
         .xLabel("days")

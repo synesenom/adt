@@ -182,10 +182,13 @@
          * @memberOf du.widgets.linechart.LineChart
          * @param {Object} path SVG path element.
          * @param {number} x The X coordinate of the point.
-         * @returns {number} The corresponding Y coordinate of the point on the path.
+         * @returns {(undefined|number)} The corresponding Y coordinate of the point on the path.
          * @private
          */
         function _findY(path, x) {
+            if (typeof path === 'undefined') {
+                return undefined;
+            }
             var pathLength = path.getTotalLength();
             var start = 0;
             var end = pathLength;
@@ -506,12 +509,14 @@
 
                 // Marker
                 var y = _findY(_svg.plots.paths[d.name], mouse[0]);
-                tt[d.name] = tt[d.name] || _svg.g.append("circle");
-                tt[d.name]
-                    .attr("cx", mouse[0])
-                    .attr("cy", y)
-                    .attr("r", 4)
-                    .style("fill", _colors[d.name]);
+                if (typeof y === 'number') {
+                    tt[d.name] = tt[d.name] || _svg.g.append("circle");
+                    tt[d.name]
+                        .attr("cx", mouse[0])
+                        .attr("cy", y)
+                        .attr("r", 4)
+                        .style("fill", _colors[d.name]);
+                }
 
                 return {
                     name: d.name,
