@@ -1034,8 +1034,8 @@
             // Get tooltip ID and mouse position
             var tooltipId = _id + "-tooltip";
             var m = d3.mouse(_widget.node());
-            var mx = d3.event.clientX;
-            var my = d3.event.clientY;
+            var mx = d3.event.pageX;
+            var my = d3.event.pageY;
             var container = _widget.node().getBoundingClientRect();
 
             // If tooltip is hidden
@@ -1045,10 +1045,14 @@
                 return;
             }
 
+            // Get scroll position
+            var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
             // If content is null or we are outside the charting area
             // just remove tooltip
-            if (mx < container.left + _attr.margins.left || mx > container.right - _attr.margins.right
-                || my < container.top + _attr.margins.top || my > container.bottom - _attr.margins.bottom) {
+            if (mx < container.left + _attr.margins.left - scrollLeft || mx > container.right - _attr.margins.right + scrollLeft
+                || my < container.top + _attr.margins.top - scrollTop || my > container.bottom - _attr.margins.bottom + scrollTop) {
                 _hideTooltip();
                 _utils.tooltip();
                 return;
@@ -1076,7 +1080,7 @@
                 color.opacity = 0.3;
                 tooltip = d3.select('#' + _IDS.tooltipContainer).append("div")
                     .attr("id", tooltipId)
-                    .style("position", "fixed")
+                    .style("position", "absolute")
                     .style("min-width", "100px")
                     .style("background-color", "rgba(255, 255, 255, 0.98)")
                     .style("border-radius", "2px")
@@ -1166,11 +1170,11 @@
                 ty = my + 20;
 
             // Correct for edges
-            if (tx + tw > container.right - _attr.margins.right - 5) {
-                tx -= tw + 40;
+            if (tx + tw > container.right - _attr.margins.right + scrollLeft - 5) {
+                tx -= tw + scrollLeft + 40;
             }
-            if (ty + th > container.bottom - _attr.margins.bottom - 5) {
-                ty = container.bottom - _attr.margins.bottom - 10 - th;
+            if (ty + th > container.bottom - _attr.margins.bottom + scrollTop - 5) {
+                ty = container.bottom - _attr.margins.bottom + scrollTop - 10 - th;
             }
 
             // Move to position
