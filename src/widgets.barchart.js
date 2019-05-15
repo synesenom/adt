@@ -141,6 +141,10 @@
 
         // Tooltip builder
         _w.utils.tooltip = function (mouse) {
+            if (!_data) {
+                return;
+            }
+
             // Get bisection
             var dir = _w.attr.vertical ? 1 : 0;
             var bisect = d3.bisector(function (d) {
