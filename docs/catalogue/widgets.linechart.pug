@@ -40,16 +40,12 @@ script.doc.
         .yLabel("price")
         .margins(40)
         .fontSize(14)
-        .dots(true)
         .lineStyles({
             mango: "4 4"
         })
         .tooltip(true)
         .tooltipYFormat(function(d) { return d.toFixed(2) })
         .render();
-    setTimeout(function() {
-        linechart.highlight('mango');
-    }, 1000);
 script.doc.
     // update data
     setInterval(function () {
