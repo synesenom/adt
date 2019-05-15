@@ -37,12 +37,16 @@ var linechart = new du.widgets.LineChart("mychart", "#widget")
     .yLabel("price")
     .margins(40)
     .fontSize(14)
+    .dots(true)
     .lineStyles({
         mango: "4 4"
     })
     .tooltip(true)
     .tooltipYFormat(function(d) { return d.toFixed(2) })
-    .render();</script><script class="doc">// update data
+    .render();
+setTimeout(function() {
+    linechart.highlight('mango');
+}, 1000);</script><script class="doc">// update data
 setInterval(function () {
     var tau = 2 * Math.random();
     var phi = 5 * Math.random() + 10;

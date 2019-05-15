@@ -717,7 +717,13 @@
             if (_w.attr.dots) {
                 _svg.plots.dots = _svg.plots.groups.selectAll(".dot")
                     .data(function (d) {
-                        return d.values;
+                        return d.values.map(function(v) {
+                            return {
+                                x: v.x,
+                                y: v.y,
+                                name: d.name
+                            };
+                        });
                     });
                 _svg.plots.dots.exit()
                     .transition().duration(duration)
