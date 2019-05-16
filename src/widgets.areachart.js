@@ -199,11 +199,14 @@
                 });
 
             // Update axes
+            // Update axes
+            _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
                 .transition().duration(duration)
                 .call(_svg.axisFn.x
                     .tickValues(_w.attr.xTicks)
                     .scale(_svg.scale.x));
+            _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .transition().duration(duration)
                 .call(_svg.axisFn.y
@@ -269,9 +272,11 @@
             // Axes
             _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
+                .call(_svg.axisFn.x)
                 .attr("transform", "translate(0," + _w.attr.innerHeight + ")");
             _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
+                .call(_svg.axisFn.y)
                 .attr("transform", "translate(0," + 1 + ")");
             _svg.g.selectAll(".tick > line")
                 .style("shape-rendering", "geometricPrecision")
