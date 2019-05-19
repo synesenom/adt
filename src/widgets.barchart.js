@@ -369,7 +369,7 @@
             if (_w.attr.vertical) {
                 enterValues
                     .attr("y", function (d) {
-                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2 + 1;
                     })
                     .attr("x", 1);
             } else {
@@ -385,13 +385,17 @@
                 });
             if (_w.attr.vertical) {
                 unionValues = unionValues
+                    .attr('text-anchor', function(d) {
+                        var x = _svg.scale.y(d.value) - _w.attr.fontSize;
+                        return x > 1.5 * _w.attr.fontSize ? 'end' : 'start';
+                    })
                     .transition().duration(duration)
                     .attr("y", function (d) {
-                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2;
+                        return _svg.scale.x(d.name) + _svg.scale.x.bandwidth() / 2 + 1;
                     })
                     .attr("x", function(d) {
                         var x = _svg.scale.y(d.value) - _w.attr.fontSize;
-                        return x > 1.5 * _w.attr.fontSize ? x : _svg.scale.y(d.value) + _w.attr.fontSize;
+                        return x > 1.5 * _w.attr.fontSize ? x + 0.5 * _w.attr.fontSize : _svg.scale.y(d.value) + _w.attr.fontSize;
                     })
                     .style('fill', function(d) {
                         var x = _svg.scale.y(d.value) - _w.attr.fontSize;
