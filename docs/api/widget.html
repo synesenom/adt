@@ -129,9 +129,9 @@
 <br>Adds a description for the widget. A description is a tooltip that is shown if the user right-clicks on the widget. After 15 second or if the user leaves the widget, the description disappears. 
 <br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>content</i></td><td><code>string</code></td><td>Content of the description. Can be HTML formatted.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.placeholder'>placeholder</h2>
-<div class='card'><pre><code>du.widget.Widget.placeholder(content)</code></pre>
+<div class='card'><pre><code>du.widget.Widget.placeholder(content, offset)</code></pre>
 <br>Replaces the widget with a placeholder. Useful for showing missing data. 
-<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>content</i></td><td><code>string</code></td><td>Content to show in place of the widget. Can be HTML formatted. If nothing is passed, the widget is shown again.</td></tr></table>
+<br><table><thead><tr><th class='fifth'>arg</th><th class='fifth'>type</th><th>description</th></tr></thead><tr><td><i>content</i></td><td><code>string</code></td><td>Content to show in place of the widget. Can be HTML formatted. If nothing is passed,</td></tr><tr><td><i>offset</i></td><td><code>offset</code></td><td>Vertical offset for the placeholder. Default is 0.</td></tr></table>
 <table><thead><tr><th class='fifth'>return</th><th>description</th></tr></thead><tr><td><i><code>du.widget.Widget</code></i></td><td>Reference to the current widget.</td></tr></table></div><br><h2 id='api-du.widget.Widget.render'>render</h2>
 <div class='card'><pre><code>du.widget.Widget.render([duration])</code></pre>
 <br>Renders the widget. Note that without calling this method, the widget is not rendered at all. After any changes in style or bound data, this method should be called. 

@@ -946,10 +946,10 @@
          * @method placeholder
          * @memberOf du.widget.Widget
          * @param {string} content Content to show in place of the widget. Can be HTML formatted. If nothing is passed,
-         * the widget is shown again.
+         * @param {offset} offset Vertical offset for the placeholder. Default is 0.
          * @returns {du.widget.Widget} Reference to the current widget.
          */
-        this.placeholder = function(content) {
+        this.placeholder = function(content, offset) {
             var duration = 300;
             var placeHolderId = "du-widget-placeholder-" + name;
             if (typeof content === "string") {
@@ -974,6 +974,7 @@
                     _attr.placeholder.append("span")
                         .style("display", "inline-block")
                         .style("vertical-align", "middle")
+                        .style('margin-bottom', (typeof offset === 'number' ? offset : 0) + 'px')
                         .style("line-height", "normal")
                         .style("font-weight", _attr.fontWeight)
                         .style("font-size", _attr.fontSize)
