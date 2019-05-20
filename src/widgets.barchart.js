@@ -143,9 +143,13 @@
         _w.utils.tooltip = function (mouse) {
             // Get bisection
             var dir = _w.attr.vertical ? 1 : 0;
-            var bisect = d3.bisector(function (d) {
+            var bisector = d3.bisector(function (d) {
                 return _svg.scale.x(d.name);
-            }).right;
+            });
+            if (typeof bisector === 'undefined') {
+                return;
+            }
+            var bisect = bisector.right;
             var i = mouse ? bisect(_data, mouse[dir]) : null;
 
             // If no mouse is given, just remove tooltip elements
