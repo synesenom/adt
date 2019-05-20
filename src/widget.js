@@ -170,7 +170,7 @@
             fontWeight: "normal",
             innerWidth: 200,
             innerHeight: 150,
-            placeholder: false,
+            placeholder: null,
 
             /**
              * Attribute categories.
@@ -959,10 +959,9 @@
                     .style("opacity", 0);
 
                 // Update placeholder (and add if needed)
-                var ph = d3.select("#" + placeHolderId);
-                if (ph.empty()) {
+                if (_attr.placeholder === null || _attr.placeholder.empty()) {
                     var realParent = parent ? parent : "body";
-                    ph = d3.select(realParent).append("div")
+                    _attr.placeholder = d3.select(realParent).append("div")
                         .attr("id", placeHolderId)
                         .style("position", "absolute")
                         .style("width", _attr.width + "px")
@@ -971,8 +970,8 @@
                         .style(_attr.x >= 0 ? "left" : "right", Math.abs(_attr.x) + _attr.xDim)
                         .style(_attr.y >= 0 ? "top" : "bottom", Math.abs(_attr.y) + _attr.yDim)
                         .style("text-align", "center")
-                        .style("pointer-events", "none")
-                        .append("span")
+                        .style("pointer-events", "none");
+                    _attr.placeholder.append("span")
                         .style("display", "inline-block")
                         .style("vertical-align", "middle")
                         .style("line-height", "normal")
@@ -984,23 +983,18 @@
                         .transition().duration(duration)
                         .style("opacity", 1);
                 } else {
-                    ph.html(content);
+                    _attr.placeholder.html(content);
                 }
-
-                // Set placeholder flag
-                _attr.placeholder = true;
             } else {
                 // Show widget
                 _widget.transition().duration();
                 _widget
                     .transition().duration(duration)
                     .style("opacity", 1);
-                var ph = d3.select("#" + placeHolderId);
-                if (!ph.empty()) {
-                    ph.remove();
+                if (_attr.placeholder !== null && !_attr.placeholder.empty()) {
+                    _attr.placeholder.remove();
+                    _attr.placeholder = null;
                 }
-
-                _attr.placeholder = false;
             }
             return this;
         };
@@ -1293,7 +1287,7 @@
             _widget
                 .style("pointer-events", _attr.tooltip && _utils.tooltip ? "all" : null)
                 .on("mousemove", function () {
-                    _attr.tooltip && !_attr.placeholder && _utils.tooltip && _showTooltip(true);
+                    _attr.tooltip && _attr.placeholder === null && _utils.tooltip && _showTooltip(true);
                 })
                 .on("mouseleave", function() {
                     _attr.tooltip && _utils.tooltip && _showTooltip(false);
@@ -1318,6 +1312,17 @@
                 .style("font-family", "inherit");
             _widget.selectAll("g")
                 .attr("font-family", "inherit");
+
+            // Placeholder
+            if (_attr.placeholder !== null && !_attr.placeholder.empty()) {
+                _attr.placeholder.style("width", _attr.width + "px")
+                    .style("height", _attr.height + "px")
+                    .style("line-height", _attr.height + "px")
+                    .style(_attr.x >= 0 ? "left" : "right", Math.abs(_attr.x) + _attr.xDim)
+                    .style(_attr.y >= 0 ? "top" : "bottom", Math.abs(_attr.y) + _attr.yDim)
+                    .style('font-size', _attr.fontSize)
+                    .style('color', _attr.fontColor);
+            }
 
             // Additional styling
             _render.style && _render.style();
