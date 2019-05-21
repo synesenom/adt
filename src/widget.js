@@ -1026,19 +1026,19 @@
          * @private
          */
         function _showTooltip(on) {
-            // Get tooltip ID and mouse position
-            var tooltipId = _id + "-tooltip";
-            var m = d3.mouse(_widget.node());
-            var mx = d3.event.pageX;
-            var my = d3.event.pageY;
-            var container = _widget.node().getBoundingClientRect();
-
             // If tooltip is hidden
             if (!on) {
                 _hideTooltip();
                 _utils.tooltip();
                 return;
             }
+
+            // Get tooltip ID and mouse position
+            var tooltipId = _id + "-tooltip";
+            var m = d3.mouse(_widget.node());
+            var mx = d3.event.pageX;
+            var my = d3.event.pageY;
+            var container = _widget.node().getBoundingClientRect();
 
             // Get scroll position
             var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
@@ -1171,6 +1171,7 @@
             if (ty + th > container.bottom - _attr.margins.bottom + scrollTop - 5) {
                 ty = container.bottom - _attr.margins.bottom + scrollTop - 10 - th;
             }
+            console.log(tx, ty);
 
             // Move to position
             tooltip
