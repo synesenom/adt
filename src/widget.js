@@ -1086,8 +1086,8 @@
                     .style("color", _attr.fontColor)
                     .style("pointer-events", "none")
                     .style('z-index', 9999)
-                    .style("left", (container.left + container.right) / 2 + 'px')
-                    .style("top", (container.top + container.bottom) / 2 + 'px');
+                    .style("left", ((container.left + container.right) / 2 + scrollLeft) + 'px')
+                    .style("top", ((container.top + container.bottom) / 2 + scrollTop) + 'px');
             }
 
             // Erase tooltip content and add title
@@ -1171,7 +1171,6 @@
             if (ty + th > container.bottom - _attr.margins.bottom + scrollTop - 5) {
                 ty = container.bottom - _attr.margins.bottom + scrollTop - 10 - th;
             }
-            console.log(tx, ty);
 
             // Move to position
             tooltip
