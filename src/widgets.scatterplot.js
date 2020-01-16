@@ -45,6 +45,17 @@
          */
         _w.attr.add(this, "opacity", 0.4);
 
+        /**
+         * Sets the size of the dots. in pixels.
+         * Default is 3.
+         *
+         * @method size
+         * @memberOf du.widgets.scatterplot.ScatterPlot
+         * @param {number} value The size to set.
+         * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
+         */
+        _w.attr.add(this, "size", 0.4);
+
         // Widget elements.
         var _svg = {};
         var _data = [];
@@ -157,11 +168,13 @@
             };
 
             // Update axes
+            _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
                 .transition().duration(duration)
                 .call(_svg.axisFn.x
                     .tickValues(_w.attr.xTicks)
                     .scale(_svg.scale.x));
+            _svg.axisFn.y.tickFormat(_w.attr.yTickFormat);
             _svg.axes.y
                 .transition().duration(duration)
                 .call(_svg.axisFn.y
@@ -233,7 +246,7 @@
                 .merge(_svg.plots.dots)
                 .transition().duration(duration)
                 .style("opacity", 1)
-                .attr("r", 3)
+                .attr("r", _w.attr.size)
                 .attr("cx", function (d) {
                     return _svg.scale.x(d.x);
                 })
