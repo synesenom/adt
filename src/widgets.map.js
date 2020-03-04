@@ -48,7 +48,6 @@
  * @requires du.Widget
  */
 // TODO add map tooltip
-// TODO make map available on gist and only set the type
 (function (global, factory) {
     if (typeof exports === "object" && typeof module !== "undefined") {
         module.exports = factory(require('d3'), require('topojson'), require('leaflet'),
@@ -497,6 +496,8 @@
                             });
                         }
                     }
+                    delete _clusterings[id];
+
                     return true;
                 } else {
                     return false;

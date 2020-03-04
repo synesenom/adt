@@ -54,7 +54,7 @@
          * @param {number} value The size to set.
          * @returns {du.widgets.scatterplot.ScatterPlot} Reference to the current ScatterPlot.
          */
-        _w.attr.add(this, "size", 0.4);
+        _w.attr.add(this, "size", 3);
 
         // Widget elements.
         var _svg = {};

@@ -199,7 +199,6 @@
                 });
 
             // Update axes
-            // Update axes
             _svg.axisFn.x.tickFormat(_w.attr.xTickFormat);
             _svg.axes.x
                 .transition().duration(duration)
