@@ -274,7 +274,7 @@
                 .style("fill", function (d) {
                     return _colors[d.name];
                 })
-                .style("pointer-events", "all")
+                .style("pointer-events", _w.attr.mouseover || _w.attr.click ? "all" : "none")
                 .style("shape-rendering", "geometricPrecision")
                 .style("stroke", "none");
             if (_w.attr.vertical) {
@@ -438,7 +438,7 @@
                 .style("width", _w.attr.innerWidth + "px")
                 .style("height", _w.attr.innerHeight + "px")
                 .attr("transform", "translate(" + _w.attr.margins.left + "," + _w.attr.margins.top + ")")
-                .style("pointer-events", "all");
+                .style("pointer-events", _w.attr.mouseover || _w.attr.click ? "all" : "none");
 
             // Axes
             if (_w.attr.vertical) {
@@ -456,7 +456,7 @@
                 .attr("transform", "translate(0," + 1 + ")");
             _svg.g.selectAll(".tick > text")
                 .attr("cursor", "default")
-                .style("pointer-events", "all");
+                .style("pointer-events", _w.attr.mouseover || _w.attr.click ? "all" : "none");
             if (_w.attr.vertical) {
                 _svg.g.selectAll(".y.axis .tick > line")
                     .style("display", "none");

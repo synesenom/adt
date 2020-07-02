@@ -43,9 +43,13 @@ var barchart = new du.widgets.BarChart("mychart", "#widget")
 var slider = new du.widgets.Slider("slider", "#slider")
     .width(parseInt(d3.select("#slider").style("width")))
     .height(parseInt(d3.select("#slider").style("height")))
+    .margins({left: 30, right: 30})
     .min(2016)
     .max(2018)
     .step(1)
+    .format(function(d) {
+        return 'Year ' + d;
+    })
     .fillColor("royalblue")
     .trackColor("#ddd")
     .thickness(10)

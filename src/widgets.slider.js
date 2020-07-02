@@ -134,9 +134,18 @@
          */
         _w.attr.add(this, "trackColor", "#ddd");
 
+        /**
+         * Sets the tick format. Default is unset.
+         *
+         * @method format
+         * @memberOf du.widgets.slider.Slider
+         * @param {Function} format The tick format. The tick value is passed as parameter.
+         * @returns {du.widgets.slider.Slider} Reference to the current Slider.
+         */
+        _w.attr.add(this, "format", null);
+
         // Widget elements
         var _svg = {};
-        var _margins = {right: 20, left: 20};
         var _ordinalScale = false;
         var _domain = [];
         var _scale = null;
@@ -175,7 +184,7 @@
             _domain = [_w.attr.min, _w.attr.max];
             _scale = d3.scaleLinear()
                 .domain(_domain)
-                .range([0, _w.attr.width - _margins.left - _margins.right])
+                .range([0, _w.attr.width - _w.attr.margins.left - _w.attr.margins.right])
                 .clamp(true);
 
             // If step is specified, update to ordinal
@@ -191,11 +200,11 @@
                 // Update scale
                 _scale = d3.scalePoint()
                     .domain(_domain)
-                    .range([0, _w.attr.width - _margins.left - _margins.right]);
+                    .range([0, _w.attr.width - _w.attr.margins.left - _w.attr.margins.right]);
             }
 
             _svg.g = _w.widget.append("g")
-                .attr("transform", "translate(" + _margins.left + ",20)");
+                .attr("transform", "translate(" + _w.attr.margins.left + ",20)");
 
             _svg.track = _svg.g.append("line")
                 .attr("stroke-linecap", "round")
@@ -203,12 +212,6 @@
                 .attr("stroke-width", _w.attr.thickness + "px")
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            /*_svg.inset = _svg.track
-                .select(function () {
-                    return this.parentNode.appendChild(this.cloneNode(true));
-                })
-                .style("stroke", _w.attr.trackColor)
-                .style("stroke-width", (_w.attr.thickness - 1) + "px");*/
             _svg.overlay = _svg.track
                 .select(function () {
                     return this.parentNode.appendChild(this.cloneNode(true));
@@ -265,7 +268,7 @@
                 .attr("text-anchor", "middle")
                 .attr("font-family", "inherit")
                 .text(function (d) {
-                    return d;
+                    return _w.attr.format === null ? d : _w.attr.format(d);
                 });
 
             _svg.valueTrack = _svg.g.insert("line", ".track-overlay")
@@ -297,13 +300,10 @@
             _w.widget.style("height", 50 + "px");
 
             // Elements
-            _scale.range([0, _w.attr.width - _margins.left - _margins.right]);
+            _scale.range([0, _w.attr.width - _w.attr.margins.left - _w.attr.margins.right]);
             _svg.track
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
-            /*_svg.inset
-                .attr("x1", _scale.range()[0])
-                .attr("x2", _scale.range()[1]);*/
             _svg.overlay
                 .attr("x1", _scale.range()[0])
                 .attr("x2", _scale.range()[1]);
